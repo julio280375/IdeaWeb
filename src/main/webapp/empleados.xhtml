@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+   	<script src="https://kit.fontawesome.com/1f0a45e941.js" crossorigin="anonymous"></script>
+    <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+    <link rel="stylesheet" type="text/css" href="resources/css/default.css" media="all" />
+
+    <title>Idea Los Cabos</title>    
+</h:head>
+<h:body onload="#{vwEmpleados.iniciaVista()}"   >	
+	
+	<h:form id="formaID"  enctype="multipart/form-data">
+	
+		<p:growl showDetail="true" sticky="false" life="1000" />
+		
+		<h:panelGrid columns="1"  style="width:100%;text-align:center;font-size:11px;font-family:Bahnschrift Light;">
+			<h:panelGrid id="headerID" columns="3" columnClasses="columnWith70,columnWith30,columnWith10" styleClass="ui-noborder" style="background-color:#D8D8D8">
+					<h:panelGrid columns="2" columnClasses="columnWith10,columnWith60" styleClass="ui-noborder" style="text-align:left;">
+						<i class="fa fa-user-circle" style="font-size:2.8rem;color:#424242;"/>
+						<h:panelGrid columns="1" styleClass="ui-noborder"  style="text-align:left;margin-left:2%;">
+							<p:outputLabel value="#{vwEmpleados.header.empleado.nombre}" style="font-size:15px;font-weight:bold;color:#585858;" />
+							<p:outputLabel value="#{vwEmpleados.header.empleado.departamento}-#{vwEmpleados.header.empleado.puesto}" style="font-family:Bahnschrift Light;font-size:10px;font-weight:bold;color:#A4A4A4;" />
+						</h:panelGrid>
+					</h:panelGrid>
+					<h:panelGrid columns="3"  style="width:100%;text-align:center;" styleClass="ui-noborder">						
+						<i class="fa fa-map-marker" style="font-size:1.3rem;color:#FBFBEF;"></i>
+						<h:panelGrid columns="1" styleClass="ui-noborder"  style="text-align:left;">							
+							<h:panelGrid columns="2" styleClass="ui-noborder"  style="text-align:left;">
+								<i class="fa fa-th" style="font-size:0.7rem;color:#FAFAFA;"></i>
+								<p:outputLabel value="Catálogos" style="font-family:Bahnschrift Light;font-size:11px;font-weight:bold;color:#A4A4A4;" />
+							</h:panelGrid>
+							<h:panelGrid columns="2"   styleClass="ui-noborder"  style="text-align:left;">
+								<i class="fa fa-users" style="font-size:0.7rem;color:#FAFAFA;"></i>
+								<p:outputLabel value="Empleados" style="font-size:13px;font-weight:bold;color:#585858;" />
+							</h:panelGrid>
+						</h:panelGrid>
+					</h:panelGrid>
+					<h:panelGrid columns="4"  styleClass="ui-noborder" style="text-align:left;">
+						<p:commandButton id="btnHomeID" icon="fa fa-home" 
+						 	action="#{vwEmpleados.redirectMenu()}"
+						 	style="color:#0174DF;width:40px;height:40px;font-size:15px;font-weight:bold;"
+						 	styleClass="rounded-button" />
+						 <p:tooltip for="btnHomeID" value="Menú Principal" position="left" />
+						 <p:commandButton id="btnLogoutID" icon="fa fa-id-card" 
+						 	action="#{vwEmpleados.redirectLogin()}"
+						 	style="color:#0174DF;width:40px;height:40px;font-size:15px;font-weight:bold;" 
+						 	styleClass="rounded-button" />	
+						 <p:tooltip for="btnLogoutID" value="Cerrar Sesión" position="right" />
+					</h:panelGrid>
+			</h:panelGrid>
+			<h:panelGrid id="toolbarID" style="width:100%;"  >
+	 			<p:toolbar    >
+					<f:facet name="left"  >
+						<h:panelGrid columns="22"  >
+							<span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>	
+							<p:outputLabel value="Filtrar Busqueda:"  />
+							<span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+							<p:inputText value="#{vwEmpleados.nombre_b}" placeholder="Nombre"  />
+							<span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>					    						
+						    <p:selectOneMenu  value="#{vwEmpleados.departamento_b}" placeholder="Departamento"   style="width:110px;" editable="false" multiple="false"  >	           			 			
+		            			<f:selectItem itemLabel="" itemValue="#{null}"/>	
+		            			<f:selectItems value="#{vwEmpleados.listaDepartamentos}"/>		            			
+			        		</p:selectOneMenu>
+						    <span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+						    <p:selectOneMenu  value="#{vwEmpleados.puesto_b}" placeholder="Puesto" style="width:110px;" editable="false" multiple="false"  >	           			 			
+		            			<f:selectItem itemLabel="" itemValue="#{null}" />	
+		            			<f:selectItems value="#{vwEmpleados.listaPuestos}"/>		            			
+			        		</p:selectOneMenu>	
+		
+						    <span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>	
+						    <p:commandButton id="btnBuscar" 
+						    				action="#{vwEmpleados.busquedaPrincipal()}"						                
+							                style="font-size:15px;"					                 
+							                icon="fa fa-search" 
+							                update=":formaID:toolbarID :formaID:tablaID :formaID:capturaID" />						                 
+		 				        <p:tooltip for="btnBuscar" value="Aplicar Filtros" position="right" />
+		 				        <span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+						    <p:commandButton id="btnLimpiar"
+						    				action="#{vwEmpleados.inicializaFiltros()}" 	
+						    				style="font-size:15px;"					                					            
+							                icon="fa fa-recycle" 						                 
+							                update=":formaID:toolbarID :formaID:tablaID :formaID:capturaID"/>						                 
+		 				        <p:tooltip for="btnLimpiar" value="Limpiar Filtros" position="right" />
+		 				    <span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>  				        					
+						 </h:panelGrid>
+					</f:facet>					
+				</p:toolbar>
+			</h:panelGrid>
+			
+			<h:panelGrid  columns="3" style="width:95%;margin-left:2%;" columnClasses="valign-center,valign-top,valign-top" >
+			 
+			<img src="resources/images/height.png" />
+			
+			<h:panelGrid  id="tablaID" columns="1" style="text-align:left;" styleClass="panel-height"> 
+	
+					<p:dataTable  var="list" value="#{vwEmpleados.listaPrincipal}" 
+								selectionMode="single" selection="#{vwEmpleados.seleccionado}" rowKey="#{list.id}" sortBy="#{list.id}" sortOrder="descending" 
+					            paginatorPosition="bottom" paginator="true"  rows="7">
+						<p:ajax event="rowSelect"  listener="#{vwEmpleados.seleccionarElemento()}" update=":formaID:capturaID"/>
+						<f:facet name="header">Listado de Empleados</f:facet>			           						
+						<p:column headerText="Nombre"  styleClass="singleLine" style="width:8%;">
+					    		<h:outputText value="#{list.nombre}"/>
+						</p:column>  
+						<p:column headerText="Departamento"  styleClass="singleLine" style="width:5%;">
+					    		<h:outputText value="#{list.departamento}"/>
+						</p:column>
+						<p:column headerText="Puesto"  styleClass="singleLine" style="width:5%;">
+					    		<h:outputText value="#{list.puesto}"/>
+						</p:column> 								
+																						 			 
+					</p:dataTable>
+
+				</h:panelGrid>
+				<h:panelGrid  columns="1" style="width:20%;text-align:center;" cellpadding="3"   >
+					<p:commandButton value="Reporte PDF"
+						styleClass="button-texto-icono"						
+						style="width:150px;height:40px;" icon="fa fa-file-pdf-o" 	
+						actionListener="#{vwEmpleados.accionDescargarPDF('RPT_EMPLEADOS_01')}" 								   
+						oncomplete="document.getElementById('formaID:downloadButton').click();"/>
+						<p:commandButton id="downloadButton" ajax="false"
+							style="display:none;">
+							<p:fileDownload value="#{vwEmpleados.descarga}" />
+						</p:commandButton>	
+				</h:panelGrid>
+			</h:panelGrid>
+			<h:panelGrid id="capturaID" columns="4"  cellpadding="5" style="width:96%;text-align:center;margin-left:2%;margin-top:1%;" columnClasses="valign-top,valign-top,valign-top,valign-center" styleClass="panelgrid-dotted-border">
+				<h:panelGrid columns="1" styleClass="panelgrid-dotted-border" >
+					<p:outputLabel value="DATOS PERSONALES" style="font-size:15px;font-weight:bold;color:#585858;" />    
+					<h:panelGrid columns="2" style="text-align:left;" styleClass="panelgrid-dotted-border" >    				
+	       				<p:outputLabel value="Nombre:" />
+	          			<p:inputText value="#{vwEmpleados.nombre_e}" readonly="#{!vwEmpleados.editable}" style="width:300px;"/>           			 	          			 			           			 	
+					</h:panelGrid>
+				</h:panelGrid>
+				<h:panelGrid columns="1" styleClass="panelgrid-dotted-border" >
+					<p:outputLabel value="DATOS LABORALES" style="font-size:15px;font-weight:bold;color:#585858;" />    
+					<h:panelGrid columns="2" style="text-align:left;" styleClass="panelgrid-dotted-border" >    				          			 	          			 			           			 	
+	       				<p:outputLabel value="Departamento:" />
+	       				<p:inputText value="#{vwEmpleados.departamento_e}" rendered="#{!vwEmpleados.editable}" readonly="true" style="width:222px;"/>
+	       				<p:selectOneMenu  value="#{vwEmpleados.departamento_e}"  rendered="#{vwEmpleados.editable}"  style="width:210px;" editable="true" multiple="false"  >	           			 			
+		            			<f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" itemDisabled="true"/>	
+		            			<f:selectItems value="#{vwEmpleados.listaDepartamentos}"/>		            			
+			        	</p:selectOneMenu>
+			        	<p:outputLabel value="Puesto:"/>
+	       				<p:inputText value="#{vwEmpleados.puesto_e}" rendered="#{!vwEmpleados.editable}" readonly="true" style="width:222px;"/>
+	       				<p:selectOneMenu  value="#{vwEmpleados.puesto_e}"  rendered="#{vwEmpleados.editable}"  style="width:210px;" editable="true" multiple="false"  >	           			 			
+		            			<f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" itemDisabled="true"/>	
+		            			<f:selectItems value="#{vwEmpleados.listaPuestos}"/>		            			
+			        	</p:selectOneMenu>			    			     
+					</h:panelGrid>
+				</h:panelGrid>
+				<h:panelGrid columns="1" styleClass="panelgrid-dotted-border" >
+					<p:outputLabel value="DATOS DE USUARIO" style="font-size:15px;font-weight:bold;color:#585858;" />    
+					<h:panelGrid columns="2" style="text-align:left;" styleClass="panelgrid-dotted-border" >    				          			 	          			 			           			 		       				
+			        	<p:outputLabel value="Usuario:" />
+	          			<p:inputText value="#{vwEmpleados.cuenta_e}" readonly="#{!vwEmpleados.editable}" style="width:200px;"/>
+	          			<p:outputLabel value="Password:" />
+	          			<p:inputText   value="#{vwEmpleados.password_e}"  type='password' readonly="#{!vwEmpleados.editable}"  style="width:100px" />
+	          			<p:outputLabel value="Confirmar:" />
+	          			<p:inputText    value="#{vwEmpleados.confirmar_e}"  type='password' readonly="#{!vwEmpleados.editable}"  style="width:100px" />			        	
+					</h:panelGrid>
+				</h:panelGrid>
+				<h:panelGrid  columns="1" style="text-align:center;margin-left:10%;" cellpadding="3" styleClass="panelgrid-dotted-border" >
+						<p:commandButton value="Agregar" 
+							action="#{vwEmpleados.accionAgregar()}"    				    						
+							update=":formaID:capturaID" 
+							styleClass="button-texto-icono"
+							disabled="#{vwEmpleados.editable}"
+							style="width:150px;height:30px;" icon="fa fa-plus-circle" />
+						<p:commandButton value="Modificar"
+							action="#{vwEmpleados.accionModificar()}"
+							disabled="#{vwEmpleados.editable}" 	
+							update=":formaID:capturaID" 
+							styleClass="button-texto-icono"
+							style="width:150px;height:30px;" icon="fa fa-pencil-square" />
+						<p:commandButton value="Cancelar" 
+							action="#{vwEmpleados.accionCancelar()}"
+							styleClass="button-texto-icono"
+							disabled="#{!vwEmpleados.editable}"	    						
+							update=":formaID:capturaID"
+							style="width:150px;height:30px;" icon="fa fa-undo" />
+						<p:commandButton value="Guardar"
+							action="#{vwEmpleados.accionGuardar()}" 
+							styleClass="button-texto-icono" 
+							disabled="#{!vwEmpleados.editable}"
+							update=":formaID" 
+							style="width:150px;height:30px;" icon="fa fa-floppy-o" />						
+				</h:panelGrid>
+			</h:panelGrid>
+		</h:panelGrid>
+	</h:form>
+</h:body>
+</html>

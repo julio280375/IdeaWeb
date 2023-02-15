@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+   	<script src="https://kit.fontawesome.com/1f0a45e941.js" crossorigin="anonymous"></script>
+   	<link rel="stylesheet" type="text/css" href="resources/css/default.css"	media="all" />
+    <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+    <title>Idea Los Cabos</title>    
+</h:head>
+<h:body onload="#{vwLogin.iniciaVista()}"  >	
+	
+	<h:form id="frmLoginID" enctype="multipart/form-data">
+		
+		<p:growl showDetail="true" sticky="false" life="1000" />
+		
+		<p:panelGrid columns="1" style="width:22%;margin-left:38%;margin-top:5%;text-align:center;font-size:12px">
+			
+			<p:panelGrid columns="1" styleClass="ui-noborder " style="width:20%;">
+				<img src="resources/images/user.png" style="display: block; margin-left: auto; margin-right: auto; height: 120px; margin-top:8%; margin-bottom:2%;" alt="login" />
+				<p:outputLabel value="Please Sign In" style="font-size:20px;font-weight:bold;color:#5882FA;"/>
+				<p:panelGrid columns="1" styleClass="ui-noborder" style="text-align:left;">
+					<p:selectOneMenu value="#{vwLogin.cuenta_b}" filter="false" filterMatchMode="contains"  style="width:215px">
+						<f:selectItem itemLabel="Empleado" itemValue="#{null}" itemDisabled="true"/>
+						<f:selectItems value="#{vwLogin.listaCuentas}"  />									
+					</p:selectOneMenu>			
+					<p:password  placeholder="Password"  value="#{vwLogin.password_b}"  style="width:230px" />
+					<p:commandButton id="btnSignIn" value="Sing In" 
+						action="#{vwLogin.loginEmpleado()}"
+						update="frmLoginID"
+						style="width:240px;height:40px;"   />		
+					<p:tooltip for="btnSignIn" value="iniciar Sesión" position="right" />
+				</p:panelGrid>
+			</p:panelGrid>
+		</p:panelGrid>
+	</h:form>
+</h:body>
+</html>

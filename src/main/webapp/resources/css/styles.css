@@ -1,0 +1,45 @@
+@charset "ISO-8859-1";
+
+.fondo {
+	background: #feeebd
+		url("/IdeaWeb/javax.faces.resource/images/ui-bg_highlight-soft_100_feeebd_1x100.png.xhtml?ln=primefaces-sunny")
+		50% top repeat-x
+}
+
+.colMenu {
+	width: 50vh !important;
+}
+
+.colMain {
+	margin-left:25vh !important;
+}
+
+.rowMain {
+	height: 100vh;
+}
+
+.ui-widget-header{
+	background:#1e2126;
+}
+
+.ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default{
+	background:#ffcd00;
+}
+
+
+.greenRaw{
+     background: #A5DF00  !important;
+ }
+ 
+ .orangeRaw{
+     background: #F5ECCE !important;
+ }
+ 
+ .redRaw{
+     background: #FE2E2E !important;
+ }
+
+ .ui-datatable .ui-state-highlight {
+        background-image: none;
+        background-color: #F5DA81 !important;
+    }

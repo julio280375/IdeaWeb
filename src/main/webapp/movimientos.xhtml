@@ -1,0 +1,211 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+   	<script src="https://kit.fontawesome.com/1f0a45e941.js" crossorigin="anonymous"></script>
+    <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+    <link rel="stylesheet" type="text/css" href="resources/css/default.css" media="all" />
+	<script type="text/javascript">    
+		function start() {PF('statusDialog').show();}		 
+		function stop() {PF('statusDialog').hide();	}
+	</script>
+    <title>Idea Los Cabos</title>    
+</h:head>
+<h:body onload="#{vwMovimientos.iniciaVista()}"   >	
+	
+	<h:form id="formaID"  enctype="multipart/form-data">
+	
+		<p:growl showDetail="true" sticky="false" life="1000" />
+		
+		<h:panelGrid columns="1"  style="width:100%;text-align:center;font-size:11px;font-family:Bahnschrift Light;">
+			<h:panelGrid id="headerID" columns="3" columnClasses="columnWith70,columnWith30,columnWith10" styleClass="ui-noborder" style="background-color:#D8D8D8">
+					<h:panelGrid columns="2" columnClasses="columnWith10,columnWith60" styleClass="ui-noborder" style="text-align:left;">
+						<i class="fa fa-user-circle" style="font-size:2.8rem;color:#424242;"/>
+						<h:panelGrid columns="1" styleClass="ui-noborder"  style="text-align:left;margin-left:2%;">
+							<p:outputLabel value="#{vwMovimientos.header.empleado.nombre}" style="font-size:15px;font-weight:bold;color:#585858;" />
+							<p:outputLabel value="#{vwMovimientos.header.empleado.departamento}-#{vwMovimientos.header.empleado.puesto}" style="font-family:Bahnschrift Light;font-size:10px;font-weight:bold;color:#A4A4A4;" />
+						</h:panelGrid>
+					</h:panelGrid>
+					<h:panelGrid columns="3"  style="width:100%;text-align:center;" styleClass="ui-noborder">						
+						<i class="fa fa-map-marker" style="font-size:1.3rem;color:#FBFBEF;"></i>
+						<h:panelGrid columns="1" styleClass="ui-noborder"  style="text-align:left;">							
+							<h:panelGrid columns="2" styleClass="ui-noborder"  style="text-align:left;">
+								<i class="fa fa-cogs" style="font-size:0.7rem;color:#FAFAFA;"/>
+								<p:outputLabel value="Administración" style="font-family:Bahnschrift Light;font-size:11px;font-weight:bold;color:#A4A4A4;" />
+							</h:panelGrid>
+							<h:panelGrid columns="2"   styleClass="ui-noborder"  style="text-align:left;">
+								<i class="fa fa-credit-card" style="font-size:0.7rem;color:#FAFAFA;"></i>
+								<p:outputLabel value="Movimientos Bancarios" style="font-size:13px;font-weight:bold;color:#585858;" />
+							</h:panelGrid>
+						</h:panelGrid>
+					</h:panelGrid>
+					<h:panelGrid columns="4"  styleClass="ui-noborder" style="text-align:left;">
+						<p:commandButton id="btnHomeID" icon="fa fa-home" 
+						 	action="#{vwMovimientos.redirectMenu()}"
+						 	style="color:#0174DF;width:40px;height:40px;font-size:15px;font-weight:bold;"
+						 	styleClass="rounded-button" />
+						 <p:tooltip for="btnHomeID" value="Menú Principal" position="left" />
+						 <p:commandButton id="btnLogoutID" icon="fa fa-id-card" 
+						 	action="#{vwMovimientos.redirectLogin()}"
+						 	style="color:#0174DF;width:40px;height:40px;font-size:15px;font-weight:bold;" 
+						 	styleClass="rounded-button" />	
+						 <p:tooltip for="btnLogoutID" value="Cerrar Sesión" position="right" />
+					</h:panelGrid>
+			</h:panelGrid>
+
+			<h:panelGrid id="capturaID" columns="4"  cellpadding="5" style="width:96%;text-align:center;margin-left:2%;margin-top:1%;" columnClasses="valign-top,valign-top,valign-top,valign-center" styleClass="panelgrid-dotted-border">
+				<h:panelGrid columns="1" styleClass="panelgrid-dotted-border" >
+				        <h:panelGrid   id="listaArchivosID"  columns="7" style="text-align:left;" styleClass="panelgrid-dotted-border">
+				        	<p:outputLabel value="Banco:" />
+		          			<p:selectOneMenu  value="#{vwMovimientos.banco}"  styleClass="MyOneMenu" style="font-size:10px;width:150px" multiple="false" filter="false"  >									
+		        				<f:selectItems value="#{vwMovimientos.listaBancos}"/>	        		
+		    				</p:selectOneMenu>	
+		    				<p:tooltip for="btnLeerArchivoID" value="Leer Archivo de Movimientos" position="right" />
+		    				<p:outputLabel value="Archivo:" />
+		          			<p:selectOneMenu  value="#{vwMovimientos.archivo}"  styleClass="MyOneMenu" style="font-size:10px;width:350px" multiple="false" filter="false"  >
+								<f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+		        				<f:selectItems value="#{vwMovimientos.listaArchivos}"/>	        		
+		    				</p:selectOneMenu>		    			
+							<p:commandButton id="btnLeerArchivoID" style="font-size:15px;" icon="fa fa-search" 																				
+								action="#{vwMovimientos.llenaListaMovimientos()}"
+								update=":formaID:tabviewID :formaID:capturaID">																		
+							</p:commandButton>		
+							<p:commandButton id="btnLimpiarID" style="font-size:15px;" icon="fa fa-recycle"														
+								action="#{vwMovimientos.limpiaListaMovimientos()}"
+								update=":formaID:tabviewID :formaID:capturaID">																		
+							</p:commandButton>						
+						</h:panelGrid>	
+				</h:panelGrid>
+			</h:panelGrid>
+			
+			<p:tabView id="tabviewID" >										
+				<p:tab  title="Gastos" >
+					<h:panelGrid  columns="1" style="text-align:left;font-size:9px;" styleClass="panel-height"> 
+	
+						<p:dataTable  var="list" value="#{vwMovimientos.listaGastosBanorte}"  style="width:100%;"
+								selectionMode="single" selection="#{vwMovimientos.gastoBanorteSeleccionado}" rowKey="#{list.movimiento}"  sortBy="#{list.movimiento}" sortOrder="ascending" 
+					            paginatorPosition="top" paginator="true"  rows="10">
+							           						
+							<p:column headerText="Movimiento" sortBy="#{list.movimiento}" styleClass="single-line" style="text-align:center;width:4%">
+						    		<h:outputText value="#{list.movimiento}"/>
+							</p:column>
+							<p:column headerText="Fecha"  styleClass="single-line" style="text-align:center;width:5%;">
+						    		<h:outputText value="#{list.fecha}">
+						    		<f:convertDateTime type="date" pattern="dd/MMM/yyyy"  locale="es"/>
+						    		</h:outputText>
+							</p:column>
+							<p:column headerText="Descripcion"  styleClass="single-line" style="width:10%;">
+						    		<h:outputText value="#{list.descripcion}"/>
+							</p:column>
+							<p:column headerText="Importe"  styleClass="single-line" style="width:5%;text-align:right;">
+						    		<h:outputText value="#{list.retiro}">
+						    			<f:convertNumber type="currency"  pattern="###,##0.00" />
+						    		</h:outputText>
+							</p:column>	
+							<p:column headerText="Detalle"  styleClass="single-line" style="width:40%;">
+						    		<h:outputText value="#{list.detalle}"/>
+							</p:column>
+							<f:facet name="footer" style="text-align:left;">
+								<h:panelGrid columns="3" style="font-size:13px;text-align:left;border:none;" columnClasses="columnWith20,columnWith10,columnWith90" >							
+									<h:outputText value="Movimientos:"/>
+									<h:outputText value="#{vwMovimientos.listaGastosBanorte.size()}"/>
+									<h:outputText value=""/>
+									<h:outputText value="Total:"/>
+									<h:outputText value="#{vwMovimientos.totalGastos}">
+										<f:convertNumber type="currency"  pattern="$###,##0.00" />
+									</h:outputText>
+									<h:outputText value=""/>								
+								</h:panelGrid>
+							</f:facet>																									 			 
+						</p:dataTable>
+					</h:panelGrid>
+					<h:panelGrid columns="1"  styleClass="ui-noborder" style="text-align:right;">
+						<p:commandButton  id="btnImportarGastosID" value="Importar Gastos"  icon="fa fa-upload" style="width:150px;height:35px;" styleClass="button-texto-icono" 
+							disabled="#{vwMovimientos.listaGastosBanorte==null}"	
+							action="#{vwMovimientos.importaGastos()}" 
+							onclick="PrimeFaces.monitorDownload(start, stop);"	
+							update=":formaID"> 		
+							<p:confirm header="Importar gastos" message="Desea importar movimientos de gastos a la base de datos?" icon="pi pi-exclamation-triangle"/>					
+						</p:commandButton>						
+						<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+				            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+				            <p:commandButton value="Si, Importar" type="button" styleClass="ui-confirmdialog-yes" />
+				        </p:confirmDialog>
+						<p:tooltip for="btnImportarGastosID" value="Guardar Movimientos de Gastos" position="right" />						
+					</h:panelGrid>
+				</p:tab>
+				<p:tab  title="Ingresos">
+					<h:panelGrid  columns="1" style="text-align:left;font-size:9px;" styleClass="panel-height"> 
+					
+						<p:dataTable  var="list" value="#{vwMovimientos.listaIngresosBanorte}"  style="width:100%;"
+									rowKey="#{list.movimiento}"  sortBy="#{list.movimiento}" sortOrder="ascending" 
+						            paginatorPosition="top" paginator="true"  rows="10">
+								           						
+							<p:column headerText="Movimiento"  sortBy="#{list.movimiento}"  styleClass="single-line" style="text-align:center;width:4%">
+						    		<h:outputText value="#{list.movimiento}"/>
+							</p:column>
+							<p:column headerText="Fecha"  styleClass="single-line" style="text-align:center;width:5%;">
+						    		<h:outputText value="#{list.fecha}">
+						    		<f:convertDateTime type="date" pattern="dd/MMM/yyyy"  locale="es"/>
+						    		</h:outputText>
+							</p:column>
+							<p:column headerText="Descripcion"  styleClass="single-line" style="width:10%;">
+						    		<h:outputText value="#{list.descripcion}"/>
+							</p:column>
+							<p:column headerText="Importe"  styleClass="single-line" style="width:5%;text-align:right;">
+						    		<h:outputText value="#{list.deposito}">
+						    			<f:convertNumber type="currency"  pattern="$###,##0.00" />
+						    		</h:outputText>
+							</p:column>	
+							<p:column headerText="Detalle"  styleClass="single-line" style="width:40%;">
+						    		<h:outputText value="#{list.detalle}"/>
+							</p:column>
+							<f:facet name="footer" style="text-align:left;">
+								<h:panelGrid columns="3" style="font-size:13px;text-align:left;border:none;" columnClasses="columnWith20,columnWith10,columnWith90" >							
+									<h:outputText value="Total Movimientos:"/>
+									<h:outputText value="#{vwMovimientos.listaIngresosBanorte.size()}"/>
+									<h:outputText value=""/>
+									<h:outputText value="Total:"/>
+									<h:outputText value="#{vwMovimientos.totalIngresos}">
+										<f:convertNumber type="currency"  pattern="$###,##0.00" />
+									</h:outputText>
+									<h:outputText value=""/>
+								</h:panelGrid>
+							</f:facet>																									 			 
+						</p:dataTable>
+					</h:panelGrid>
+					<h:panelGrid columns="1"  styleClass="ui-noborder" style="text-align:right;">
+						<p:commandButton  id="btnImportarIngresosID" value="Importar Ingresos"  icon="fa fa-upload" style="width:150px;height:35px;" styleClass="button-texto-icono" 
+							disabled="#{vwMovimientos.listaIngresosBanorte==null}"	
+							action="#{vwMovimientos.importaIngresos()}" 
+							onclick="PrimeFaces.monitorDownload(start, stop);"	
+							update=":formaID"> 		
+							<p:confirm header="Importar ingresos" message="Desea importar movimientos de ingresos a la base de datos?" icon="pi pi-exclamation-triangle"/>					
+						</p:commandButton>																			
+						<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+				            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+				            <p:commandButton value="Si, Importar" type="button" styleClass="ui-confirmdialog-yes" />
+				        </p:confirmDialog>
+						<p:tooltip for="btnImportarIngresosID" value="Guardar Movimientos de Ingresos" position="right" />						
+					</h:panelGrid>
+				</p:tab>
+			</p:tabView>
+			
+			
+				
+		</h:panelGrid>
+		<p:dialog  modal="true" widgetVar="statusDialog" header="Procesando..." draggable="false" closable="false" resizable="false">
+		   <h:panelGrid  columns="1" style="margin-left:25%;"  >
+		   		<i class="fa fa-spin fa-spinner" style="font-size:3em"></i>
+		   </h:panelGrid>
+		</p:dialog>
+	</h:form>
+</h:body>
+</html>

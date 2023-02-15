@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+   	<script src="https://kit.fontawesome.com/1f0a45e941.js" crossorigin="anonymous"></script>
+    <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+    <link rel="stylesheet" type="text/css" href="resources/css/default.css" media="all" />
+    <title>Idea Los Cabos</title>    
+</h:head>
+<h:body onload="#{vwMain.iniciaVista()}"   >	
+	
+	<h:form id="frmMain" enctype="multipart/form-data">
+		<p:growl showDetail="true" sticky="false" life="1000" />
+		<h:panelGrid columns="1"  style="width:100%;text-align:center;font-size:11px;font-family:Bahnschrift Light;">
+		<h:panelGrid id="headerID" columns="2" columnClasses="columnWith100,columnWith10" styleClass="ui-noborder" style="background-color:#D8D8D8">
+					<h:panelGrid columns="2" columnClasses="columnWith10,columnWith60" styleClass="ui-noborder" style="text-align:left;">
+						<i class="fa fa-user-circle" style="font-size:2.8rem;color:#424242;"/>
+						<h:panelGrid columns="1" styleClass="ui-noborder"  style="text-align:left;margin-left:2%;">
+							<p:outputLabel value="#{vwMain.header.empleado.nombre}" style="font-size:15px;font-weight:bold;color:#585858;" />
+							<p:outputLabel value="#{vwMain.header.empleado.departamento}-#{vwMain.header.empleado.puesto}" style="font-family:Bahnschrift Light;font-size:10px;font-weight:bold;color:#A4A4A4;" />
+						</h:panelGrid>
+					</h:panelGrid>
+					<h:panelGrid columns="2"  styleClass="ui-noborder" style="text-align:left;">						
+						 <p:commandButton id="btnLogoutID" icon="fa fa-id-card" 
+						 	action="#{vwMain.cerrarSesion()}"
+						 	style="color:#0174DF;width:40px;height:40px;font-size:15px;font-weight:bold;" 
+						 	styleClass="rounded-button" />	
+						 <p:tooltip for="btnLogoutID" value="Cerrar Sesión" position="right" />
+					</h:panelGrid>
+			</h:panelGrid>
+		
+		
+		<p:menubar>
+			<p:submenu label="Catalogos" icon="fa fa-th" style="width:170px;font-size:14px;margin-left:10px;font-weight:bold;">
+				<p:menuitem rendered="false" value="Materiales" icon="fa fa-archive" url="materiales.xhtml"  />			
+				<p:menuitem value="Empleados" icon="fa fa-users" url="empleados.xhtml"/>
+				<p:menuitem value="Proveedores" icon="fa fa-truck" url="proveedores.xhtml" />
+				<p:menuitem value="Obras" icon="fa fa-handshake-o" url="obras.xhtml" />					
+			</p:submenu>
+			<p:submenu rendered="false" label="Operación" icon="fa fa-wrench" style="width:120px;font-size:14px;margin-left:10px;font-weight:bold;">
+				<p:menuitem rendered="false" value="Requerimientos" icon="fa fa-list" url="requerimientos.xhtml" />
+				<p:menuitem rendered="false" value="Abastecimientos" icon="fa fa-tags" url="abastecimientos.xhtml"/>
+																							
+			</p:submenu>
+			<p:submenu label="Administración" icon="fa fa-cogs" style="width:220px;font-size:14px;margin-left:10px;font-weight:bold;">	
+				<p:menuitem value="Movimientos Bancarios" icon="fa fa-credit-card"  url="movimientos.xhtml" />	
+				<p:menuitem rendered="false" value="Orden Compra" icon="fa fa-list-alt" url="ordenes.xhtml" />	
+				<p:menuitem value="Gastos" icon="fa fa-shopping-cart" url="gastos.xhtml" />
+				<p:menuitem value="Ingresos" icon="fa fa-line-chart" url="ingresos.xhtml" />	
+				<p:menuitem rendered="false" value="Facturas" icon="fa fa-file-text" url="facturas.xhtml" />					
+				<p:menuitem value="Cuentas por Pagar" icon="fa fa-hourglass-half " url="cuentasPagar.xhtml"  />				
+				<p:menuitem value="Cuentas por Cobrar" icon="fa fa-calculator" url="cuentasCobrar.xhtml"  />
+														
+			</p:submenu>
+			<p:submenu label="Sistema" icon="fa fa-laptop" style="width:110px;font-size:14px;margin-left:10px;font-weight:bold;">
+				<p:menuitem value="Configuración" icon="fa fa-gear" url="configuracion.xhtml"  />
+				<p:menuitem rendered="false" value="Accesos" icon="fa fa-tasks" url="accesos.xhtml"   />					
+				<p:menuitem value="Bitácora" icon="fa fa-book" url="bitacora.xhtml" />
+				<p:menuitem rendered="false" value="Salir" icon="fa fa-sign-out" actionListener="#{vwMain.cerrarSesion}" />
+			</p:submenu>
+
+            				
+		</p:menubar>
+		</h:panelGrid>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</h:form>
+</h:body>
+</html>

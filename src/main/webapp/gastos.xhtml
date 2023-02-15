@@ -1,0 +1,399 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+   	<script src="https://kit.fontawesome.com/1f0a45e941.js" crossorigin="anonymous"></script>    
+    <link rel="stylesheet" type="text/css" href="resources/css/default.css" media="all" />
+    <h:outputScript library="js" name="resources/javascript/calendar.js" />
+    <title>Idea Los Cabos [GASTOS]</title>  	
+</h:head>
+
+<h:body onload="#{vwGastos.iniciaVista()}" >	
+ 
+	<h:form id="formaID"  enctype="multipart/form-data"  >
+	
+		<p:growl id="mensajeID" showDetail="true" sticky="false" life="1000"    />
+		
+		<h:panelGrid columns="1"  style="width:100%;text-align:center;font-size:11px;font-family:Bahnschrift Light;">
+			<h:panelGrid id="headerID" columns="3" columnClasses="columnWith80,columnWith20,columnWith10" styleClass="ui-noborder" style="background-color:#D8D8D8">
+					<h:panelGrid columns="2" columnClasses="columnWith10,columnWith90" styleClass="ui-noborder" style="text-align:left;">
+						<i class="fa fa-user-circle" style="font-size:2.8rem;color:#424242;"/>
+						<h:panelGrid columns="1" styleClass="panelgrid-dotted-border"  style="text-align:left;margin-left:2%;">
+							<p:outputLabel value="#{vwGastos.header.empleado.nombre}" style="font-size:15px;font-weight:bold;color:#585858;" />
+							<p:outputLabel value="#{vwGastos.header.empleado.departamento}-#{vwGastos.header.empleado.puesto}" style="font-family:Bahnschrift Light;font-size:10px;font-weight:bold;color:#A4A4A4;" />
+						</h:panelGrid>
+					</h:panelGrid>
+					<h:panelGrid columns="3"  style="width:100%;text-align:center;" styleClass="ui-noborder">						
+						<i class="fa fa-map-marker" style="font-size:1.3rem;color:#FBFBEF;"></i>
+						<h:panelGrid columns="1" styleClass="ui-noborder"  style="text-align:left;">							
+							<h:panelGrid columns="2" styleClass="ui-noborder"  style="text-align:left;">
+								<i class="fa fa-cogs" style="font-size:0.7rem;color:#FAFAFA;"/>
+								<p:outputLabel value="Administración" style="font-family:Bahnschrift Light;font-size:11px;font-weight:bold;color:#A4A4A4;" />
+							</h:panelGrid>
+							<h:panelGrid columns="2"   styleClass="ui-noborder"  style="text-align:left;">
+								<i class="fa fa-shopping-cart" style="font-size:0.7rem;color:#FAFAFA;"></i>
+								<p:outputLabel value="Gastos" style="font-size:13px;font-weight:bold;color:#585858;" />
+							</h:panelGrid>
+						</h:panelGrid>
+					</h:panelGrid>					
+					<h:panelGrid columns="7"  styleClass="ui-noborder" style="text-align:left;">
+						<p:commandButton id="btnOrdenID" icon="fa fa-list-alt" 
+						 	action="#{vwGastos.redirectOrdenes()}"
+						 	style="color:#FA8258;width:35px;height:35px;font-size:13px;font-weight:bold;" 
+						 	styleClass="rounded-button" />
+						<p:tooltip for="btnOrdenID" value="Ir a Ordenes de Compra" position="left" />
+						<p:commandButton id="btnHomeID" icon="fa fa-home" 
+						 	action="#{vwGastos.redirectMenu()}"
+						 	style="color:#0174DF;width:40px;height:40px;font-size:15px;font-weight:bold;" 
+						 	styleClass="rounded-button" />
+						 <p:tooltip for="btnHomeID" value="Menú Principal" position="left" />
+						 <p:commandButton id="btnLogoutID" icon="fa fa-id-card" 
+						 	action="#{vwGastos.redirectLogin()}"
+						 	style="color:#0174DF;width:40px;height:40px;font-size:15px;font-weight:bold;" 
+						 	styleClass="rounded-button" />	
+						 <p:tooltip for="btnLogoutID" value="Cerrar Sesión" position="right" />
+					</h:panelGrid>
+			</h:panelGrid>
+			<h:panelGrid id="toolbarID"  styleClass="panelgrid-dotted-border"  style="width:100%;"  >
+	 			<p:toolbar    >
+					<f:facet name="left"  >
+						<h:panelGrid columns="22"  >							
+							<p:outputLabel value="Filtrar:"  />
+							<span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>					    						
+						    <p:selectOneMenu value="#{vwGastos.proveedor_b}"  placeholder="Tipo"  filter="true" filterMatchMode="contains" style="width:110px;" editable="false" multiple="false"  >	           			 			
+		            			<f:selectItem itemLabel="Proveedor" itemValue="#{null}"/>	
+		            			<f:selectItems value="#{vwGastos.listaNombreProveedores}"/>		            			
+			        		</p:selectOneMenu>		
+						    <span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+						    <p:selectOneMenu  value="#{vwGastos.obra_b}" placeholder="Obra"  filter="true" filterMatchMode="contains" multiple="false" style="width:110px;"   >
+				           		<f:selectItem itemLabel="Obra" itemValue="#{null}"/>
+								<f:selectItems value="#{vwGastos.listaNombreObras}" />
+				        	</p:selectOneMenu>
+				        	<span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+						    <p:selectOneMenu  value="#{vwGastos.tipo_b}" placeholder="Tipo"  filter="true" filterMatchMode="contains" multiple="false" style="width:110px;"   >
+				           		<f:selectItem itemLabel="Tipo" itemValue="#{null}"/>
+								<f:selectItems value="#{vwGastos.listaCatalogoGastos}" />
+				        	</p:selectOneMenu>
+				        	<span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+			          		<p:inputText value="#{vwGastos.concepto_b}" placeholder="Concepto" style="width:110px;"/>
+			        		<span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>			        					        		
+		           			<p:calendar value="#{vwGastos.fecha_inicio_b}"  placeholder="Fecha Inicio"  
+		           					pattern="dd/MM/yyyy" readonlyInput="true" mode="popup"  popupIconOnly="true" effect="fold"	 />						
+							<p:calendar value="#{vwGastos.fecha_final_b}" placeholder="Fecha Fin"  									
+									pattern="dd/MM/yyyy" readonlyInput="true" mode="popup"  popupIconOnly="true" effect="fold"  />					      	
+						    <span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>	
+						    <p:commandButton id="btnBuscar" 
+						    				action="#{vwGastos.busquedaPrincipal()}"						                
+							                style="font-size:15px;"	 icon="fa fa-search" 				                 							               
+							                update=":formaID:tablaID  :formaID:capturaID" />						                 
+		 				        <p:tooltip for="btnBuscar" value="Aplicar Filtros" position="right" />
+		 				    <span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+						    <p:commandButton id="btnLimpiar"
+						    				action="#{vwGastos.inicializaFiltros(true)}" 	
+						    				style="font-size:15px;"	icon="fa fa-recycle" 				                					            							                						                 
+							                update=":formaID:toolbarID :formaID:tablaID :formaID:capturaID"/>						                 
+		 				        <p:tooltip for="btnLimpiar" value="Limpiar Filtros" position="right" />
+		 				    <span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>  				        					
+						 </h:panelGrid>
+					</f:facet>					
+				</p:toolbar>
+			</h:panelGrid>
+			
+			<h:panelGrid id="tablaID"  styleClass="panelgrid-dotted-border"   columns="3" style="width:100%;" columnClasses="valign-top,valign-top,valign-top" >
+			 	
+					<h:panelGrid  columns="1" style="text-align:left;font-size:9px;" styleClass="panel-height"> 
+	
+					<p:dataTable id="tablaPrincipal" var="list" value="#{vwGastos.listaPrincipal}"  style="width:100%;"
+								selectionMode="single" selection="#{vwGastos.seleccionado}" rowKey="#{list.id}" sortBy="#{list.id}" sortOrder="descending" 
+					            paginatorPosition="top" paginator="true"  rows="7">
+						<p:ajax event="rowSelect"  listener="#{vwGastos.seleccionarElemento()}" update=":formaID:capturaID"/>
+						
+				        
+				        
+						<p:column headerText="ID"  sortBy="#{list.id}"  styleClass="singleLine" style="width:4%;text-align:center;">
+					    		<h:outputText value="#{list.id}"/>
+						</p:column>		           						
+						<p:column headerText="Movimiento"  styleClass="single-line" style="width:7%;text-align:center;">
+					    		<h:outputText value="#{list.movimiento}"/>
+						</p:column>
+						<p:column headerText="Tipo"  styleClass="single-line"  style="width:20%;">
+					    		<h:outputText value="#{list.tipo}"/>
+						</p:column> 
+						<p:column headerText="Obra"  styleClass="single-line" style="width:20%;">
+					    		<h:outputText value="#{list.obra.nombre}"/>
+						</p:column>
+						<p:column headerText="Proveedor"  styleClass="single-line" style="width:20%;">
+					    		<h:outputText value="#{list.proveedor.nombre}"/>
+						</p:column> 																
+						<p:column headerText="Fecha"  styleClass="single-line" style="text-align:center;width:10%;">
+					    		<h:outputText value="#{list.fecha}">
+					    		<f:convertDateTime type="date" pattern="dd/MMM/yyyy"  locale="es"/>
+					    		</h:outputText>
+						</p:column>
+						<p:column headerText="Concepto"  styleClass="single-line" style="text-align:left;width:20%;">
+					    		<h:outputText value="#{list.concepto}"/>
+						</p:column> 	
+												
+						<p:column headerText="Vencimiento" rendered="false" styleClass="single-line" style="text-align:center;width:10%;">
+					    		<h:outputText value="#{list.fecha_vencimiento}">
+					    			<f:convertDateTime type="date" pattern="dd/MMM/yyyy"  locale="es" />
+					    		</h:outputText>
+						</p:column>
+						<p:column headerText="Importe"  styleClass="single-line" style="width:10%;text-align:right;">
+					    		<h:outputText value="#{list.importe}">
+					    			<f:convertNumber type="currency"  pattern="$###,##0.00" />
+					    		</h:outputText>
+						</p:column>
+						<f:facet name="footer" style="text-align:left;">
+								<h:panelGrid columns="4" style="font-size:13px;" styleClass="panelgrid-dotted-border"  columnClasses="columnWith20 columnAlignLeft,columnWith80 columnAlignCenter,columnWith20 columnAlignRight,columnWith20 columnAlignRight" >							
+									<h:outputText value="#{vwGastos.listaPrincipal.size()}  elementos."/>
+									<h:outputText/>
+									<h:outputText value="Total:"/>
+									<h:outputText value="#{vwGastos.totalGasto}">
+										<f:convertNumber type="currency"  pattern="$###,##0.00" />
+									</h:outputText>							
+								</h:panelGrid>
+							</f:facet>																									 			 
+					</p:dataTable>
+				</h:panelGrid>
+				<h:panelGrid  columns="1" style="width:20%;text-align:center;"  >
+					
+					<h:commandLink>
+	                    <p:graphicImage name="/images/csv.png" width="24"/>
+	                    <p:dataExporter type="xls" target="tablaPrincipal" fileName="gastos" />
+	                </h:commandLink>
+
+					<p:commandButton  id="btnDescargaFiles"  value="Descargar Listado"  									
+							icon="fa fa-download" style="width:130px;" 
+					 		ajax="false" >
+						<p:fileDownload value="#{vwGastos.descargarFilterFiles()}"></p:fileDownload>
+					</p:commandButton>		
+									
+											
+					<p:commandButton  id="btnResumen" value="Resumen"   disabled="#{vwGastos.listaPrincipal.size()==0}"
+						icon="fa fa-bar-chart" style="width:150px;height:35px;margin-top:30%;" styleClass="button-texto-icono" 
+						action="#{vwGastos.accionResumen()}"
+						update=":formaID"
+						oncomplete="PF('dialogResumenVar').show()"> 							
+					</p:commandButton>
+				</h:panelGrid>
+			</h:panelGrid>
+			<h:panelGrid id="capturaID" columns="2"  cellpadding="3" style="width:100%;text-align:center;" columnClasses="valign-top,valign-top" styleClass="panelgrid-dotted-border">
+				<h:panelGrid   columns="1"  styleClass="panelgrid-dotted-border" >
+					<p:tabView >
+		        		<p:tab title="DATOS" columns="3" >
+							<h:panelGrid rendered="false" columns="4" styleClass="panelgrid-dotted-border"  >						
+								<p:outputLabel value="Orden Compra:" />
+								<p:inputText  value="#{vwGastos.orden_id_e}"  style="width:40px;text-align:center;" readonly="true" />
+							    <p:inputText  value="#{vwGastos.orden_tipo_e}" style="width:200px;" readonly="true" />	
+							    <p:commandButton id="btnCapturaOrden" disabled="#{!vwGastos.editable}"	 style="font-size:15px;" icon="fa fa-list-alt" 
+									action="#{vwGastos.llenaListaOrdenes()}"
+									update=":formaID:dialogOrdenesID"
+									oncomplete="PF('dialogOrdenesVar').show()">
+								</p:commandButton>
+								<p:tooltip for="btnCapturaOrden" value="Seleccionar Orden de Compra" position="right" />	
+						    </h:panelGrid>	
+						    <h:panelGrid   columns="3" styleClass="panelgrid-dotted-border"  columnClasses="valign-top,valign-top,valign-top" >
+								<h:panelGrid  columns="2" style="text-align:left;" styleClass="panelgrid-dotted-border" > 
+									<p:outputLabel value="Gasto:" />
+				       				<p:inputText value="#{vwGastos.tipo_e}" rendered="#{!vwGastos.editable}" readonly="true" style="width:300px;"/>
+				       				<p:selectOneMenu  value="#{vwGastos.tipo_e}" placeholder="Seleccionar..." rendered="#{vwGastos.editable}"  style="width:288px;" editable="true" filter="true" filterMatchMode="contains" multiple="false"  >	           			 			
+					            			<f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" itemDisabled="true"/>	
+					            			<f:selectItems value="#{vwGastos.listaCatalogoGastos}"/>			            			 	            			
+						        	</p:selectOneMenu>
+						        	<p:outputLabel value="Concepto:" />
+					          		<p:inputText value="#{vwGastos.concepto_e}"  readonly="#{!vwGastos.editable}" style="width:300px;"/>					        	
+									<p:outputLabel value="Obra:" />
+				          			<p:inputText value="#{vwGastos.obra_e}"  rendered="#{!vwGastos.editable}" readonly="true" style="width:300px;"/>
+				          			<p:selectOneMenu  value="#{vwGastos.obra_e}" placeholder="Seleccionar..." rendered="#{vwGastos.editable}" multiple="false" style="width:288px" filter="true" filterMatchMode="contains" panelStyle="width:300px" >
+							           		<f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+											<f:selectItems value="#{vwGastos.listaNombreObras}" />
+							        </p:selectOneMenu>
+							        <p:outputLabel value="Proveedor:" />
+				          			<p:inputText value="#{vwGastos.proveedor_e}"  rendered="#{!vwGastos.editable}" readonly="true" style="width:300px;"/>
+				          			<p:selectOneMenu  value="#{vwGastos.proveedor_e}" placeholder="Seleccionar..." rendered="#{vwGastos.editable}" multiple="false" style="width:288px" filter="true" filterMatchMode="contains" panelStyle="width:300px" >
+							           		<f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+											<f:selectItems value="#{vwGastos.listaNombreProveedores}" />
+							        </p:selectOneMenu>
+					        	</h:panelGrid> 
+					        	<h:panelGrid  columns="2" style="text-align:left;" styleClass="panelgrid-dotted-border" >         			
+					          			<p:outputLabel value="Fecha:"  />	
+						        	 	<p:inputText value="#{vwGastos.fecha_e}" rendered="#{!vwGastos.editable}" style="width:153px;" readonly="true">
+									    			<f:convertDateTime type="date" pattern="dd/MMM/yyyy"  locale="es" />
+				      					</p:inputText>			        						        		
+					           			<p:calendar  placeholder="Sin Fecha..." rendered="#{vwGastos.editable}" 
+												mode="popup"  popupIconOnly="true" effect="fold"
+												value="#{vwGastos.fecha_e}" maxdate="now()"										
+												pattern="dd/MM/yyyy" 
+												locale="es" />			          			
+					          			<p:outputLabel value="Importe:" />
+					          			<p:inputText value="#{vwGastos.importe_e}" readonly="#{!vwGastos.editable}" style="width:153px;text-align:right;">
+					          				<f:convertNumber type="currency"  pattern="###,##0.00" />
+					          			</p:inputText>
+					          			<p:outputLabel value="Solicitó:" />
+								        <p:inputText value="#{vwGastos.solicito_e}"  rendered="#{!vwGastos.editable}" readonly="true" style="width:300px;"/>
+					          			<p:selectOneMenu  value="#{vwGastos.solicito_e}" placeholder="Seleccionar..." rendered="#{vwGastos.editable}" multiple="false" style="width:288px" filter="true" filterMatchMode="contains" panelStyle="width:300px" >
+								           		<f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+												<f:selectItems value="#{vwGastos.listaNombreEmpleados}" />
+								        </p:selectOneMenu>
+							        	<p:outputLabel value="Autorizó:" />
+								        <p:inputText value="#{vwGastos.autorizo_e}"  rendered="#{!vwGastos.editable}" readonly="true" style="width:300px;"/>
+					          			<p:selectOneMenu  value="#{vwGastos.autorizo_e}" placeholder="Seleccionar..." rendered="#{vwGastos.editable}" multiple="false" style="width:288px" filter="true" filterMatchMode="contains" panelStyle="width:300px" >
+								           		<f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+												<f:selectItems value="#{vwGastos.listaNombreEmpleados}" />
+								        </p:selectOneMenu>			          																			
+			          				</h:panelGrid >
+			          				<h:panelGrid columns="1" style="text-align:left;" styleClass="panelgrid-dotted-border" >
+				          				<p:outputLabel value="Detalle:" />
+					       				<p:inputTextarea rows="5"  value="#{vwGastos.detalle_e}" readonly="#{!vwGastos.editable}" style="width:355px;"/>
+			          				</h:panelGrid>	          				
+							</h:panelGrid>					
+						</p:tab>
+						<p:tab title="FACTURAS Y PRESUPUESTOS" columns="2" >
+							<h:panelGrid  columns="2" style="text-align:left;" columnClasses="valign-top,valign-top" styleClass="panelgrid-dotted-border"  > 
+			         			
+						        <h:panelGrid     columns="5" styleClass="panelgrid-dotted-border">
+						        	<p:outputLabel value="Archivo:" />
+							        <p:inputText value="#{vwGastos.archivo_e}"  rendered="#{!vwGastos.editable}" readonly="true" style="width:295px;"/>
+				          			<p:selectOneMenu  value="#{vwGastos.archivo_e}" rendered="#{vwGastos.editable}" styleClass="MyOneMenu" style="font-size:10px;width:240px" multiple="false" filter="true"  >
+										<f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+				        				<f:selectItems value="#{vwGastos.listaArchivosCombo}"/>	        		
+				    				</p:selectOneMenu>				    			
+									<p:commandButton id="btnAgregarPDF" disabled="#{!vwGastos.editable}" style="font-size:15px;" icon="fa fa-plus-circle" 
+										action="#{vwGastos.agregaArchivo()}"									
+										update=":formaID">																		
+									</p:commandButton>
+									<p:tooltip for="btnAgregarPDF" value="Agregar Factura" position="right" />
+								</h:panelGrid>
+								
+								<h:panelGrid   columns="1" style="text-align:left;font-size:9px;" styleClass="panelgrid-dotted-border"  >
+		
+									<p:dataTable id="tablaArchivosID" var="list" value="#{vwGastos.listaArchivos}"  style="width:100%;"
+											selectionMode="single" selection="#{vwGastos.archivoSeleccionado}" rowKey="#{list.nombre}" sortBy="#{list.id}" 
+									        paginator="false"  rows="5">
+						           			<p:ajax event="rowSelect"  listener="#{vwGastos.seleccionarElementoArchivo()}" />
+										<p:column headerText="Archivo"  styleClass="singleLine" style="width:80%;text-align:left;">
+									    		<h:outputText value="#{list.nombre}"/>
+										</p:column>
+										<p:column  headerText="PDF"  styleClass="singleLine" style="width:10%;text-align:center;">																
+											<p:commandButton  id="btnPreview"
+													oncomplete="PF('dialogPDFVar').show()"
+										 			update=":formaID" style="color:#0174DF;width:15px;height:15px;font-size:15px;" 	icon="fa fa-file-pdf-o"  styleClass="rounded-button">						 								 											
+											</p:commandButton>										
+											<p:tooltip for="btnPreview" value="Ver #{list.nombre}" position="right" />
+										</p:column>
+										<p:column  headerText="Quitar"  styleClass="singleLine" style="width:10%;text-align:center;">																
+											<p:commandButton  id="btnBorrar" disabled="#{!vwGastos.editable}"
+													action="#{vwGastos.eliminaArchivo()}"    
+										 			update=":formaID" style="color:#0174DF;width:15px;height:15px;font-size:15px;" 	icon="fa fa-minus-circle"  styleClass="rounded-button">						 								 											
+											</p:commandButton>										
+											<p:tooltip for="btnBorrar" value="Quitar de la lista" position="right" />													
+										</p:column>	
+									</p:dataTable>
+								</h:panelGrid>
+		         			</h:panelGrid>
+						</p:tab>
+					</p:tabView>
+				</h:panelGrid>
+				<h:panelGrid   columns="1" style="text-align:center;" cellpadding="3" styleClass="panelgrid-dotted-border" >
+						<p:commandButton value="Agregar" 
+							action="#{vwGastos.accionAgregar()}"    				    						
+							update=":formaID:capturaID" 
+							styleClass="button-texto-icono"
+							disabled="#{vwGastos.editable}"
+							style="width:150px;height:30px;" icon="fa fa-plus-circle" />
+						<p:commandButton value="Modificar"
+							action="#{vwGastos.accionModificar()}"
+							disabled="#{vwGastos.seleccionado==null or vwGastos.nuevo}" 	
+							update=":formaID:capturaID" 
+							styleClass="button-texto-icono"
+							style="width:150px;height:30px;" icon="fa fa-pencil-square" />
+						<p:commandButton value="Cancelar" 
+							action="#{vwGastos.accionCancelar()}"
+							styleClass="button-texto-icono"
+							disabled="#{!vwGastos.editable}"	    						
+							update=":formaID:capturaID"
+							style="width:150px;height:30px;" icon="fa fa-undo" />
+						<p:commandButton value="Guardar"
+							action="#{vwGastos.accionGuardar()}" 
+							styleClass="button-texto-icono" 
+							disabled="#{!vwGastos.editable}"				
+							style="width:150px;height:30px;" icon="fa fa-floppy-o" />						
+				</h:panelGrid>
+				
+			</h:panelGrid>
+			
+		</h:panelGrid>
+		
+		<p:dialog  modal="true" widgetVar="statusDialog" header="Procesando..." draggable="false" closable="false" resizable="false">
+		   <h:panelGrid  columns="1" style="margin-left:25%;"  >
+		   		<i class="fa fa-spin fa-spinner" style="font-size:3em"></i>
+		   </h:panelGrid>
+		</p:dialog>
+		
+		<p:dialog id="dialogResumen" widgetVar="dialogResumenVar" header="Resumen de Gastos"  modal="true" closable="true"  resizable="false" width="auto" height="auto" >		                 
+			 <h:panelGrid  columns="1" styleClass="panelgrid-dotted-border">
+				 <h:panelGrid  columns="3" styleClass="panelgrid-dotted-border">
+	  				<h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">	
+	  					<p:outputLabel value="PROVEEDOR" style="font-size:15px;font-weight:bold;color:#585858;"/>
+	            		<p:donutChart model="#{vwGastos.donutModelProveedores}"  style="width:200px; height:200px;"/>
+	            	</h:panelGrid>
+	            	<h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">	
+	  					<p:outputLabel value="OBRA/PROYECTO" style="font-size:15px;font-weight:bold;color:#585858;"/>
+	       		 		<p:donutChart model="#{vwGastos.donutModelObras}" style="width:200px; height:200px;"/>
+	       		 	</h:panelGrid>
+	       		 	<h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">	
+	  					<p:outputLabel value="TIPO DE GASTO" style="font-size:15px;font-weight:bold;color:#585858;"/>
+	       		 		<p:donutChart model="#{vwGastos.donutModelTipo}" style="width:200px; height:200px;"/>
+	       		 	</h:panelGrid>
+	       		</h:panelGrid>
+
+	       		<h:outputLabel value="#{vwGastos.totalGasto}" style="font-size:15px;font-weight:bold;color:#585858;">
+					<f:convertNumber type="currency"  pattern="$###,##0.00" />
+				</h:outputLabel>
+       		</h:panelGrid>	 			        
+	    </p:dialog>
+		
+		<p:dialog id="dialogPDFID" widgetVar="dialogPDFVar" header="#{vwGastos.archivoSeleccionado.nombre}"  modal="true" closable="true" maximizable="true" resizable="false" width="30%" height="400px" >		                 
+				<p:media value="#{vwGastos.pdf_to_show}" width="100%" height="98%">
+					    Error al mostrar la vista previa, el archivo <p:outputLabel value="#{vwGastos.pdf_to_show}" /> no existe en la ruta especificada. 
+					    <i class="fa fa-exclamation-triangle " style="font-size:2.8rem;color:#424242;"/>					   
+				</p:media>						 		        
+	    </p:dialog>	
+	    
+	    
+	    <p:dialog id="dialogOrdenesID" widgetVar="dialogOrdenesVar" header="Seleccionar Orden de Compra"  modal="true" closable="true" resizable="false" width="60%" height="200px" >		                 
+			<h:panelGrid  id="tablaOrdenesID" columns="1" style="text-align:left;font-size:9px;" > 
+					<p:dataTable  var="list" value="#{vwGastos.listaOrdenes}"  style="width:100%;"
+								selectionMode="single" selection="#{vwGastos.ordenSeleccionado}" rowKey="#{list.id}" sortBy="#{list.id}" sortOrder="descending" 
+					            paginatorPosition="bottom" paginator="true"  rows="7">
+						
+						<p:ajax event="rowDblselect"  listener="#{vwGastos.seleccionarOrden()}" update=":formaID:tablaID :formaID:capturaID"/>
+								           						
+						<p:column headerText="Orden"  styleClass="singleLine" style="width:4%;text-align:center;">
+					    		<h:outputText value="#{list.id}"/>
+						</p:column>
+						<p:column headerText="Tipo"  styleClass="singleLine" style="width:20%;">
+					    		<h:outputText value="#{list.tipo}"/>
+						</p:column> 
+						<p:column headerText="Concepto"  styleClass="singleLine" style="width:20%;">
+					    		<h:outputText value="#{list.concepto}"/>
+						</p:column> 
+						<p:column headerText="Proveedor"  styleClass="singleLine" style="width:20%;">
+					    		<h:outputText  value="#{list.proveedor.nombre}" />
+						</p:column> 
+						<p:column headerText="Importe"  styleClass="singleLine" style="width:10%;text-align:right;">
+					    		<h:outputText value="#{list.importe}">
+					    			<f:convertNumber type="currency"  pattern="###,##0.00" />
+					    		</h:outputText>
+						</p:column>																														 			 
+					</p:dataTable>
+				</h:panelGrid>					 		        
+	    </p:dialog>				
+	</h:form>
+</h:body>
+</html>

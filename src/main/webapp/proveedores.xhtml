@@ -1,0 +1,169 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+   	<script src="https://kit.fontawesome.com/1f0a45e941.js" crossorigin="anonymous"></script>
+    <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+    <link rel="stylesheet" type="text/css" href="resources/css/default.css" media="all" />
+	<script type="text/javascript">    
+		function start() {PF('statusDialog').show();}		 
+		function stop() {PF('statusDialog').hide();	}
+	</script>
+    <title>Idea Los Cabos</title>    
+</h:head>
+<h:body onload="#{vwProveedores.iniciaVista()}"   >	
+	
+	<h:form id="formaID"  enctype="multipart/form-data">
+	
+		<p:growl showDetail="true" sticky="false" life="1000" />
+		
+		<h:panelGrid columns="1"  style="width:100%;text-align:center;font-size:11px;font-family:Bahnschrift Light;">
+			<h:panelGrid id="headerID" columns="3" columnClasses="columnWith70,columnWith30,columnWith10" styleClass="ui-noborder" style="background-color:#D8D8D8">
+					<h:panelGrid columns="2" columnClasses="columnWith10,columnWith60" styleClass="ui-noborder" style="text-align:left;">
+						<i class="fa fa-user-circle" style="font-size:2.8rem;color:#424242;"/>
+						<h:panelGrid columns="1" styleClass="ui-noborder"  style="text-align:left;margin-left:2%;">
+							<p:outputLabel value="#{vwProveedores.header.empleado.nombre}" style="font-size:15px;font-weight:bold;color:#585858;" />
+							<p:outputLabel value="#{vwProveedores.header.empleado.departamento}-#{vwProveedores.header.empleado.puesto}" style="font-family:Bahnschrift Light;font-size:10px;font-weight:bold;color:#A4A4A4;" />
+						</h:panelGrid>
+					</h:panelGrid>
+					<h:panelGrid columns="3"  style="width:100%;text-align:center;" styleClass="ui-noborder">						
+						<i class="fa fa-map-marker" style="font-size:1.3rem;color:#FBFBEF;"></i>
+						<h:panelGrid columns="1" styleClass="ui-noborder"  style="text-align:left;">							
+							<h:panelGrid columns="2" styleClass="ui-noborder"  style="text-align:left;">
+								<i class="fa fa-th" style="font-size:0.7rem;color:#FAFAFA;"></i>
+								<p:outputLabel value="Catálogos" style="font-family:Bahnschrift Light;font-size:11px;font-weight:bold;color:#A4A4A4;" />
+							</h:panelGrid>
+							<h:panelGrid columns="2"   styleClass="ui-noborder"  style="text-align:left;">
+								<i class="fa fa-truck" style="font-size:0.7rem;color:#FAFAFA;"></i>
+								<p:outputLabel value="Proveedores" style="font-size:13px;font-weight:bold;color:#585858;" />
+							</h:panelGrid>
+						</h:panelGrid>
+					</h:panelGrid>
+					<h:panelGrid columns="4"  styleClass="ui-noborder" style="text-align:left;">
+						<p:commandButton id="btnHomeID" icon="fa fa-home" 
+						 	action="#{vwProveedores.redirectMenu()}"
+						 	style="color:#0174DF;width:40px;height:40px;font-size:15px;font-weight:bold;"
+						 	styleClass="rounded-button" />
+						 <p:tooltip for="btnHomeID" value="Menú Principal" position="left" />
+						 <p:commandButton id="btnLogoutID" icon="fa fa-id-card" 
+						 	action="#{vwProveedores.redirectLogin()}"
+						 	style="color:#0174DF;width:40px;height:40px;font-size:15px;font-weight:bold;" 
+						 	styleClass="rounded-button" />	
+						 <p:tooltip for="btnLogoutID" value="Cerrar Sesión" position="right" />
+					</h:panelGrid>
+			</h:panelGrid>
+			<h:panelGrid id="toolbarID" style="width:100%;"  >
+	 			<p:toolbar    >
+					<f:facet name="left"  >
+						<h:panelGrid columns="22"  >
+							<span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>	
+							<p:outputLabel value="Filtrar Busqueda:"  />
+							<span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+							<p:inputText value="#{vwProveedores.nombre_b}" placeholder="Descripcion"  />
+							
+						    <span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>	
+						    <p:commandButton id="btnBuscar" 
+						    				action="#{vwProveedores.busquedaPrincipal()}"						                
+							                style="font-size:15px;"					                 
+							                icon="fa fa-search" 
+							                update=":formaID:toolbarID :formaID:tablaID :formaID:capturaID" />						                 
+		 				    <p:tooltip for="btnBuscar" value="Aplicar Filtros" position="right" />
+		 				    <span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+						    <p:commandButton id="btnLimpiar"
+						    				action="#{vwProveedores.inicializaFiltros()}" 	
+						    				style="font-size:15px;"					                					            
+							                icon="fa fa-recycle" 						                 
+							                update=":formaID:toolbarID :formaID:tablaID :formaID:capturaID"/>						                 
+		 				        <p:tooltip for="btnLimpiar" value="Limpiar Filtros" position="right" />
+		 				    <span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>  				        					
+						 </h:panelGrid>
+					</f:facet>					
+				</p:toolbar>
+			</h:panelGrid>
+			
+			<h:panelGrid  columns="3" style="width:95%;margin-left:2%;" columnClasses="valign-center,valign-top,valign-top" >
+			 
+			<img src="resources/images/height.png" />
+			
+			<h:panelGrid  id="tablaID" columns="1" style="text-align:left;" styleClass="panel-height"> 
+	
+					<p:dataTable  var="list" value="#{vwProveedores.listaPrincipal}" 
+								selectionMode="single" selection="#{vwProveedores.seleccionado}" rowKey="#{list.id}" sortBy="#{list.id}" sortOrder="descending" 
+					            paginatorPosition="bottom" paginator="true"  rows="7">
+						<p:ajax event="rowSelect"  listener="#{vwProveedores.seleccionarElemento()}" update=":formaID:capturaID"/>
+						<f:facet name="header">Listado de Proveedores</f:facet>
+						<p:column headerText="Id"  styleClass="singleLine" style="width:10%;text-align:center;">
+					    		<h:outputText value="#{list.id}"/>
+						</p:column>			           						
+						<p:column headerText="Descripcion"  styleClass="singleLine" style="width:30%;">
+					    		<h:outputText value="#{list.nombre}"/>
+						</p:column>  														 																					 			 
+					</p:dataTable>
+
+				</h:panelGrid>
+				<h:panelGrid  columns="1" style="width:20%;text-align:center;" cellpadding="3"   >
+					<h:panelGrid  columns="1" style="width:20%;text-align:center;"  >					
+				
+				
+				
+					<p:commandButton  id="btnDescargaExcel" value="Generar Excel" disabled="#{vwProveedores.listaPrincipal.size()==0}"	
+						icon="fa fa-file-excel" style="width:150px;height:35px;" styleClass="button-texto-icono" 
+						onclick="PrimeFaces.monitorDownload(start, stop);"	update=":formaID"> 							
+					</p:commandButton>		
+					<p:tooltip for="btnDescargaExcel" value="Generar Excel" position="right" />					
+				</h:panelGrid>
+				</h:panelGrid>
+			</h:panelGrid>
+			<h:panelGrid id="capturaID" columns="4"  cellpadding="5" style="width:96%;text-align:center;margin-left:2%;margin-top:1%;" columnClasses="valign-top,valign-top,valign-top,valign-center" styleClass="panelgrid-dotted-border">
+				<h:panelGrid columns="1" styleClass="panelgrid-dotted-border" >
+					<p:outputLabel value="DATOS PROVEEDOR" style="font-size:15px;font-weight:bold;color:#585858;" />    
+					<h:panelGrid columns="2" style="text-align:left;" styleClass="panelgrid-dotted-border" >    				
+	       				<p:outputLabel value="Descripcion:" />
+	          			<p:inputText value="#{vwProveedores.nombre_e}" readonly="#{!vwProveedores.editable}" style="width:300px;"/>           			 	          			 			           			 						   
+					</h:panelGrid>
+				</h:panelGrid>
+
+				<h:panelGrid  columns="1" style="text-align:center;margin-left:10%;" cellpadding="3" styleClass="panelgrid-dotted-border" >
+						<p:commandButton value="Agregar" 
+							action="#{vwProveedores.accionAgregar()}"    				    						
+							update=":formaID:capturaID" 
+							styleClass="button-texto-icono"
+							disabled="#{vwProveedores.editable}"
+							style="width:150px;height:30px;" icon="fa fa-plus-circle" />
+						<p:commandButton value="Modificar"
+							action="#{vwProveedores.accionModificar()}"
+							disabled="#{vwProveedores.editable}" 	
+							update=":formaID:capturaID" 
+							styleClass="button-texto-icono"
+							style="width:150px;height:30px;" icon="fa fa-pencil-square" />
+						<p:commandButton value="Cancelar" 
+							action="#{vwProveedores.accionCancelar()}"
+							styleClass="button-texto-icono"
+							disabled="#{!vwProveedores.editable}"	    						
+							update=":formaID:capturaID"
+							style="width:150px;height:30px;" icon="fa fa-undo" />
+						<p:commandButton value="Guardar"
+							onclick="PrimeFaces.monitorDownload(start, stop);"
+							action="#{vwProveedores.accionGuardar()}" 
+							styleClass="button-texto-icono" 
+							disabled="#{!vwProveedores.editable}"
+							update=":formaID" 
+							style="width:150px;height:30px;" icon="fa fa-floppy-o" />						
+				</h:panelGrid>
+			</h:panelGrid>
+		</h:panelGrid>
+		<p:dialog  modal="true" widgetVar="statusDialog" header="Procesando..." draggable="false" closable="false" resizable="false">
+		   <h:panelGrid  columns="1" style="margin-left:25%;"  >
+		   		<i class="fa fa-spin fa-spinner" style="font-size:3em"></i>
+		   </h:panelGrid>
+		</p:dialog>
+	</h:form>
+</h:body>
+</html>
