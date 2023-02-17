@@ -279,19 +279,17 @@
 										<p:column headerText="Archivo"  styleClass="singleLine" style="width:80%;text-align:left;">
 									    		<h:outputText value="#{list.nombre}"/>
 										</p:column>
-										<p:column  headerText="PDF"  styleClass="singleLine" style="width:10%;text-align:center;">																
+										<p:column  headerText="Preview"  styleClass="singleLine" style="width:10%;text-align:center;">																
 											<p:commandButton  id="btnPreview"
 													oncomplete="PF('dialogPDFVar').show()"
 										 			update=":formaID" style="color:#0174DF;width:15px;height:15px;font-size:15px;" 	icon="fa fa-file-pdf-o"  styleClass="rounded-button">						 								 											
 											</p:commandButton>										
-											<p:tooltip for="btnPreview" value="Ver #{list.nombre}" position="right" />
 										</p:column>
 										<p:column  headerText="Quitar"  styleClass="singleLine" style="width:10%;text-align:center;">																
 											<p:commandButton  id="btnBorrar" disabled="#{!vwGastos.editable}"
 													action="#{vwGastos.eliminaArchivo()}"    
 										 			update=":formaID" style="color:#0174DF;width:15px;height:15px;font-size:15px;" 	icon="fa fa-minus-circle"  styleClass="rounded-button">						 								 											
-											</p:commandButton>										
-											<p:tooltip for="btnBorrar" value="Quitar de la lista" position="right" />													
+											</p:commandButton>																							
 										</p:column>	
 									</p:dataTable>
 								</h:panelGrid>

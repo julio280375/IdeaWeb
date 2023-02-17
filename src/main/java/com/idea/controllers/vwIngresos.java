@@ -94,10 +94,10 @@ public class vwIngresos  {
 	private Archivo archivoSeleccionado;
 
 	//Buscar	
+	private Date fecha_inicio_b;
+	private Date fecha_final_b;
 	private String obra_b;
 	private String concepto_b;
-	
-	
 	//Editar
 	private Date fecha_e;
 	private String concepto_e;
@@ -174,6 +174,10 @@ public class vwIngresos  {
 		
 		if (obra_b!=null && obra_b.trim().length()>0) filtro="#OBRA#";
 		if (concepto_b!=null && concepto_b.trim().length()>0) filtro="#CONCEPTO#";
+		if (fecha_inicio_b!=null) {
+			filtro=filtro+"#FECHA#";
+			if(fecha_final_b!=null) filtro=filtro.replace("#FECHA#","#PERIODO#");
+		}
 		
 		Body body = new Body();
 		switch(filtro) {
@@ -189,7 +193,15 @@ public class vwIngresos  {
 			Obra obra=listaObras.stream().filter(elem->elem.getNombre().toUpperCase().equals(obra_b.toUpperCase())).findFirst().orElse(null);
 			body.setFilter1(obra.getId().toString());
 			break;
-		
+		case "#FECHA#":	
+			body.setFilter("BY_FECHA");
+			body.setFilter1(df_yyyyMMdd.format(fecha_inicio_b));
+			break;
+		case "#PERIODO#":
+			body.setFilter("BY_PERIODO");
+			body.setFilter1(df_yyyyMMdd.format(fecha_inicio_b));
+			body.setFilter2(df_yyyyMMdd.format(fecha_final_b));
+			break;
 		}
 		
 		if(filtro_anterior.equals("ALL")) {
@@ -248,6 +260,8 @@ public void inicializaFiltros(Boolean buscar){
 
 	obra_b=null;
 	concepto_b=null;
+	fecha_inicio_b = null;
+	fecha_final_b = null;
 	if(buscar) {
 		busquedaPrincipal();
 	}
@@ -771,6 +785,30 @@ public void inicializaCapturar(){
 
 	public void setFactura_e(String factura_e) {
 		this.factura_e = factura_e;
+	}
+
+
+
+	public Date getFecha_inicio_b() {
+		return fecha_inicio_b;
+	}
+
+
+
+	public void setFecha_inicio_b(Date fecha_inicio_b) {
+		this.fecha_inicio_b = fecha_inicio_b;
+	}
+
+
+
+	public Date getFecha_final_b() {
+		return fecha_final_b;
+	}
+
+
+
+	public void setFecha_final_b(Date fecha_final_b) {
+		this.fecha_final_b = fecha_final_b;
 	}
 
 

@@ -12,6 +12,8 @@ public class Ingreso {
 	private String detalle;
 	private String factura;
 	private String estatus;
+	private String tipo_factura;
+	
 	private Obra obra;
 
 
@@ -170,6 +172,24 @@ public class Ingreso {
 
 	public void setEstatus(String estatus) {
 		this.estatus = estatus;
+	}
+
+
+
+
+
+
+	public String getTipo_factura() {
+		return tipo_factura;
+	}
+
+
+
+
+
+
+	public void setTipo_factura(String tipo_factura) {
+		this.tipo_factura = tipo_factura;
 	}
 	
 

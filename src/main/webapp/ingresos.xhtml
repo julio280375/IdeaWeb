@@ -78,7 +78,12 @@
 						    <p:selectOneMenu  value="#{vwIngresos.concepto_b}" placeholder="Concepto"  filter="true" filterMatchMode="contains" multiple="false" style="width:110px;"   >
 				           		<f:selectItem itemLabel="Concepto" itemValue="#{null}"/>
 								<f:selectItems value="#{vwIngresos.listaCatalogoIngresos}" />
-				        	</p:selectOneMenu>				        																								      	
+				        	</p:selectOneMenu>	
+				        	<span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>			        					        		
+		           			<p:calendar value="#{vwIngresos.fecha_inicio_b}"  placeholder="Fecha Inicio"  
+		           					pattern="dd/MM/yyyy" readonlyInput="true" mode="popup"  popupIconOnly="true" effect="fold"	 />						
+							<p:calendar value="#{vwIngresos.fecha_final_b}" placeholder="Fecha Fin"  									
+									pattern="dd/MM/yyyy" readonlyInput="true" mode="popup"  popupIconOnly="true" effect="fold"  />					      							   			        																								      	
 						    <span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>	
 						    <p:commandButton id="btnBuscar" 
 						    				action="#{vwIngresos.busquedaPrincipal()}"						                

@@ -85,7 +85,7 @@ public class vwCuentasPagar  {
 	private String filtro_anterior;
 	private CuentaPagar registro_guardar;
 	private String carpeta_gastos;
-	private String carpeta_cPagar;
+	private String carpeta_cpagar;
 	private String carpeta_trabajo;
 	private List<String>listaCatalogoGastos=new ArrayList<>();
 	private List<Obra>listaObras;
@@ -168,7 +168,7 @@ public class vwCuentasPagar  {
 		
 		configuracion = header.getConfiguracion().stream().filter(elem->elem.getConcepto().equals("FOLDER_CUENTAS_PAGAR")).findFirst().orElse(null);
 		
-		carpeta_cPagar=configuracion.getValor();
+		carpeta_cpagar=configuracion.getValor();
 		
 		configuracion = header.getConfiguracion().stream().filter(elem->elem.getConcepto().equals("FOLDER_FACTURAS_GASTOS")).findFirst().orElse(null);
 		
@@ -321,8 +321,7 @@ public class vwCuentasPagar  {
 			}
 			
 			descargaListaArchivos();
-
-			//preparaPreviewPDF();			
+	
 			
 		}		
 	}
@@ -437,21 +436,14 @@ public class vwCuentasPagar  {
 		}		
 	}
 	
-	/*
-	public void preparaPreviewPDF() {
-		pdf_to_preview=carpeta_trabajo+"error.pdf";
-		if(archivo_e!=null && !archivo_e.equals("")){
-			pdf_to_preview=carpeta_cPagar+archivo_e;
-		}
-	}
-	*/
+
 	
 	
 	public void descargaListaPDF() {
 		Body body = new Body();
 		body.setFilter("CUENTAS_PAGAR_PDF_DISPONIBLES");	
 		String pathArchivos=System.getProperty("user.dir").replace("\\", "/")+"/src/main/webapp";
-		body.setFilter1(pathArchivos+carpeta_cPagar);
+		body.setFilter1(pathArchivos+carpeta_cpagar);
 		listaArchivosPDF=tools.listadoString("tools/stringList", header, body, 30);
 	}
 	
@@ -459,7 +451,7 @@ public class vwCuentasPagar  {
 	public void seleccionarElementoArchivo(){
 		pdf_to_show=carpeta_trabajo+"error.pdf";
 		if(archivoSeleccionado!=null ){
-			pdf_to_show=carpeta_cPagar+archivoSeleccionado.getNombre();
+			pdf_to_show=carpeta_cpagar+archivoSeleccionado.getNombre();
 		}
 	}
 	
@@ -543,7 +535,6 @@ public class vwCuentasPagar  {
 	
 	public void accionGuardar(){
 		LOG.info("***************** vwCuentasPagar.accionGuardar() ****************");
-
 		String strValida=resultadoValidaGuardado();
 		if (!strValida.equals("")) {
 			addMessage("Error al guardar, registro incompleto", "Capturar información faltante "+strValida, FacesMessage.SEVERITY_WARN);
@@ -567,72 +558,7 @@ public class vwCuentasPagar  {
 	}
 	
 	
-	private void guardaRegistroPagado() {
-
-		Body body = new Body();
-		Timestamp now = Timestamp.from(Instant.now());	
-		seleccionado.setDeleted(now);
-		body.setCuentaPagar(seleccionado);
-		Respuesta resp = tools.ejecutaRespuesta("cuentaPagar/save", header, body, 30);
-		if(resp!=null && resp.getCode()==200) {
-			
-			asignaValoresRegistroGasto();
-			
-			body.setGasto(gasto);
-			resp = tools.ejecutaRespuesta("gasto/save", header, body, 30);
-			if(resp!=null && resp.getCode()==200) {
-				body = gSon.fromJson(resp.getData(), Body.class);
-				gasto.setId(body.getGasto().getId());
-			
-				actualizaArchivosGasto(gasto);
-				
-				if(listaArchivos!=null && listaArchivos.size()>0) {
-					for(Archivo archivo:listaArchivos) {
-						mueveArchivo(carpeta_cPagar+archivo.getNombre(), carpeta_gastos+archivo.getNombre());
-					}
-				}
-				addMessage("Registros guardados correctamente.","Se guardó la información del elemento.",FacesMessage.SEVERITY_INFO);		
-				
-				inicializaFiltros(true);
-			}else {
-				addMessage("Error al guardar información.","Respuesta servidor: "+resp.getMessage(), FacesMessage.SEVERITY_WARN);
-			}
-		}else {
-			addMessage("Error al guardar información.","Respuesta servidor: "+resp.getMessage(), FacesMessage.SEVERITY_WARN);
-		}			
-		PrimeFaces.current().ajax().update(":formaID");
-	}
-	
-	
-	
-	
-	private void actualizaArchivosGasto(Gasto gasto) {
-		if(listaArchivos!=null && listaArchivos.size()>0) {
-			listaArchivos.stream().forEach(elem-> elem.setTipo("GASTO"));
-			listaArchivos.stream().forEach(elem-> elem.setGasto(gasto));		
-			Body body = new Body();
-			body.setListaArchivos(listaArchivos);
-			Respuesta resp = tools.ejecutaRespuesta("archivo/saveAll", header, body, 30);
-			if(resp!=null && resp.getCode()==200) {	
-				LOG.info("OK! Archivos guardados correctamente!");			
-			}else {
-				LOG.error("ERROR! Los archivos no se guardaron correctamente!");
-			}
-		}
-	}
-	
-	private void mueveArchivo(String source, String target) {
-		try {
-			String pathArchivos=System.getProperty("user.dir").replace("\\", "/")+"/src/main/webapp";
-			Files.move(Paths.get(pathArchivos+source), Paths.get(pathArchivos+target), StandardCopyOption.REPLACE_EXISTING);
-			LOG.info("Archivo "+source+" movido a "+target);
-		} catch (IOException e) {
-			LOG.error("Error en mueveArchivos() "+e.getMessage());
-		}
-	}
-	
-	private void guardaRegistro() {
-		
+	private void guardaRegistro() {	
 		Body body = new Body();
 		body.setCuentaPagar(registro_guardar);
 		Respuesta resp = tools.ejecutaRespuesta("cuentaPagar/save", header, body, 30);
@@ -661,7 +587,68 @@ public class vwCuentasPagar  {
 		nuevo=false;			
 		PrimeFaces.current().ajax().update(":formaID");
 	}
+
 	
+	private void guardaRegistroPagado() {
+		Body body = new Body();
+		Timestamp now = Timestamp.from(Instant.now());	
+		seleccionado.setDeleted(now);
+		body.setCuentaPagar(seleccionado);
+		Respuesta resp = tools.ejecutaRespuesta("cuentaPagar/save", header, body, 30);
+		if(resp!=null && resp.getCode()==200) {
+			
+			asignaValoresRegistroGasto();
+			
+			body.setGasto(gasto);
+			resp = tools.ejecutaRespuesta("gasto/save", header, body, 30);
+			if(resp!=null && resp.getCode()==200) {
+				body = gSon.fromJson(resp.getData(), Body.class);
+				gasto.setId(body.getGasto().getId());
+			
+				actualizaArchivosGasto(gasto);
+				
+				if(listaArchivos!=null && listaArchivos.size()>0) {
+					for(Archivo archivo:listaArchivos) {
+						mueveArchivo(carpeta_cpagar+archivo.getNombre(), carpeta_gastos+archivo.getNombre());
+					}
+				}
+				addMessage("Registros guardados correctamente.","Se guardó la información del elemento.",FacesMessage.SEVERITY_INFO);		
+				
+				inicializaFiltros(true);
+			}else {
+				addMessage("Error al guardar información.","Respuesta servidor: "+resp.getMessage(), FacesMessage.SEVERITY_WARN);
+			}
+		}else {
+			addMessage("Error al guardar información.","Respuesta servidor: "+resp.getMessage(), FacesMessage.SEVERITY_WARN);
+		}			
+		PrimeFaces.current().ajax().update(":formaID");
+	}
+	
+	
+	private void mueveArchivo(String source, String target) {
+		try {
+			String pathArchivos=System.getProperty("user.dir").replace("\\", "/")+"/src/main/webapp";
+			Files.move(Paths.get(pathArchivos+source), Paths.get(pathArchivos+target), StandardCopyOption.REPLACE_EXISTING);
+			LOG.info("Archivo "+source+" movido a "+target);
+		} catch (IOException e) {
+			LOG.error("Error en mueveArchivos() "+e.getMessage());
+		}
+	}
+	
+	private void actualizaArchivosGasto(Gasto gasto) {
+		if(listaArchivos!=null && listaArchivos.size()>0) {
+			listaArchivos.stream().forEach(elem-> elem.setTipo("GASTO"));
+			listaArchivos.stream().forEach(elem-> elem.setGasto(gasto));		
+			Body body = new Body();
+			body.setListaArchivos(listaArchivos);
+			Respuesta resp = tools.ejecutaRespuesta("archivo/saveAll", header, body, 30);
+			if(resp!=null && resp.getCode()==200) {	
+				LOG.info("OK! Archivos guardados correctamente!");			
+			}else {
+				LOG.error("ERROR! Los archivos no se guardaron correctamente!");
+			}
+		}
+	}
 	
 	
 	private void actualizaArchivos(CuentaPagar cuentaPagar) {

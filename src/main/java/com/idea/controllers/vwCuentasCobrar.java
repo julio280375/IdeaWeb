@@ -7,9 +7,12 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -72,6 +75,7 @@ public class vwCuentasCobrar  {
 	private NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
 	private DateFormat df_ddMMMyyyy= new SimpleDateFormat("dd-MMM-yyyy");
 	private DateFormat df_yyyyMMdd= new SimpleDateFormat("yyyy-MM-dd");	
+	private List<String>listaEstatus= new ArrayList<String>(Arrays.asList("PENDIENTE", "ANTICIPO", "PAGADO", "CANCELADO"));
 	private Header header;
 	private List<CuentaCobrar> listaPrincipal;
 	private CuentaCobrar seleccionado;
@@ -79,13 +83,15 @@ public class vwCuentasCobrar  {
 	private Boolean nuevo;
 	private String filtro_anterior;
 	private CuentaCobrar registro_guardar;
+	private String carpeta_ingresos;
 	private String carpeta_ccobrar;
 	private String carpeta_trabajo;
 	private List<String>listaCatalogoIngresos=new ArrayList<>();
 	private List<Obra>listaObras;
 	private List<String>listaNombreObras=new ArrayList<>();
 	private List<Archivo>listaArchivos=new ArrayList<>();
-	private Double totalIngreso;
+	private Double totalCuentasCobrar;
+	private Ingreso ingreso;
 	private Tools tools =new Tools();
 
 	private String archivo_e;
@@ -97,7 +103,8 @@ public class vwCuentasCobrar  {
 	//Buscar	
 	private String obra_b;
 	private String concepto_b;
-	
+	private Date fecha_inicio_b;
+	private Date fecha_final_b;
 	
 	//Editar
 	private Date fecha_e;
@@ -106,6 +113,7 @@ public class vwCuentasCobrar  {
 	private String factura_e;
 	private String detalle_e;
 	private String obra_e;
+	private String estatus_e;
 
 
 	
@@ -148,6 +156,10 @@ public class vwCuentasCobrar  {
 		
 		carpeta_ccobrar=configuracion.getValor();
 		
+		configuracion = header.getConfiguracion().stream().filter(elem->elem.getConcepto().equals("FOLDER_FACTURAS_INGRESOS")).findFirst().orElse(null);
+		
+		carpeta_ingresos=configuracion.getValor();
+		
 		
 	}
 
@@ -175,7 +187,10 @@ public class vwCuentasCobrar  {
 		
 		if (obra_b!=null && obra_b.trim().length()>0) filtro="#OBRA#";
 		if (concepto_b!=null && concepto_b.trim().length()>0) filtro="#CONCEPTO#";
-		
+		if (fecha_inicio_b!=null) {
+			filtro=filtro+"#FECHA#";
+			if(fecha_final_b!=null) filtro=filtro.replace("#FECHA#","#PERIODO#");
+		}
 		Body body = new Body();
 		switch(filtro) {
 		case "":
@@ -190,6 +205,15 @@ public class vwCuentasCobrar  {
 			Obra obra=listaObras.stream().filter(elem->elem.getNombre().toUpperCase().equals(obra_b.toUpperCase())).findFirst().orElse(null);
 			body.setFilter1(obra.getId().toString());
 			break;
+		case "#FECHA#":	
+			body.setFilter("BY_FECHA");
+			body.setFilter1(df_yyyyMMdd.format(fecha_inicio_b));
+			break;
+		case "#PERIODO#":
+			body.setFilter("BY_PERIODO");
+			body.setFilter1(df_yyyyMMdd.format(fecha_inicio_b));
+			body.setFilter2(df_yyyyMMdd.format(fecha_final_b));
+			break;
 		
 		}
 		
@@ -200,10 +224,10 @@ public class vwCuentasCobrar  {
 	
 		seleccionado=null;
 		listaPrincipal=tools.listadoCuentasCobrar("cuentaCobrar/filter", header, body, 30);
-		totalIngreso = 0d;
+		totalCuentasCobrar = 0d;
 		if(listaPrincipal!=null && listaPrincipal.size()>0) {
 			seleccionado=listaPrincipal.get(0);
-			totalIngreso = listaPrincipal.stream().mapToDouble(elem->elem.getImporte()).sum();
+			totalCuentasCobrar = listaPrincipal.stream().mapToDouble(elem->elem.getImporte()).sum();
 		}
 
 		filtro_anterior=body.getFilter();
@@ -214,7 +238,7 @@ public class vwCuentasCobrar  {
 	
 	
 	
-public void seleccionarElemento(){
+	public void seleccionarElemento(){
 		
 		editable=false;
 		nuevo=false;
@@ -231,11 +255,11 @@ public void seleccionarElemento(){
 			factura_e=seleccionado.getFactura();
 			concepto_e=seleccionado.getConcepto();
 			detalle_e=seleccionado.getDetalle();
+			estatus_e=seleccionado.getEstatus();
 			obra_e=null;
 			if(seleccionado.getObra()!=null) {
 				obra_e=seleccionado.getObra().getNombre();
-			}
-			
+			}		
 			
 			descargaListaArchivos();		
 			
@@ -245,28 +269,30 @@ public void seleccionarElemento(){
 	
 	
 
-public void inicializaFiltros(Boolean buscar){
-
-	obra_b=null;
-	concepto_b=null;
-	if(buscar) {
-		busquedaPrincipal();
+	public void inicializaFiltros(Boolean buscar){
+		obra_b=null;
+		concepto_b=null;
+		fecha_inicio_b = null;
+		fecha_final_b = null;
+		if(buscar) {
+			busquedaPrincipal();
+		}
 	}
-}
 
 
-public void inicializaCapturar(){
-	concepto_e="";
-	fecha_e = Calendar.getInstance().getTime();
-	importe_e=0d;
-	factura_e="";
-	detalle_e="";
-	archivo_e="";
-	pdf_to_show=carpeta_trabajo+"error.pdf";
-	obra_e = "";
-	
-	listaArchivos= new ArrayList<Archivo>();
-}
+	public void inicializaCapturar(){
+		concepto_e="";
+		fecha_e = Calendar.getInstance().getTime();
+		importe_e=0d;
+		factura_e="";
+		detalle_e="";
+		archivo_e="";
+		estatus_e="PENDIENTE";
+		pdf_to_show=carpeta_trabajo+"error.pdf";
+		obra_e = "";
+		
+		listaArchivos= new ArrayList<Archivo>();
+	}
 
 
 
@@ -277,6 +303,8 @@ public void inicializaCapturar(){
 		registro_guardar.setConcepto(concepto_e);
 		registro_guardar.setDetalle(detalle_e);
 		registro_guardar.setFactura(factura_e);
+		registro_guardar.setEstatus(estatus_e);
+		
 		registro_guardar.setObra(null);
 		if(obra_e!=null && !obra_e.equals("")) {
 			Obra obra=listaObras.stream().filter(elem->elem.getNombre().toUpperCase().equals(obra_e.toUpperCase())).findFirst().orElse(null);
@@ -287,14 +315,24 @@ public void inicializaCapturar(){
 
 	
 	
-	public void seleccionarElementoArchivo(){
-		pdf_to_show=carpeta_trabajo+"error.pdf";
-		if(archivoSeleccionado!=null ){
-			pdf_to_show=this.carpeta_ccobrar+archivoSeleccionado.getNombre();
+private void asignaValoresRegistroIngreso() {
+		ingreso = new Ingreso();
+		ingreso.setFecha(fecha_e);
+		ingreso.setImporte(importe_e);
+		ingreso.setConcepto(concepto_e);
+		ingreso.setDetalle(detalle_e);
+		ingreso.setFactura(factura_e);
+		ingreso.setEstatus(estatus_e);
+		ingreso.setTipo_factura("CREDITO");
+		ingreso.setObra(null);
+		if(obra_e!=null && !obra_e.equals("")) {
+			Obra obra=listaObras.stream().filter(elem->elem.getNombre().toUpperCase().equals(obra_e.toUpperCase())).findFirst().orElse(null);
+			ingreso.setObra(obra);
 		}
+		
 	}
-
 	
+
 	public void descargaListaPDF() {
 		Body body = new Body();
 		body.setFilter("CUENTAS_COBRAR_PDF_DISPONIBLES");	
@@ -302,12 +340,16 @@ public void inicializaCapturar(){
 		body.setFilter1(pathArchivos+carpeta_ccobrar);
 		listaArchivosPDF=tools.listadoString("tools/stringList", header, body, 30);
 	}
+
 	
-	
-	
-	
-	
-	
+	public void seleccionarElementoArchivo(){
+		pdf_to_show=carpeta_trabajo+"error.pdf";
+		if(archivoSeleccionado!=null ){
+			pdf_to_show=this.carpeta_ccobrar+archivoSeleccionado.getNombre();
+		}
+	}
+
+
 	
 	public void eliminaArchivo() {
 		Body body = new Body();
@@ -365,8 +407,7 @@ public void inicializaCapturar(){
 	}
 	
 	
-	public void accionModificar(){			
-		
+	public void accionModificar(){					
 		if( listaArchivosPDF==null ) {
 			listaArchivosPDF= new ArrayList<String>();
 		}
@@ -387,13 +428,14 @@ public void inicializaCapturar(){
 
 	
 	public void accionGuardar(){
-		LOG.info("***************** vwIngresos.accionGuardar() ****************");
+		LOG.info("***************** vwCuentasCobrar.accionGuardar() ****************");
 		String strValida=resultadoValidaGuardado();
 		if (!strValida.equals("")) {
 			addMessage("Error al guardar, registro incompleto", "Capturar información faltante "+strValida, FacesMessage.SEVERITY_WARN);
 			PrimeFaces.current().ajax().update(":formaID:mensajeID");
 			return;
 		}
+		
 		registro_guardar = new CuentaCobrar();//SI ES NUEVO SE CREA UN NUEVO REGISTRO 
 		if(!nuevo) {			
 			registro_guardar=seleccionado;//SI NO ES NUEVO SE ACTUALIZA EL REGISTRO CON EL ID SELECCIONADO
@@ -401,6 +443,16 @@ public void inicializaCapturar(){
 		//SE ASIGNAN VALORES AL REGISTRO YA SEA NUEVO O NO 
 		asignaValoresRegistro();
 		
+		if(!estatus_e.equals("PAGADO")) {
+			guardaRegistro();
+		}else {
+			guardaRegistroPagado();
+		}
+		
+	}
+	
+	
+	private void guardaRegistro() {	
 		Body body = new Body();
 		body.setCuentaCobrar(registro_guardar);
 		Respuesta resp = tools.ejecutaRespuesta("cuentaCobrar/save", header, body, 30);
@@ -430,7 +482,70 @@ public void inicializaCapturar(){
 		PrimeFaces.current().ajax().update(":formaID");
 	}
 	
+	
 
+	private void guardaRegistroPagado() {
+
+		Body body = new Body();
+		Timestamp now = Timestamp.from(Instant.now());	
+		seleccionado.setDeleted(now);
+		body.setCuentaCobrar(seleccionado);
+		Respuesta resp = tools.ejecutaRespuesta("cuentaCobrar/save", header, body, 30);
+		if(resp!=null && resp.getCode()==200) {
+			
+			asignaValoresRegistroIngreso();
+			
+			body.setIngreso(ingreso);
+			resp = tools.ejecutaRespuesta("ingreso/save", header, body, 30);
+			if(resp!=null && resp.getCode()==200) {
+				body = gSon.fromJson(resp.getData(), Body.class);
+				ingreso.setId(body.getIngreso().getId());
+			
+				actualizaArchivosIngreso(ingreso);
+				
+				if(listaArchivos!=null && listaArchivos.size()>0) {
+					for(Archivo archivo:listaArchivos) {
+						mueveArchivo(carpeta_ccobrar+archivo.getNombre(), carpeta_ingresos+archivo.getNombre());
+					}
+				}
+				addMessage("Registros guardados correctamente.","Se guardó la información del elemento.",FacesMessage.SEVERITY_INFO);		
+				
+				inicializaFiltros(true);
+			}else {
+				addMessage("Error al guardar información.","Respuesta servidor: "+resp.getMessage(), FacesMessage.SEVERITY_WARN);
+			}
+		}else {
+			addMessage("Error al guardar información.","Respuesta servidor: "+resp.getMessage(), FacesMessage.SEVERITY_WARN);
+		}			
+		PrimeFaces.current().ajax().update(":formaID");
+	}
+	
+	
+	private void mueveArchivo(String source, String target) {
+		try {
+			String pathArchivos=System.getProperty("user.dir").replace("\\", "/")+"/src/main/webapp";
+			Files.move(Paths.get(pathArchivos+source), Paths.get(pathArchivos+target), StandardCopyOption.REPLACE_EXISTING);
+			LOG.info("Archivo "+source+" movido a "+target);
+		} catch (IOException e) {
+			LOG.error("Error en mueveArchivos() "+e.getMessage());
+		}
+	}
+	
+	
+	private void actualizaArchivosIngreso(Ingreso ingreso) {
+		if(listaArchivos!=null && listaArchivos.size()>0) {
+			listaArchivos.stream().forEach(elem-> elem.setTipo("INGRESO"));
+			listaArchivos.stream().forEach(elem-> elem.setIngreso(ingreso));		
+			Body body = new Body();
+			body.setListaArchivos(listaArchivos);
+			Respuesta resp = tools.ejecutaRespuesta("archivo/saveAll", header, body, 30);
+			if(resp!=null && resp.getCode()==200) {	
+				LOG.info("OK! Archivos guardados correctamente!");			
+			}else {
+				LOG.error("ERROR! Los archivos no se guardaron correctamente!");
+			}
+		}
+	}
 	
 	
 	private void actualizaArchivos(CuentaCobrar param) {
@@ -454,7 +569,7 @@ public void inicializaCapturar(){
 	
 	
 	private String resultadoValidaGuardado() {
-		//String result="TIPO";
+		String result="TIPO";
 		//if (tipo_e==null || tipo_e.equals("")) return result;
 		//result="PROVEEDOR";
 		//if (proveedor_e==null || proveedor_e.equals("")) return result;
@@ -462,6 +577,9 @@ public void inicializaCapturar(){
 		//if (solicito_e==null || solicito_e.equals("")) return result;
 		//result="IMPORTE";
 		//if (importe_e==null || importe_e<=0d) return result;
+		result="ESTATUS";
+		if (estatus_e.equals("PAGADO") && nuevo) return result;
+
 		return "";
 	}
 	
@@ -681,18 +799,6 @@ public void inicializaCapturar(){
 
 
 
-	public Double getTotalGasto() {
-		return totalIngreso;
-	}
-
-
-
-	public void setTotalGasto(Double totalGasto) {
-		this.totalIngreso = totalGasto;
-	}
-
-
-
 
 	public String getConcepto_b() {
 		return concepto_b;
@@ -755,13 +861,13 @@ public void inicializaCapturar(){
 
 
 	public Double getTotalIngreso() {
-		return totalIngreso;
+		return totalCuentasCobrar;
 	}
 
 
 
 	public void setTotalIngreso(Double totalIngreso) {
-		this.totalIngreso = totalIngreso;
+		this.totalCuentasCobrar = totalIngreso;
 	}
 
 
@@ -774,6 +880,66 @@ public void inicializaCapturar(){
 
 	public void setFactura_e(String factura_e) {
 		this.factura_e = factura_e;
+	}
+
+
+
+	public List<String> getListaEstatus() {
+		return listaEstatus;
+	}
+
+
+
+	public void setListaEstatus(List<String> listaEstatus) {
+		this.listaEstatus = listaEstatus;
+	}
+
+
+
+	public String getEstatus_e() {
+		return estatus_e;
+	}
+
+
+
+	public void setEstatus_e(String estatus_e) {
+		this.estatus_e = estatus_e;
+	}
+
+
+
+	public Date getFecha_inicio_b() {
+		return fecha_inicio_b;
+	}
+
+
+
+	public void setFecha_inicio_b(Date fecha_inicio_b) {
+		this.fecha_inicio_b = fecha_inicio_b;
+	}
+
+
+
+	public Date getFecha_final_b() {
+		return fecha_final_b;
+	}
+
+
+
+	public void setFecha_final_b(Date fecha_final_b) {
+		this.fecha_final_b = fecha_final_b;
+	}
+
+
+
+	public Double getTotalCuentasCobrar() {
+		return totalCuentasCobrar;
+	}
+
+
+
+	public void setTotalCuentasCobrar(Double totalCuentasCobrar) {
+		this.totalCuentasCobrar = totalCuentasCobrar;
 	}
 
 

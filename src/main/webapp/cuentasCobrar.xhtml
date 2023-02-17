@@ -111,18 +111,20 @@
 						<p:column headerText="Concepto"  styleClass="single-line" style="text-align:left;width:20%;">
 					    		<h:outputText value="#{list.concepto}"/>
 						</p:column> 		           						
-						<p:column headerText="Factura" sortBy="#{list.factura}" styleClass="single-line" style="width:7%;text-align:center;">
-					    		<h:outputText value="#{list.factura}"/>
-						</p:column>
 						<p:column headerText="Fecha"  styleClass="single-line"  style="width:10%;">
 					    		<h:outputText value="#{list.fecha}">
 					    			<f:convertDateTime type="date" pattern="dd/MMM/yyyy"  locale="es"/>
 					    		</h:outputText>
+						</p:column>
+						<p:column headerText="Estatus" styleClass="single-line" style="width:7%;text-align:center;">
+					    		<h:outputText value="#{list.estatus}"/>
+						</p:column>
+						<p:column headerText="Factura" styleClass="single-line" style="width:7%;text-align:center;">
+					    		<h:outputText value="#{list.factura}"/>
 						</p:column> 
 						<p:column headerText="Obra"  styleClass="single-line" style="width:20%;">
 					    		<h:outputText value="#{list.obra.nombre}"/>
 						</p:column>
-									
 						<p:column headerText="Importe"  styleClass="single-line" style="width:10%;text-align:right;">
 					    		<h:outputText value="#{list.importe}">
 					    			<f:convertNumber type="currency"  pattern="$###,##0.00" />
@@ -133,7 +135,7 @@
 									<h:outputText value="#{vwCuentasCobrar.listaPrincipal.size()}  elementos."/>
 									<h:outputText/>
 									<h:outputText value="Total:"/>
-									<h:outputText value="#{vwCuentasCobrar.totalIngreso}">
+									<h:outputText value="#{vwCuentasCobrar.totalCuentasCobrar}">
 										<f:convertNumber type="currency"  pattern="$###,##0.00" />
 									</h:outputText>							
 								</h:panelGrid>
@@ -194,7 +196,13 @@
 					          			<p:outputLabel value="Importe:" />
 					          			<p:inputText value="#{vwCuentasCobrar.importe_e}" readonly="#{!vwCuentasCobrar.editable}" style="width:153px;text-align:right;">
 					          				<f:convertNumber type="currency"  pattern="###,##0.00" />
-					          			</p:inputText>					          					          																			
+					          			</p:inputText>
+					          			<p:outputLabel value="Estatus:" />
+								        <p:inputText value="#{vwCuentasCobrar.estatus_e}"  rendered="#{!vwCuentasCobrar.editable}" readonly="true" style="width:153px;"/>
+					          			<p:selectOneMenu  value="#{vwCuentasCobrar.estatus_e}" placeholder="Seleccionar..." rendered="#{vwCuentasCobrar.editable}" multiple="false" style="width:141px" filter="false"  panelStyle="width:153px" >							           		
+								           		<f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+												<f:selectItems value="#{vwCuentasCobrar.listaEstatus}" />
+								        </p:selectOneMenu>						          					          																			
 			          				</h:panelGrid >
 			          				<h:panelGrid columns="1" style="text-align:left;" styleClass="panelgrid-dotted-border" >
 				          				<p:outputLabel value="Detalle:" />
@@ -266,11 +274,16 @@
 							disabled="#{!vwCuentasCobrar.editable}"	    						
 							update=":formaID:capturaID"
 							style="width:150px;height:30px;" icon="fa fa-undo" />
-						<p:commandButton value="Guardar"
+						<p:commandButton value="Guardar" style="width:150px;height:30px;" icon="fa fa-floppy-o" 
 							action="#{vwCuentasCobrar.accionGuardar()}" 
 							styleClass="button-texto-icono" 
-							disabled="#{!vwCuentasCobrar.editable}"				
-							style="width:150px;height:30px;" icon="fa fa-floppy-o" />						
+							disabled="#{!vwCuentasCobrar.editable}">
+							<p:confirm header="Actualizar datos"  message="Desea actualizar los datos del elemento?" icon="pi pi-exclamation-triangle"/>
+						</p:commandButton>	
+						<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+				            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+				            <p:commandButton value="Si, Actualizar" type="button" styleClass="ui-confirmdialog-yes" />
+				        </p:confirmDialog>					
 				</h:panelGrid>
 				
 			</h:panelGrid>

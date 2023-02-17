@@ -1,5 +1,6 @@
 package com.idea.objects.business;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 public class CuentaCobrar  {
@@ -13,6 +14,9 @@ public class CuentaCobrar  {
 	private String tipo_factura;
 	private String estatus;
 	private String detalle;	
+	private Timestamp created;
+	private Timestamp deleted;	
+	
 	
 	private Obra obra;
 	
@@ -75,6 +79,18 @@ public class CuentaCobrar  {
 	}
 	public void setEstatus(String estatus) {
 		this.estatus = estatus;
+	}
+	public Timestamp getCreated() {
+		return created;
+	}
+	public void setCreated(Timestamp created) {
+		this.created = created;
+	}
+	public Timestamp getDeleted() {
+		return deleted;
+	}
+	public void setDeleted(Timestamp deleted) {
+		this.deleted = deleted;
 	}
 	
 	
