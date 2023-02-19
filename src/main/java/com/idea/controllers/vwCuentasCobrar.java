@@ -81,7 +81,6 @@ public class vwCuentasCobrar  {
 	private CuentaCobrar seleccionado;
 	private Boolean editable;
 	private Boolean nuevo;
-	private Boolean mostrarPagados;
 	private String filtro_anterior;
 	private CuentaCobrar registro_guardar;
 	private String carpeta_ingresos;
@@ -104,6 +103,7 @@ public class vwCuentasCobrar  {
 	//Buscar	
 	private String obra_b;
 	private String concepto_b;
+	private String estatus_b;
 	private Date fecha_inicio_b;
 	private Date fecha_final_b;
 	
@@ -186,16 +186,27 @@ public class vwCuentasCobrar  {
 
 		String filtro="";
 		
-		if (obra_b!=null && obra_b.trim().length()>0) filtro="#OBRA#";
-		if (concepto_b!=null && concepto_b.trim().length()>0) filtro="#CONCEPTO#";
-		if (fecha_inicio_b!=null) {
-			filtro=filtro+"#FECHA#";
-			if(fecha_final_b!=null) filtro=filtro.replace("#FECHA#","#PERIODO#");
-		}
+		if (obra_b!=null && obra_b.trim().length()>0) 
+			filtro="#OBRA#";
+		else
+			if (concepto_b!=null && concepto_b.trim().length()>0) 
+				filtro="#CONCEPTO#";
+			else
+				if (estatus_b!=null && estatus_b.trim().length()>0) 
+					filtro="#ESTATUS#";
+				else
+					if (fecha_inicio_b!=null) {
+						filtro=filtro+"#FECHA#";
+						if(fecha_final_b!=null) filtro=filtro.replace("#FECHA#","#PERIODO#");
+					}
 		Body body = new Body();
 		switch(filtro) {
 		case "":
 			body.setFilter("ALL");
+			break;
+		case "#ESTATUS#":
+			body.setFilter("BY_ESTATUS");
+			body.setFilter1(estatus_b);
 			break;
 		case "#CONCEPTO#":
 			body.setFilter("BY_CONCEPTO_LIKE");
@@ -225,16 +236,7 @@ public class vwCuentasCobrar  {
 		}
 	
 		seleccionado=null;
-		List<CuentaCobrar> listaAuxiliar=tools.listadoCuentasCobrar("cuentaCobrar/filter", header, body, 30);
-		listaPrincipal=new ArrayList<>();
-		if(listaAuxiliar!=null && listaAuxiliar.size()>0) {
-			if(mostrarPagados) {
-				listaPrincipal=listaAuxiliar;
-			}
-			else {
-				listaPrincipal=listaAuxiliar.stream().filter(elem -> elem.getEstatus()==null || !elem.getEstatus().equals("PAGADO")).collect(Collectors.toList());
-			}
-		}
+		listaPrincipal=tools.listadoCuentasCobrar("cuentaCobrar/filter", header, body, 30);
 		totalCuentasCobrar = 0d;
 		if(listaPrincipal!=null && listaPrincipal.size()>0) {
 			seleccionado=listaPrincipal.get(0);
@@ -285,7 +287,7 @@ public class vwCuentasCobrar  {
 		concepto_b=null;
 		fecha_inicio_b = null;
 		fecha_final_b = null;
-		mostrarPagados=false;
+		estatus_b=null;
 		if(buscar) {
 			busquedaPrincipal();
 		}
@@ -956,14 +958,15 @@ private void asignaValoresRegistroIngreso() {
 
 
 
-	public Boolean getMostrarPagados() {
-		return mostrarPagados;
+
+	public String getEstatus_b() {
+		return estatus_b;
 	}
 
 
 
-	public void setMostrarPagados(Boolean mostrarPagados) {
-		this.mostrarPagados = mostrarPagados;
+	public void setEstatus_b(String estatus_b) {
+		this.estatus_b = estatus_b;
 	}
 
 

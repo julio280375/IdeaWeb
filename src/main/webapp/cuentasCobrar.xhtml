@@ -80,15 +80,17 @@
 								<f:selectItems value="#{vwCuentasCobrar.listaCatalogoIngresos}" />
 				        	</p:selectOneMenu>				        																								      	
 						    <span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>			        					        		
+		           			 <p:selectOneMenu  value="#{vwCuentasCobrar.estatus_b}" placeholder="Estatus"  filter="true" filterMatchMode="contains" multiple="false" style="width:110px;"   >
+				           		<f:selectItem itemLabel="Todos" itemValue="#{null}"/>
+								<f:selectItems value="#{vwCuentasCobrar.listaEstatus}" />
+				        	</p:selectOneMenu>
+						    <span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
 		           			<p:calendar value="#{vwCuentasCobrar.fecha_inicio_b}"  placeholder="Fecha Inicio"  
 		           					pattern="dd/MM/yyyy" readonlyInput="true" mode="popup"  popupIconOnly="true" effect="fold"	 />						
 							<p:calendar value="#{vwCuentasCobrar.fecha_final_b}" placeholder="Fecha Fin"  									
 									pattern="dd/MM/yyyy" readonlyInput="true" mode="popup"  popupIconOnly="true" effect="fold"  />					      							   			        																								      	
 						    <span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-						    <h:panelGrid columns="1"  style="margin-top:5px;"  >
-						   		<p:selectBooleanCheckbox itemLabel="Mostrar Pagados" value="#{vwCuentasCobrar.mostrarPagados}" />
-						    </h:panelGrid>
-						    <span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>		
+						  		
 						    <p:commandButton id="btnBuscar" 
 						    				action="#{vwCuentasCobrar.busquedaPrincipal()}"						                
 							                style="font-size:15px;"	 icon="fa fa-search" 				                 							               
