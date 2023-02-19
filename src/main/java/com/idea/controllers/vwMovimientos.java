@@ -3,10 +3,12 @@ package com.idea.controllers;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -157,8 +159,6 @@ public void EnviaGastosBanorte() {
 						Gasto gasto = new Gasto();
 						gasto.setMovimiento(movimiento.getMovimiento());
 						gasto.setFecha(formatddMMyyyy.parse(movimiento.getFecha()));
-						gasto.setAutorizo(header.getEmpleado());
-						gasto.setSolicito(header.getEmpleado());
 						gasto.setImporte(Double.valueOf(movimiento.getRetiro().replace("$", "").replace(",", "")));
 						gasto.setDetalle(movimiento.getDetalle());
 						gasto.setConcepto(movimiento.getDescripcion());
@@ -167,6 +167,12 @@ public void EnviaGastosBanorte() {
 						e.printStackTrace();
 					}						
 				}
+				listaGastos.stream().forEach(elem-> elem.setSolicito(header.getEmpleado()));
+				listaGastos.stream().forEach(elem-> elem.setAutorizo(header.getEmpleado()));	
+				listaGastos.stream().forEach(elem-> elem.setEstatus("PAGADO"));
+				listaGastos.stream().forEach(elem-> elem.setTipo_factura("CONTADO"));
+				Timestamp now = Timestamp.from(Instant.now());	
+				listaGastos.stream().forEach(elem-> elem.setCreated(now));
 				body = new Body();
 				body.setListaGastos(listaGastos);
 				Respuesta resp = tools.ejecutaRespuesta("gasto/saveAll", header, body, 30);
@@ -214,6 +220,10 @@ public void EnviaGastosBanorte() {
 						e.printStackTrace();
 					}						
 				}
+				listaIngresos.stream().forEach(elem-> elem.setEstatus("PAGADO"));
+				listaIngresos.stream().forEach(elem-> elem.setTipo_factura("CONTADO"));
+				Timestamp now = Timestamp.from(Instant.now());	
+				listaIngresos.stream().forEach(elem-> elem.setCreated(now));
 				body = new Body();
 				body.setListaIngresos(listaIngresos);
 				Respuesta resp = tools.ejecutaRespuesta("ingreso/saveAll", header, body, 30);

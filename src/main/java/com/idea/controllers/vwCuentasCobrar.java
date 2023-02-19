@@ -81,6 +81,7 @@ public class vwCuentasCobrar  {
 	private CuentaCobrar seleccionado;
 	private Boolean editable;
 	private Boolean nuevo;
+	private Boolean mostrarPagados;
 	private String filtro_anterior;
 	private CuentaCobrar registro_guardar;
 	private String carpeta_ingresos;
@@ -220,10 +221,20 @@ public class vwCuentasCobrar  {
 		if(filtro_anterior.equals("ALL")) {
 			seleccionado=listaPrincipal.get(0);
 			seleccionarElemento();
+			
 		}
 	
 		seleccionado=null;
-		listaPrincipal=tools.listadoCuentasCobrar("cuentaCobrar/filter", header, body, 30);
+		List<CuentaCobrar> listaAuxiliar=tools.listadoCuentasCobrar("cuentaCobrar/filter", header, body, 30);
+		listaPrincipal=new ArrayList<>();
+		if(listaAuxiliar!=null && listaAuxiliar.size()>0) {
+			if(mostrarPagados) {
+				listaPrincipal=listaAuxiliar;
+			}
+			else {
+				listaPrincipal=listaAuxiliar.stream().filter(elem -> elem.getEstatus()==null || !elem.getEstatus().equals("PAGADO")).collect(Collectors.toList());
+			}
+		}
 		totalCuentasCobrar = 0d;
 		if(listaPrincipal!=null && listaPrincipal.size()>0) {
 			seleccionado=listaPrincipal.get(0);
@@ -274,6 +285,7 @@ public class vwCuentasCobrar  {
 		concepto_b=null;
 		fecha_inicio_b = null;
 		fecha_final_b = null;
+		mostrarPagados=false;
 		if(buscar) {
 			busquedaPrincipal();
 		}
@@ -940,6 +952,18 @@ private void asignaValoresRegistroIngreso() {
 
 	public void setTotalCuentasCobrar(Double totalCuentasCobrar) {
 		this.totalCuentasCobrar = totalCuentasCobrar;
+	}
+
+
+
+	public Boolean getMostrarPagados() {
+		return mostrarPagados;
+	}
+
+
+
+	public void setMostrarPagados(Boolean mostrarPagados) {
+		this.mostrarPagados = mostrarPagados;
 	}
 
 

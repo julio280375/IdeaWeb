@@ -197,7 +197,7 @@ public class vwCuentasPagar  {
 		
 		listaEmpleados=tools.listadoEmpleados("empleado/filter", header, body, 30);
 		if(listaEmpleados!=null && listaEmpleados.size()>0) {
-		listaNombreEmpleados=listaEmpleados.stream().map(elem -> elem.getNombre()).distinct().collect(Collectors.toList());
+		listaNombreEmpleados=listaEmpleados.stream().map(elem -> elem.getNombre()).collect(Collectors.toList());
 	
 		}
 		

@@ -21,6 +21,7 @@ import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
 import com.google.gson.Gson;
@@ -70,7 +71,6 @@ public class vwLogin{
 	
 	public void iniciaVista() {
 		LOG.info("***************** vwLogin.iniciaVista() ****************");
-		
 		FacesContext context = FacesContext.getCurrentInstance();
 		ExternalContext externalContext = context.getExternalContext();
 		HttpServletRequest reqHttp = (HttpServletRequest) externalContext.getRequest();

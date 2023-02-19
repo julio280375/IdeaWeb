@@ -1,5 +1,6 @@
 package com.idea.objects.business;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 public class Ingreso {
@@ -13,6 +14,8 @@ public class Ingreso {
 	private String factura;
 	private String estatus;
 	private String tipo_factura;
+	private Timestamp created;
+	private Timestamp deleted;
 	
 	private Obra obra;
 
@@ -190,6 +193,42 @@ public class Ingreso {
 
 	public void setTipo_factura(String tipo_factura) {
 		this.tipo_factura = tipo_factura;
+	}
+
+
+
+
+
+
+	public Timestamp getCreated() {
+		return created;
+	}
+
+
+
+
+
+
+	public void setCreated(Timestamp created) {
+		this.created = created;
+	}
+
+
+
+
+
+
+	public Timestamp getDeleted() {
+		return deleted;
+	}
+
+
+
+
+
+
+	public void setDeleted(Timestamp deleted) {
+		this.deleted = deleted;
 	}
 	
 
