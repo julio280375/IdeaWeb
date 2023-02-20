@@ -85,6 +85,11 @@
 				        	</p:selectOneMenu>
 				        	<span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
 			          		<p:inputText value="#{vwCuentasPagar.concepto_b}" placeholder="Concepto" style="width:110px;"/>
+			          		<span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>			        					        		
+		           			 <p:selectOneMenu  value="#{vwCuentasPagar.estatus_b}" placeholder="Estatus"  filter="true" filterMatchMode="contains" multiple="false" style="width:110px;"   >
+				           		<f:selectItem itemLabel="Estatus" itemValue="#{null}"/>
+								<f:selectItems value="#{vwCuentasPagar.listaEstatus}" />
+				        	</p:selectOneMenu>
 			        		<span class="ui-separator"> <span class="ui-icon ui-icon-grip-dotted-vertical" /></span>			        					        		
 		           			<p:calendar value="#{vwCuentasPagar.fecha_inicio_b}"  placeholder="Fecha Inicio"  
 		           					pattern="dd/MM/yyyy" readonlyInput="true" mode="popup"  popupIconOnly="true" effect="fold"	 />						
@@ -119,10 +124,13 @@
 						<p:column headerText="ID"  styleClass="singleLine" style="width:3%;text-align:center;">
 					    		<h:outputText value="#{list.id}"/>
 						</p:column>		
-						<p:column headerText="Proveedor"  styleClass="single-line" style="width:20%;">
+						<p:column headerText="Proveedor"  styleClass="single-line" style="width:15%;">
 					    		<h:outputText value="#{list.proveedor.nombre}"/>
 						</p:column>  
-						<p:column headerText="Concepto"  styleClass="single-line" style="text-align:left;width:20%;">
+						<p:column headerText="Obra"  styleClass="single-line" style="width:15%;">
+					    		<h:outputText value="#{list.obra.nombre}"/>
+						</p:column> 
+						<p:column headerText="Concepto"  styleClass="single-line" style="text-align:left;width:15%;">
 					    		<h:outputText value="#{list.concepto}"/>
 						</p:column>
 						<p:column headerText="Factura"  styleClass="single-line" style="text-align:center;width:10%;">
@@ -133,12 +141,12 @@
 					    			<f:convertDateTime type="date" pattern="dd/MMM/yyyy"  locale="es"/>
 					    		</h:outputText>
 						</p:column>        						
-						<p:column headerText="Estatus"  styleClass="single-line"  style="width:10%;">
-					    		<h:outputText value="#{list.estatus}"/>
-						</p:column> 
 						<p:column headerText="Dias"  styleClass="singleLine" style="width:3%;text-align:center;">
 					    		<h:outputText value="#{list.diasVencimiento}"/>
-						</p:column> 				
+						</p:column> 	
+						<p:column headerText="Estatus"  styleClass="single-line"  style="width:5%;">
+					    		<h:outputText value="#{list.estatus}"/>
+						</p:column> 			
 						<p:column headerText="Importe"  styleClass="single-line" style="width:10%;text-align:right;">
 					    		<h:outputText value="#{list.importe}">
 					    			<f:convertNumber type="currency"  pattern="$###,##0.00" />

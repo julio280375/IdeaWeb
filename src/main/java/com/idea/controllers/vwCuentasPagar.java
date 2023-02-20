@@ -109,6 +109,7 @@ public class vwCuentasPagar  {
 	private String tipo_b;
 	private Date vencimiento_inicio_b;
 	private Date vencimiento_final_b;
+	private String estatus_b;
 	private String obra_b;
 	private String proveedor_b;
 	private String concepto_b;
@@ -210,14 +211,25 @@ public class vwCuentasPagar  {
 
 		String filtro="";
 		
-		if (proveedor_b!=null && proveedor_b.trim().length()>0) filtro="#PROVEEDOR#";
-		if (obra_b!=null && obra_b.trim().length()>0) filtro="#OBRA#";
-		if (vencimiento_inicio_b!=null) {
-			filtro=filtro+"#FECHA#";
-			if(vencimiento_final_b!=null) filtro=filtro.replace("#FECHA#","#PERIODO#");
-		}
-		if (tipo_b!=null && tipo_b.trim().length()>0) filtro="#TIPO#";
-		if (concepto_b!=null && concepto_b.trim().length()>0) filtro="#CONCEPTO#";
+		if (proveedor_b!=null && proveedor_b.trim().length()>0) 
+				filtro="#PROVEEDOR#";
+		else
+			if (obra_b!=null && obra_b.trim().length()>0) 
+				filtro="#OBRA#";
+			else
+				if (tipo_b!=null && tipo_b.trim().length()>0) 
+					filtro="#TIPO#";
+				else
+					if (concepto_b!=null && concepto_b.trim().length()>0) 
+						filtro="#CONCEPTO#";
+					else
+						if (estatus_b!=null && estatus_b.trim().length()>0) 
+							filtro="#ESTATUS#";
+						else
+							if (vencimiento_inicio_b!=null) {
+								filtro=filtro+"#FECHA#";
+								if(vencimiento_final_b!=null) filtro=filtro.replace("#FECHA#","#PERIODO#");
+							}
 		
 		Body body = new Body();
 		switch(filtro) {
@@ -241,7 +253,11 @@ public class vwCuentasPagar  {
 			body.setFilter("BY_OBRA");
 			Obra obra=listaObras.stream().filter(elem->elem.getNombre().toUpperCase().equals(obra_b.toUpperCase())).findFirst().orElse(null);
 			body.setFilter1(obra.getId().toString());
-			break;
+			break;		
+		case "#ESTATUS#":
+			body.setFilter("BY_ESTATUS");
+			body.setFilter1(estatus_b);
+			break;		
 		case "#FECHA#":	
 			body.setFilter("BY_FECHA");
 			body.setFilter1(df_yyyyMMdd.format(vencimiento_inicio_b));
@@ -336,6 +352,7 @@ public class vwCuentasPagar  {
 		obra_b=null;
 		proveedor_b=null;
 		concepto_b=null;
+		estatus_b=null;
 		if(buscar) {
 			busquedaPrincipal();
 		}
@@ -1194,6 +1211,18 @@ public class vwCuentasPagar  {
 
 	public void setDetalle_e(String detalle_e) {
 		this.detalle_e = detalle_e;
+	}
+
+
+
+	public String getEstatus_b() {
+		return estatus_b;
+	}
+
+
+
+	public void setEstatus_b(String estatus_b) {
+		this.estatus_b = estatus_b;
 	}
 
 
