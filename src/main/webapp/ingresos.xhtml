@@ -127,7 +127,10 @@
 						</p:column>
 						<p:column headerText="Concepto"  styleClass="single-line" style="text-align:left;width:40%;">
 					    		<h:outputText value="#{list.concepto}"/>
-						</p:column> 									
+						</p:column> 
+						<p:column headerText="Estatus"  styleClass="single-line" style="text-align:left;width:5%;">
+					    		<h:outputText value="#{list.estatus}"/>
+						</p:column>									
 						<p:column headerText="Importe"  styleClass="single-line" style="width:10%;text-align:right;">
 					    		<h:outputText value="#{list.importe}">
 					    			<f:convertNumber type="currency"  pattern="$###,##0.00" />
