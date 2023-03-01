@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.2</version>
+		<version>2.6.7</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.idea</groupId>
@@ -27,7 +27,11 @@
 	</repositories>
 	<dependencies>
 		
-
+		<dependency>
+		  <groupId>org.glassfish.web</groupId>
+		  <artifactId>el-impl</artifactId>
+		  <version>2.2</version>
+	     </dependency>
 		
 		<dependency>
 			<groupId>commons-io</groupId>
