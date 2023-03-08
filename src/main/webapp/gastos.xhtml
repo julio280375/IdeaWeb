@@ -229,7 +229,9 @@
 												mode="popup"  popupIconOnly="true" effect="fold"
 												value="#{vwGastos.fecha_e}" maxdate="now()"										
 												pattern="dd/MM/yyyy" 
-												locale="es" />			          			
+												locale="es" />		
+							        	<p:outputLabel value="Factura:" />
+						          		<p:inputText value="#{vwGastos.factura_e}"  readonly="#{!vwGastos.editable}" style="width:153px;"/>					        														          																          			
 					          			<p:outputLabel value="Importe:" />
 					          			<p:inputText value="#{vwGastos.importe_e}" readonly="#{!vwGastos.editable}" style="width:153px;text-align:right;">
 					          				<f:convertNumber type="currency"  pattern="###,##0.00" />
@@ -274,19 +276,19 @@
 		
 									<p:dataTable id="tablaArchivosID" var="list" value="#{vwGastos.listaArchivos}"  style="width:100%;"
 											selectionMode="single" selection="#{vwGastos.archivoSeleccionado}" rowKey="#{list.nombre}" sortBy="#{list.id}" 
-									        paginator="false"  rows="5">
-						           			<p:ajax event="rowSelect"  listener="#{vwGastos.seleccionarElementoArchivo()}" />
+									        paginator="false"  rows="5">						           			
 										<p:column headerText="Archivo"  styleClass="singleLine" style="width:80%;text-align:left;">
 									    		<h:outputText value="#{list.nombre}"/>
 										</p:column>
 										<p:column  headerText="Preview"  styleClass="singleLine" style="width:10%;text-align:center;">																
 											<p:commandButton  id="btnPreview"
+													action="#{vwGastos.accionPreview()}"
 													oncomplete="PF('dialogPDFVar').show()"
 										 			update=":formaID" style="color:#0174DF;width:15px;height:15px;font-size:15px;" 	icon="fa fa-file-pdf-o"  styleClass="rounded-button">						 								 											
 											</p:commandButton>										
 										</p:column>
 										<p:column  headerText="Quitar"  styleClass="singleLine" style="width:10%;text-align:center;">																
-											<p:commandButton  id="btnBorrar" disabled="#{!vwGastos.editable}"
+											<p:commandButton  id="btnBorrar" disabled="#{!vwGastos.editable}"													
 													action="#{vwGastos.eliminaArchivo()}"    
 										 			update=":formaID" style="color:#0174DF;width:15px;height:15px;font-size:15px;" 	icon="fa fa-minus-circle"  styleClass="rounded-button">						 								 											
 											</p:commandButton>																							

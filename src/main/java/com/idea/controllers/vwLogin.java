@@ -164,11 +164,8 @@ public class vwLogin{
 			listaConfiguracion.add(configuracion);
 			body.setListaConfiguracion(listaConfiguracion);
 			configuracion = new Configuracion();
-			configuracion.setConcepto("FOLDER_FACTURAS_GASTOS");
-			configuracion.setValor("/resources/facturas/gastos/");
-			configuracion = new Configuracion();
-			configuracion.setConcepto("FOLDER_ORDENES");
-			configuracion.setValor("/resources/ordenes/");
+			configuracion.setConcepto("RUTA_LOCAL_ARCHIVOS");
+			configuracion.setValor("c:/idea/");
 			listaConfiguracion.add(configuracion);
 			Respuesta resp=tools.ejecutaRespuesta("configuracion/save", header, body, 30);
 			if(resp.getCode()==200) {

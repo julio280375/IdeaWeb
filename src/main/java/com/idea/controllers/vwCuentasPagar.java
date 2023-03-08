@@ -84,8 +84,7 @@ public class vwCuentasPagar  {
 	private Boolean nuevo;
 	private String filtro_anterior;
 	private CuentaPagar registro_guardar;
-	private String carpeta_gastos;
-	private String carpeta_cpagar;
+	private String carpeta_archivos;
 	private String carpeta_trabajo;
 	private List<String>listaCatalogoGastos=new ArrayList<>();
 	private List<Obra>listaObras;
@@ -101,7 +100,6 @@ public class vwCuentasPagar  {
 	
 	private String archivo_e;
 	private List<String> listaArchivosPDF;
-	private String pdf_to_preview;
 	private String pdf_to_show;
 	private Archivo archivoSeleccionado;
 
@@ -161,20 +159,55 @@ public class vwCuentasPagar  {
 	
 
 	
+	public void accionPreview(){
+		
+		String origen=carpeta_archivos+archivoSeleccionado.getNombre();
+		
+		if(Files.exists(Paths.get(origen))) {
+		
+			String destino=System.getProperty("user.dir").replace("\\", "/")+"/src/main/webapp" + carpeta_trabajo + "pdf_to_show.pdf";
+			
+			mueveArchivo(origen, destino);
+			
+			try {
+			    TimeUnit.MILLISECONDS.sleep(500);
+			} catch (InterruptedException ie) {
+			    Thread.currentThread().interrupt();
+			}
+				
+			pdf_to_show=carpeta_trabajo + "pdf_to_show.pdf";
+		}else {
+			
+			pdf_to_show=carpeta_trabajo + "error.pdf";
+			
+			addMessage("Error al mostrar archivo.","El archivo "+origen+" no existe...", FacesMessage.SEVERITY_WARN);
+
+		}
+		
+	}
+	
+	
+	private void mueveArchivo(String source, String target) {
+		try {
+			
+			Files.copy(Paths.get(source), Paths.get(target), StandardCopyOption.REPLACE_EXISTING);
+			
+		} catch (IOException e) {
+			LOG.error("Error en mueveArchivos() "+e.getMessage());
+		}
+	}
+	
+	
+	
 	private void leeConfiguracion() {
 		
 		Configuracion configuracion = header.getConfiguracion().stream().filter(elem->elem.getConcepto().equals("FOLDER_TRABAJO")).findFirst().orElse(null);
 		
 		carpeta_trabajo=configuracion.getValor();
 		
-		configuracion = header.getConfiguracion().stream().filter(elem->elem.getConcepto().equals("FOLDER_CUENTAS_PAGAR")).findFirst().orElse(null);
+		configuracion = header.getConfiguracion().stream().filter(elem->elem.getConcepto().equals("RUTA_LOCAL_ARCHIVOS")).findFirst().orElse(null);
 		
-		carpeta_cpagar=configuracion.getValor();
-		
-		configuracion = header.getConfiguracion().stream().filter(elem->elem.getConcepto().equals("FOLDER_FACTURAS_GASTOS")).findFirst().orElse(null);
-		
-		carpeta_gastos=configuracion.getValor();
-		
+		carpeta_archivos=configuracion.getValor();
 		
 	}
 
@@ -281,15 +314,16 @@ public class vwCuentasPagar  {
 		if(listaPrincipal!=null && listaPrincipal.size()>0) {
 			seleccionado=listaPrincipal.get(0);
 			totalCuentasPagar = listaPrincipal.stream().mapToDouble(elem->elem.getImporte()).sum();
-			listaPrincipal.stream().forEach(elem-> elem.setDiasVencimiento(calculaDiasVencimiento(elem.getVencimiento().getTime())));
-			listaPrincipal.stream().filter(elem -> elem.getDiasVencimiento().equals(0l)).forEach(elem->elem.setEstatus("VENCIDO"));
+			listaPrincipal.stream().forEach(elem-> elem.setDiasVencimiento(calculaDiasVencimiento(elem.getVencimiento().getTime(), elem.getEstatus())));
+			listaPrincipal.stream().filter(elem -> elem.getDiasVencimiento().equals(0l) && !elem.getEstatus().equals("PAGADO")).forEach(elem->elem.setEstatus("VENCIDO"));
 		}
 	    filtro_anterior=body.getFilter();
 		
 		seleccionarElemento();
 	}
 	
-	private Long calculaDiasVencimiento(Long fecha) {
+	private Long calculaDiasVencimiento(Long fecha, String estatus) {
+		if(estatus.equals("PAGADO"))return 0l;
 		Date now = Calendar.getInstance().getTime();
 		Long result = TimeUnit.DAYS.convert(Math.abs(now.getTime() - fecha), TimeUnit.MILLISECONDS);
 		if(now.getTime() > fecha) return 0l;
@@ -352,7 +386,8 @@ public class vwCuentasPagar  {
 		obra_b=null;
 		proveedor_b=null;
 		concepto_b=null;
-		estatus_b=null;
+		estatus_b="PENDIENTE";
+		pdf_to_show=carpeta_trabajo+"error.pdf";
 		if(buscar) {
 			busquedaPrincipal();
 		}
@@ -388,7 +423,7 @@ public class vwCuentasPagar  {
 		registro_guardar.setImporte(importe_e);
 		registro_guardar.setConcepto(concepto_e);
 		registro_guardar.setVencimiento(vencimiento_e);
-		registro_guardar.setDiasVencimiento(calculaDiasVencimiento(vencimiento_e.getTime()));
+		registro_guardar.setDiasVencimiento(calculaDiasVencimiento(vencimiento_e.getTime(), estatus_e));
 		registro_guardar.setFactura(factura_e);
 		registro_guardar.setEstatus(estatus_e);
 		registro_guardar.setTipo_factura(tipo_factura_e);
@@ -459,18 +494,10 @@ public class vwCuentasPagar  {
 	public void descargaListaPDF() {
 		Body body = new Body();
 		body.setFilter("CUENTAS_PAGAR_PDF_DISPONIBLES");	
-		String pathArchivos=System.getProperty("user.dir").replace("\\", "/")+"/src/main/webapp";
-		body.setFilter1(pathArchivos+carpeta_cpagar);
+		body.setFilter1(carpeta_archivos);
 		listaArchivosPDF=tools.listadoString("tools/stringList", header, body, 30);
 	}
 	
-	
-	public void seleccionarElementoArchivo(){
-		pdf_to_show=carpeta_trabajo+"error.pdf";
-		if(archivoSeleccionado!=null ){
-			pdf_to_show=carpeta_cpagar+archivoSeleccionado.getNombre();
-		}
-	}
 	
 
 	
@@ -495,7 +522,6 @@ public class vwCuentasPagar  {
 		if(listaArchivos!=null && listaArchivos.size()>0) {
 			archivoSeleccionado=listaArchivos.get(0);
 		}
-		seleccionarElementoArchivo();
 	}
 	
 	
@@ -510,8 +536,7 @@ public class vwCuentasPagar  {
 			listaArchivos.add(archivo);
 			listaArchivosPDF.remove(archivo.getNombre());
 			archivoSeleccionado=archivo;
-			
-			seleccionarElementoArchivo();
+
 		}
 	}
 		
@@ -624,11 +649,6 @@ public class vwCuentasPagar  {
 			
 				actualizaArchivosGasto(gasto);
 				
-				if(listaArchivos!=null && listaArchivos.size()>0) {
-					for(Archivo archivo:listaArchivos) {
-						mueveArchivo(carpeta_cpagar+archivo.getNombre(), carpeta_gastos+archivo.getNombre());
-					}
-				}
 				addMessage("Registros guardados correctamente.","Se guardó la información del elemento.",FacesMessage.SEVERITY_INFO);		
 				
 				inicializaFiltros(true);
@@ -642,15 +662,6 @@ public class vwCuentasPagar  {
 	}
 	
 	
-	private void mueveArchivo(String source, String target) {
-		try {
-			String pathArchivos=System.getProperty("user.dir").replace("\\", "/")+"/src/main/webapp";
-			Files.move(Paths.get(pathArchivos+source), Paths.get(pathArchivos+target), StandardCopyOption.REPLACE_EXISTING);
-			LOG.info("Archivo "+source+" movido a "+target);
-		} catch (IOException e) {
-			LOG.error("Error en mueveArchivos() "+e.getMessage());
-		}
-	}
 	
 	private void actualizaArchivosGasto(Gasto gasto) {
 		if(listaArchivos!=null && listaArchivos.size()>0) {
@@ -693,7 +704,8 @@ public class vwCuentasPagar  {
 		//result="IMPORTE";
 		//if (importe_e==null || importe_e<=0d) return result;
 		result="ESTATUS";
-		if (estatus_e.equals("PAGADO") && nuevo) return result;
+		if ((estatus_e==null)||(estatus_e.equals("PAGADO") && nuevo)) return result;
+
 		return "";
 	}
 	
@@ -1059,20 +1071,6 @@ public class vwCuentasPagar  {
 	public void setListaArchivosPDF(List<String> listaArchivosPDF) {
 		this.listaArchivosPDF = listaArchivosPDF;
 	}
-
-
-
-	public String getPdf_to_preview() {
-		return pdf_to_preview;
-	}
-
-
-
-	public void setPdf_to_preview(String pdf_to_preview) {
-		this.pdf_to_preview = pdf_to_preview;
-	}
-
-
 
 	public Double getImporte_e() {
 		return importe_e;

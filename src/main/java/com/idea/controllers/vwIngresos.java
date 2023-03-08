@@ -2,40 +2,28 @@ package com.idea.controllers;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.application.FacesMessage.Severity;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
-import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import org.primefaces.PrimeFaces;
-import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.charts.ChartData;
-import org.primefaces.model.charts.ChartOptions;
-import org.primefaces.model.charts.donut.DonutChartDataSet;
-import org.primefaces.model.charts.donut.DonutChartModel;
-import org.primefaces.model.charts.donut.DonutChartOptions;
-import org.primefaces.model.charts.optionconfig.legend.Legend;
-import org.primefaces.model.file.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -43,26 +31,17 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.idea.Tools;
 import com.idea.objects.business.Archivo;
-import com.idea.objects.business.Gasto;
 import com.idea.objects.business.Ingreso;
 import com.idea.objects.business.Obra;
-import com.idea.objects.business.Orden;
-import com.idea.objects.business.Proveedor;
 import com.idea.objects.system.Body;
 import com.idea.objects.system.Configuracion;
-import com.idea.objects.system.Empleado;
 import com.idea.objects.system.Header;
 import com.idea.objects.system.Respuesta;
-import com.opencsv.CSVWriter;
-import com.opencsv.bean.StatefulBeanToCsv;
-import com.opencsv.bean.StatefulBeanToCsvBuilder;
 
 
 @SuppressWarnings("deprecation")
 @Component
 @ManagedBean(name = "vwIngresos")
-@SessionScoped
-@RequestScoped
 public class vwIngresos  {
 
 	transient HttpSession session;
@@ -78,7 +57,7 @@ public class vwIngresos  {
 	private Boolean nuevo;
 	private String filtro_anterior;
 	private Ingreso registro_guardar;
-	private String carpeta_ingresos;
+	private String carpeta_archivos;
 	private String carpeta_trabajo;
 	private List<String>listaCatalogoIngresos=new ArrayList<>();
 	private List<Obra>listaObras;
@@ -88,8 +67,7 @@ public class vwIngresos  {
 	private Tools tools =new Tools();
 
 	private String archivo_e;
-	private List<String> listaArchivosPDF;
-	private String pdf_to_preview;
+	private List<String> listaArchivosCombo;
 	private String pdf_to_show;
 	private Archivo archivoSeleccionado;
 
@@ -98,6 +76,7 @@ public class vwIngresos  {
 	private Date fecha_final_b;
 	private String obra_b;
 	private String concepto_b;
+	
 	//Editar
 	private Date fecha_e;
 	private String concepto_e;
@@ -108,6 +87,8 @@ public class vwIngresos  {
 
 
 	
+	
+	 
 	
 
 	public void iniciaVista() {
@@ -128,14 +109,62 @@ public class vwIngresos  {
 		leeConfiguracion();
 		
 		filtro_anterior="";			
-				
+		
 		descargaCatalogos();
 		
 		inicializaFiltros(true);
 		
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public void accionPreview(){
+		
+		String origen=carpeta_archivos+archivoSeleccionado.getNombre();
+		
+		if(Files.exists(Paths.get(origen))) {
+		
+			String destino=System.getProperty("user.dir").replace("\\", "/")+"/src/main/webapp" + carpeta_trabajo + "pdf_to_show.pdf";
+			
+			mueveArchivo(origen, destino);
+			
+			try {
+			    TimeUnit.MILLISECONDS.sleep(500);
+			} catch (InterruptedException ie) {
+			    Thread.currentThread().interrupt();
+			}
+				
+			pdf_to_show=carpeta_trabajo + "pdf_to_show.pdf";
+		}else {
+			
+			pdf_to_show=carpeta_trabajo + "error.pdf";
+			
+			addMessage("Error al mostrar archivo.","El archivo "+origen+" no existe...", FacesMessage.SEVERITY_WARN);
 
+		}
+		
+	}
+
+	
+	private void mueveArchivo(String source, String target) {
+		try {
+			
+			Files.copy(Paths.get(source), Paths.get(target), StandardCopyOption.REPLACE_EXISTING);
+			
+		} catch (IOException e) {
+			LOG.error("Error en mueveArchivos() "+e.getMessage());
+		}
+	}
+	
+	
 	
 	private void leeConfiguracion() {
 		
@@ -143,9 +172,9 @@ public class vwIngresos  {
 		
 		carpeta_trabajo=configuracion.getValor();
 		
-		configuracion = header.getConfiguracion().stream().filter(elem->elem.getConcepto().equals("FOLDER_FACTURAS_INGRESOS")).findFirst().orElse(null);
+		configuracion = header.getConfiguracion().stream().filter(elem->elem.getConcepto().equals("RUTA_LOCAL_ARCHIVOS")).findFirst().orElse(null);
 		
-		carpeta_ingresos=configuracion.getValor();
+		carpeta_archivos=configuracion.getValor();
 		
 		
 	}
@@ -225,7 +254,7 @@ public class vwIngresos  {
 	
 	
 	
-public void seleccionarElemento(){
+	public void seleccionarElemento(){
 		
 		editable=false;
 		nuevo=false;
@@ -254,34 +283,35 @@ public void seleccionarElemento(){
 	}
 	
 	
+		
 	
-
-public void inicializaFiltros(Boolean buscar){
-
-	obra_b=null;
-	concepto_b=null;
-	fecha_inicio_b = null;
-	fecha_final_b = null;
-	if(buscar) {
-		busquedaPrincipal();
+	public void inicializaFiltros(Boolean buscar){
+	
+		obra_b=null;
+		concepto_b=null;
+		fecha_inicio_b = null;
+		fecha_final_b = null;
+		pdf_to_show=carpeta_trabajo + "error.pdf";
+		if(buscar) {
+			busquedaPrincipal();
+		}
 	}
-}
-
-
-public void inicializaCapturar(){
-	concepto_e="";
-	fecha_e = Calendar.getInstance().getTime();
-	importe_e=0d;
-	factura_e="";
-	detalle_e="";
-	archivo_e="";
-	pdf_to_show=carpeta_trabajo+"error.pdf";
-	obra_e = "";
 	
-	listaArchivos= new ArrayList<Archivo>();
-}
-
-
+	
+	public void inicializaCapturar(){
+		concepto_e="";
+		fecha_e = Calendar.getInstance().getTime();
+		importe_e=0d;
+		factura_e="";
+		detalle_e="";
+		archivo_e="";
+		pdf_to_show=carpeta_trabajo+"error.pdf";
+		obra_e = "";
+		
+		listaArchivos= new ArrayList<Archivo>();
+	}
+	
+	
 
 	private void asignaValoresRegistro() {
 		
@@ -300,20 +330,14 @@ public void inicializaCapturar(){
 
 	
 	
-	public void seleccionarElementoArchivo(){
-		pdf_to_show=carpeta_trabajo+"error.pdf";
-		if(archivoSeleccionado!=null ){
-			pdf_to_show=carpeta_ingresos+archivoSeleccionado.getNombre();
-		}
-	}
+	
 
 	
 	public void descargaListaPDF() {
 		Body body = new Body();
 		body.setFilter("INGRESOS_PDF_DISPONIBLES");	
-		String pathArchivos=System.getProperty("user.dir").replace("\\", "/")+"/src/main/webapp";
-		body.setFilter1(pathArchivos+carpeta_ingresos);
-		listaArchivosPDF=tools.listadoString("tools/stringList", header, body, 30);
+		body.setFilter1(carpeta_archivos);
+		listaArchivosCombo=tools.listadoString("tools/stringList", header, body, 30);
 	}
 	
 	
@@ -329,7 +353,7 @@ public void inicializaCapturar(){
 		if(resp!=null && resp.getCode()==200) {
 			listaArchivos.remove(archivoSeleccionado);
 			
-			listaArchivosPDF.add(archivoSeleccionado.getNombre());
+			listaArchivosCombo.add(archivoSeleccionado.getNombre());
 		}
 	}
 	
@@ -343,8 +367,6 @@ public void inicializaCapturar(){
 		if(listaArchivos!=null && listaArchivos.size()>0) {
 			archivoSeleccionado=listaArchivos.get(0);
 		}
-		
-		seleccionarElementoArchivo();
 	}
 	
 	
@@ -357,10 +379,8 @@ public void inicializaCapturar(){
 				listaArchivos=new ArrayList<>();
 			}
 			listaArchivos.add(archivo);
-			listaArchivosPDF.remove(archivo.getNombre());	
+			listaArchivosCombo.remove(archivo.getNombre());	
 			archivoSeleccionado=archivo;
-			
-			seleccionarElementoArchivo();
 		}
 	}
 	
@@ -378,8 +398,8 @@ public void inicializaCapturar(){
 	
 	public void accionModificar(){			
 		
-		if( listaArchivosPDF==null ) {
-			listaArchivosPDF= new ArrayList<String>();
+		if( listaArchivosCombo==null ) {
+			listaArchivosCombo= new ArrayList<String>();
 		}
 		
 		editable=true;		
@@ -658,9 +678,6 @@ public void inicializaCapturar(){
 	}
 
 
-	public List<String> getListaArchivosPDF() {
-		return listaArchivosPDF;
-	}
 
 
 
@@ -668,21 +685,6 @@ public void inicializaCapturar(){
 
 
 
-	public void setListaArchivosPDF(List<String> listaArchivosPDF) {
-		this.listaArchivosPDF = listaArchivosPDF;
-	}
-
-
-
-	public String getPdf_to_preview() {
-		return pdf_to_preview;
-	}
-
-
-
-	public void setPdf_to_preview(String pdf_to_preview) {
-		this.pdf_to_preview = pdf_to_preview;
-	}
 
 
 
@@ -811,6 +813,33 @@ public void inicializaCapturar(){
 		this.fecha_final_b = fecha_final_b;
 	}
 
+
+
+
+
+
+
+
+
+
+
+	public List<String> getListaArchivosCombo() {
+		return listaArchivosCombo;
+	}
+
+
+
+
+
+
+
+
+
+
+
+	public void setListaArchivosCombo(List<String> listaArchivosCombo) {
+		this.listaArchivosCombo = listaArchivosCombo;
+	}
 
 
 }
