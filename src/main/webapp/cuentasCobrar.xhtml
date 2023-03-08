@@ -241,13 +241,13 @@
 		
 									<p:dataTable id="tablaArchivosID" var="list" value="#{vwCuentasCobrar.listaArchivos}"  style="width:100%;"
 											selectionMode="single" selection="#{vwCuentasCobrar.archivoSeleccionado}" rowKey="#{list.nombre}" sortBy="#{list.id}" 
-									        paginator="false"  rows="5">
-						           			<p:ajax event="rowSelect"  listener="#{vwCuentasCobrar.seleccionarElementoArchivo()}" />
+									        paginator="false"  rows="5">						           			
 										<p:column headerText="Archivo"  styleClass="singleLine" style="width:80%;text-align:left;">
 									    		<h:outputText value="#{list.nombre}"/>
 										</p:column>
 										<p:column  headerText="PDF"  styleClass="singleLine" style="width:10%;text-align:center;">																
 											<p:commandButton  id="btnPreview"
+													action="#{vwCuentasCobrar.accionPreview()}"
 													oncomplete="PF('dialogPDFVar').show()"
 										 			update=":formaID" style="color:#0174DF;width:15px;height:15px;font-size:15px;" 	icon="fa fa-file-pdf-o"  styleClass="rounded-button">						 								 											
 											</p:commandButton>										
@@ -275,7 +275,7 @@
 							style="width:150px;height:30px;" icon="fa fa-plus-circle" />
 						<p:commandButton value="Modificar"
 							action="#{vwCuentasCobrar.accionModificar()}"
-							disabled="#{vwCuentasCobrar.editable}" 	
+							disabled="#{vwCuentasCobrar.editable or vwCuentasCobrar.seleccionado.estatus=='PAGADO'}" 	
 							update=":formaID:capturaID" 
 							styleClass="button-texto-icono"
 							style="width:150px;height:30px;" icon="fa fa-pencil-square" />

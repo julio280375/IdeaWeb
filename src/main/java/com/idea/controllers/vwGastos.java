@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -16,6 +17,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
@@ -72,7 +74,7 @@ public class vwGastos implements Serializable  {
 	private Boolean nuevo;
 	private String filtro_anterior;
 	private Gasto registro_guardar;
-	private String carpeta_gastos;
+	private String carpeta_archivos;
 	private String carpeta_trabajo;
 	private List<String>listaCatalogoGastos=new ArrayList<>();
 	private List<Obra>listaObras;
@@ -97,7 +99,6 @@ public class vwGastos implements Serializable  {
 	
 	private String archivo_e;
 	private List<String> listaArchivosCombo;
-	private String pdf_to_preview;
 	private String pdf_to_show;
 	private Archivo archivoSeleccionado;
 
@@ -114,15 +115,13 @@ public class vwGastos implements Serializable  {
 	private Date fecha_e;
 	private String tipo_e;
 	private String concepto_e;
+	private String factura_e;
 	private Double importe_e;
-
 	private String detalle_e;
-	
 	private String proveedor_e;
 	private String obra_e;
 	private String solicito_e;
 	private String autorizo_e;
-	
 	private Integer orden_id_e;
 	private String orden_tipo_e;
 
@@ -159,6 +158,52 @@ public class vwGastos implements Serializable  {
 		//fileDOWN=downloadReviewReportStreamed();
 
 	}
+	
+	
+	
+	
+	public void accionPreview(){
+		
+		String origen=carpeta_archivos+archivoSeleccionado.getNombre();
+		
+		if(Files.exists(Paths.get(origen))) {
+		
+			String destino=System.getProperty("user.dir").replace("\\", "/")+"/src/main/webapp" + carpeta_trabajo + "pdf_to_show.pdf";
+			
+			mueveArchivo(origen, destino);
+			
+			try {
+			    TimeUnit.MILLISECONDS.sleep(500);
+			} catch (InterruptedException ie) {
+			    Thread.currentThread().interrupt();
+			}
+				
+			pdf_to_show=carpeta_trabajo + "pdf_to_show.pdf";
+		}else {
+			
+			pdf_to_show=carpeta_trabajo + "error.pdf";
+			
+			addMessage("Error al mostrar archivo.","El archivo "+origen+" no existe...", FacesMessage.SEVERITY_WARN);
+
+		}
+		
+	}
+
+	
+	private void mueveArchivo(String source, String target) {
+		try {
+			
+			Files.copy(Paths.get(source), Paths.get(target), StandardCopyOption.REPLACE_EXISTING);
+			
+		} catch (IOException e) {
+			LOG.error("Error en mueveArchivos() "+e.getMessage());
+		}
+	}
+	
+	
+	
+	
+	
 	
 
 	public DefaultStreamedContent  downloadReviewReportStreamed() {
@@ -274,10 +319,10 @@ public class vwGastos implements Serializable  {
 		
 		carpeta_trabajo=configuracion.getValor();
 		
-		configuracion = header.getConfiguracion().stream().filter(elem->elem.getConcepto().equals("FOLDER_FACTURAS_GASTOS")).findFirst().orElse(null);
+		configuracion = header.getConfiguracion().stream().filter(elem->elem.getConcepto().equals("RUTA_LOCAL_ARCHIVOS")).findFirst().orElse(null);
 		
-		carpeta_gastos=configuracion.getValor();
-		
+		carpeta_archivos=configuracion.getValor();
+	
 
 	}
 
@@ -401,6 +446,7 @@ public class vwGastos implements Serializable  {
 			importe_e=seleccionado.getImporte();
 			concepto_e=seleccionado.getConcepto();
 			detalle_e=seleccionado.getDetalle();
+			factura_e=seleccionado.getFactura();
 			obra_e=null;
 			if(seleccionado.getObra()!=null) {
 				obra_e=seleccionado.getObra().getNombre();
@@ -427,8 +473,6 @@ public class vwGastos implements Serializable  {
 			}
 			
 			descargaListaArchivos();
-
-			//preparaPreviewPDF();			
 			
 		}		
 	}
@@ -443,6 +487,7 @@ public class vwGastos implements Serializable  {
 		obra_b=null;
 		proveedor_b=null;
 		concepto_b=null;
+		pdf_to_show=carpeta_trabajo + "error.pdf";
 		if(buscar) {
 			busquedaPrincipal();
 		}
@@ -456,6 +501,7 @@ public class vwGastos implements Serializable  {
 		importe_e=0d;
 		detalle_e="";
 		archivo_e="";
+		factura_e="";
 		pdf_to_show=carpeta_trabajo+"error.pdf";
 		obra_e = "";
 		proveedor_e="";
@@ -478,6 +524,7 @@ public class vwGastos implements Serializable  {
 		registro_guardar.setImporte(importe_e);
 		registro_guardar.setConcepto(concepto_e);
 		registro_guardar.setDetalle(detalle_e);
+		registro_guardar.setFactura(factura_e);
 		registro_guardar.setTipo_factura("CONTADO");
 		registro_guardar.setObra(null);
 		if(obra_e!=null && !obra_e.equals("")) {
@@ -505,28 +552,12 @@ public class vwGastos implements Serializable  {
 
 	
 	
-	public void seleccionarElementoArchivo(){
-		pdf_to_show=carpeta_trabajo+"error.pdf";
-		if(archivoSeleccionado!=null ){
-			pdf_to_show=carpeta_gastos+archivoSeleccionado.getNombre();
-		}
-	}
-
 	
-	
-	/*
-	public void preparaPreviewPDF() {
-		pdf_to_preview=carpeta_trabajo+"error.pdf";
-		if(archivo_e!=null && !archivo_e.equals("")){
-			pdf_to_preview=carpeta_gastos+archivo_e;
-		}
-	}*/
 	
 	public void descargaListaPDF() {
 		Body body = new Body();
 		body.setFilter("GASTOS_PDF_DISPONIBLES");	
-		String pathArchivos=System.getProperty("user.dir").replace("\\", "/")+"/src/main/webapp";
-		body.setFilter1(pathArchivos+carpeta_gastos);
+		body.setFilter1(carpeta_archivos);
 		listaArchivosCombo=tools.listadoString("tools/stringList", header, body, 30);
 	}
 	
@@ -557,8 +588,6 @@ public class vwGastos implements Serializable  {
 		if(listaArchivos!=null && listaArchivos.size()>0) {
 			archivoSeleccionado=listaArchivos.get(0);
 		}
-		
-		seleccionarElementoArchivo();
 	}
 	
 	
@@ -573,8 +602,6 @@ public class vwGastos implements Serializable  {
 			listaArchivos.add(archivo);
 			listaArchivosCombo.remove(archivo.getNombre());	
 			archivoSeleccionado=archivo;
-			
-			seleccionarElementoArchivo();
 		}
 	}
 	
@@ -1270,19 +1297,6 @@ public class vwGastos implements Serializable  {
 	}
 
 
-
-	public String getPdf_to_preview() {
-		return pdf_to_preview;
-	}
-
-
-
-	public void setPdf_to_preview(String pdf_to_preview) {
-		this.pdf_to_preview = pdf_to_preview;
-	}
-
-
-
 	public Double getImporte_e() {
 		return importe_e;
 	}
@@ -1402,6 +1416,34 @@ public class vwGastos implements Serializable  {
 
 	public void setListaArchivosCombo(List<String> listaArchivosCombo) {
 		this.listaArchivosCombo = listaArchivosCombo;
+	}
+
+
+
+
+	public String getCarpeta_archivos() {
+		return carpeta_archivos;
+	}
+
+
+
+
+	public void setCarpeta_archivos(String carpeta_archivos) {
+		this.carpeta_archivos = carpeta_archivos;
+	}
+
+
+
+
+	public String getFactura_e() {
+		return factura_e;
+	}
+
+
+
+
+	public void setFactura_e(String factura_e) {
+		this.factura_e = factura_e;
 	}
 
 

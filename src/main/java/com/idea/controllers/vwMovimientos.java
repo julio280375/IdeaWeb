@@ -57,7 +57,8 @@ public class vwMovimientos  {
 	private List<String> listaArchivos;
 	private String banco;
 	private String archivo;
-	private String carpeta_movimientos;
+	private String carpeta_archivos;
+	private String carpeta_trabajo;
 	private Tools tools =new Tools();
 	private List<MovimientoBanorteExcel>listaGastosBanorte;
 	private List<MovimientoBanorteExcel>listaIngresosBanorte;
@@ -93,7 +94,7 @@ public class vwMovimientos  {
 	private void descargaListaArchivos() {
 		Body body = new Body();
 		body.setFilter("ARCHIVOS_MOVIMIENTOS");	
-		body.setFilter1(carpeta_movimientos);
+		body.setFilter1(carpeta_archivos);
 		listaArchivos=tools.listadoString("tools/stringList", header, body, 30);
 	}
 	
@@ -102,7 +103,7 @@ public class vwMovimientos  {
 		Boolean archivoLeido=false;
 		switch(banco) {
 		case "BANORTE":
-			archivoLeido=readFileBanorte(carpeta_movimientos+archivo);
+			archivoLeido=readFileBanorte(carpeta_archivos+archivo);
 			break;
 		}
 		if (!archivoLeido) {
@@ -115,23 +116,19 @@ public class vwMovimientos  {
 	public void limpiaListaMovimientos(){		
 		listaIngresosBanorte= new ArrayList<>();
 		listaGastosBanorte= new ArrayList<>();
+		totalGastos=0d;
+		totalIngresos=0d;
 	}
 	
 	
 	
-	public void importaGastos(){		
+	public void importaMovimientos(){		
 
 		switch(banco) {
-			case "BANORTE" : EnviaGastosBanorte();								
-			break;
-		}
-
-	}	
-	
-	public void importaIngresos(){		
-
-		switch(banco) {
-			case "BANORTE" : EnviaIngresosBanorte();								
+			case "BANORTE" : 
+				EnviaGastosBanorte();	
+				
+				EnviaIngresosBanorte();
 			break;
 		}
 
@@ -139,7 +136,9 @@ public class vwMovimientos  {
 	
 	
 	
-public void EnviaGastosBanorte() {
+	
+	
+	public void EnviaGastosBanorte() {
 		
 		if(listaGastosBanorte.size()>0) {
 			List<MovimientoBanorteExcel> listaMovimientosExcel = new ArrayList<>();
@@ -281,16 +280,21 @@ public void EnviaGastosBanorte() {
 	
 	
 	
-	
 	private void leeConfiguracion() {
 		
-		Configuracion configuracion = header.getConfiguracion().stream().filter(elem->elem.getConcepto().equals("FOLDER_MOVIMIENTOS_BANCO")).findFirst().orElse(null);
+		Configuracion configuracion = header.getConfiguracion().stream().filter(elem->elem.getConcepto().equals("FOLDER_TRABAJO")).findFirst().orElse(null);
 		
-		String valor =configuracion.getValor();
+		carpeta_trabajo=configuracion.getValor();
 		
-		carpeta_movimientos=System.getProperty("user.dir").replace("\\", "/")+"/src/main/webapp"+valor;
+		configuracion = header.getConfiguracion().stream().filter(elem->elem.getConcepto().equals("RUTA_LOCAL_ARCHIVOS")).findFirst().orElse(null);
 		
+		carpeta_archivos=configuracion.getValor();
+	
+
 	}
+	
+	
+
 	
 	
 	
@@ -447,6 +451,30 @@ public void EnviaGastosBanorte() {
 
 	public void setGastoBanorteSeleccionado(MovimientoBanorteExcel gastoBanorteSeleccionado) {
 		this.gastoBanorteSeleccionado = gastoBanorteSeleccionado;
+	}
+
+
+
+	public String getCarpeta_archivos() {
+		return carpeta_archivos;
+	}
+
+
+
+	public void setCarpeta_archivos(String carpeta_archivos) {
+		this.carpeta_archivos = carpeta_archivos;
+	}
+
+
+
+	public String getCarpeta_trabajo() {
+		return carpeta_trabajo;
+	}
+
+
+
+	public void setCarpeta_trabajo(String carpeta_trabajo) {
+		this.carpeta_trabajo = carpeta_trabajo;
 	}
 
 

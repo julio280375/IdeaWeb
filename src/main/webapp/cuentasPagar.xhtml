@@ -235,17 +235,17 @@
 							        </p:selectOneMenu>	
 					        	</h:panelGrid> 
 					        	<h:panelGrid  columns="2" style="text-align:left;" styleClass="panelgrid-dotted-border" >
-				        			<p:outputLabel value="Factura:" />
-						        	<p:inputText value="#{vwCuentasPagar.factura_e}"  readonly="#{!vwCuentasPagar.editable}" style="width:153px;"/>         			
-				          			<p:outputLabel value="Fecha:"  />	
-					        	 	<p:inputText value="#{vwCuentasPagar.fecha_e}" rendered="#{!vwCuentasPagar.editable}" style="width:153px;" readonly="true">
+					        		<p:outputLabel value="Fecha:"  />
+					        		<p:inputText value="#{vwCuentasPagar.fecha_e}" rendered="#{!vwCuentasPagar.editable}" style="width:153px;" readonly="true">
 								    			<f:convertDateTime type="date" pattern="dd/MMM/yyyy"  locale="es" />
 			      					</p:inputText>	
 			      					<p:calendar  placeholder="Sin Fecha..." rendered="#{vwCuentasPagar.editable}" 
 											mode="popup"  popupIconOnly="true" effect="fold"
 											value="#{vwCuentasPagar.fecha_e}" maxdate="now()"										
 											pattern="dd/MM/yyyy" 
-											locale="es" />			      								          			
+											locale="es" />
+				        			<p:outputLabel value="Factura:" />
+						        	<p:inputText value="#{vwCuentasPagar.factura_e}"  readonly="#{!vwCuentasPagar.editable}" style="width:153px;"/>         							          									        	 				      								          			
 				          			<p:outputLabel value="Importe:" />
 				          			<p:inputText value="#{vwCuentasPagar.importe_e}" readonly="#{!vwCuentasPagar.editable}" style="width:153px;text-align:right;">
 				          				<f:convertNumber type="currency"  pattern="###,##0.00" />
@@ -294,12 +294,12 @@
 									<p:dataTable id="tablaArchivosID" var="list" value="#{vwCuentasPagar.listaArchivos}"  style="width:100%;"
 											selectionMode="single" selection="#{vwCuentasPagar.archivoSeleccionado}" rowKey="#{list.nombre}" sortBy="#{list.id}" 
 									        paginator="false"  rows="5">
-						           			<p:ajax event="rowSelect"  listener="#{vwCuentasPagar.seleccionarElementoArchivo()}" />
 										<p:column headerText="Archivo"  styleClass="singleLine" style="width:80%;text-align:left;">
 									    		<h:outputText value="#{list.nombre}"/>
 										</p:column>
 										<p:column  headerText="PDF"  styleClass="singleLine" style="width:10%;text-align:center;">																
 											<p:commandButton  id="btnPreview"
+													action="#{vwCuentasPagar.accionPreview()}"
 													oncomplete="PF('dialogPDFVar').show()"
 										 			update=":formaID" style="color:#0174DF;width:15px;height:15px;font-size:15px;" 	icon="fa fa-file-pdf-o"  styleClass="rounded-button">						 								 											
 											</p:commandButton>										

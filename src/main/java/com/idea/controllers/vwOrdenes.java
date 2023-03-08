@@ -67,7 +67,7 @@ public class vwOrdenes  {
 	private Boolean nuevo;
 	private String filtro_anterior;
 	private Orden registro_guardar;
-	private String carpeta_ordenes;
+	private String carpeta_archivos;
 	private String carpeta_trabajo;
 	private List<String>listaCatalogoGastos=new ArrayList<>();
 	private List<Obra>listaObras;
@@ -158,7 +158,7 @@ public class vwOrdenes  {
 			archivo_e=seleccionado.getArchivo(); 
 			pdf_to_show=carpeta_trabajo+"error.pdf";
 			if(archivo_e!=null && !archivo_e.equals("")){
-				pdf_to_show=carpeta_ordenes+archivo_e;
+				pdf_to_show=carpeta_archivos+archivo_e;
 			}
 		}		
 	}
@@ -298,7 +298,7 @@ public class vwOrdenes  {
 		Body body = new Body();
 		body.setFilter("ORDENES_PDF_DISPONIBLES");	
 		String pathArchivos=System.getProperty("user.dir").replace("\\", "/")+"/src/main/webapp";
-		body.setFilter1(pathArchivos+carpeta_ordenes);
+		body.setFilter1(pathArchivos+carpeta_archivos);
 		listaArchivosPDF=tools.listadoString("tools/stringList", header, body, 30);
 	}
 	
@@ -359,16 +359,21 @@ public class vwOrdenes  {
 	
 	
 	
+	
 	private void leeConfiguracion() {
-
-		Configuracion configuracion = header.getConfiguracion().stream().filter(elem->elem.getConcepto().equals("FOLDER_ORDENES")).findFirst().orElse(null);
 		
-		carpeta_ordenes=configuracion.getValor();
-		
-		configuracion = header.getConfiguracion().stream().filter(elem->elem.getConcepto().equals("FOLDER_TRABAJO")).findFirst().orElse(null);
+		Configuracion configuracion = header.getConfiguracion().stream().filter(elem->elem.getConcepto().equals("FOLDER_TRABAJO")).findFirst().orElse(null);
 		
 		carpeta_trabajo=configuracion.getValor();
+		
+		configuracion = header.getConfiguracion().stream().filter(elem->elem.getConcepto().equals("RUTA_LOCAL_ARCHIVOS")).findFirst().orElse(null);
+		
+		carpeta_archivos=configuracion.getValor();
+	
+
 	}
+	
+
 	
 	
 	private void descargaCatalogos() {
