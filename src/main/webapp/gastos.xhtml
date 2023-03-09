@@ -114,7 +114,7 @@
 						
 				        
 				        
-						<p:column headerText="ID"  sortBy="#{list.id}"  styleClass="singleLine" style="width:4%;text-align:center;">
+						<p:column headerText="ID"  sortBy="#{list.id}"  styleClass="single-line" style="width:4%;text-align:center;">
 					    		<h:outputText value="#{list.id}"/>
 						</p:column>		           						
 						<p:column headerText="Movimiento"  styleClass="single-line" style="width:7%;text-align:center;">
@@ -277,17 +277,17 @@
 									<p:dataTable id="tablaArchivosID" var="list" value="#{vwGastos.listaArchivos}"  style="width:100%;"
 											selectionMode="single" selection="#{vwGastos.archivoSeleccionado}" rowKey="#{list.nombre}" sortBy="#{list.id}" 
 									        paginator="false"  rows="5">						           			
-										<p:column headerText="Archivo"  styleClass="singleLine" style="width:80%;text-align:left;">
+										<p:column headerText="Archivo"  styleClass="single-line" style="width:80%;text-align:left;">
 									    		<h:outputText value="#{list.nombre}"/>
 										</p:column>
-										<p:column  headerText="Preview"  styleClass="singleLine" style="width:10%;text-align:center;">																
+										<p:column  headerText="Preview"  styleClass="single-line" style="width:10%;text-align:center;">																
 											<p:commandButton  id="btnPreview"
 													action="#{vwGastos.accionPreview()}"
 													oncomplete="PF('dialogPDFVar').show()"
 										 			update=":formaID" style="color:#0174DF;width:15px;height:15px;font-size:15px;" 	icon="fa fa-file-pdf-o"  styleClass="rounded-button">						 								 											
 											</p:commandButton>										
 										</p:column>
-										<p:column  headerText="Quitar"  styleClass="singleLine" style="width:10%;text-align:center;">																
+										<p:column  headerText="Quitar"  styleClass="single-line" style="width:10%;text-align:center;">																
 											<p:commandButton  id="btnBorrar" disabled="#{!vwGastos.editable}"													
 													action="#{vwGastos.eliminaArchivo()}"    
 										 			update=":formaID" style="color:#0174DF;width:15px;height:15px;font-size:15px;" 	icon="fa fa-minus-circle"  styleClass="rounded-button">						 								 											
@@ -324,9 +324,7 @@
 							disabled="#{!vwGastos.editable}"				
 							style="width:150px;height:30px;" icon="fa fa-floppy-o" />						
 				</h:panelGrid>
-				
 			</h:panelGrid>
-			
 		</h:panelGrid>
 		
 		<p:dialog  modal="true" widgetVar="statusDialog" header="Procesando..." draggable="false" closable="false" resizable="false">
@@ -336,25 +334,51 @@
 		</p:dialog>
 		
 		<p:dialog id="dialogResumen" widgetVar="dialogResumenVar" header="Resumen de Gastos"  modal="true" closable="true"  resizable="false" width="auto" height="auto" >		                 
-			 <h:panelGrid  columns="1" styleClass="panelgrid-dotted-border">
-				 <h:panelGrid  columns="3" styleClass="panelgrid-dotted-border">
-	  				<h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">	
-	  					<p:outputLabel value="PROVEEDOR" style="font-size:15px;font-weight:bold;color:#585858;"/>
-	            		<p:donutChart model="#{vwGastos.donutModelProveedores}"  style="width:200px; height:200px;"/>
+			 <h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border"> 	
+				 <h:panelGrid  columns="2" styleClass="panelgrid-dotted-border">	
+	  				<h:panelGrid  columns="1" style="text-align:center;width:400px;" styleClass="panelgrid-dotted-border">		  					
+							<p:dataTable  var="list" value="#{vwGastos.listaResumenProveedor}"  scrollable="true" scrollHeight="150"
+										sortBy="#{list.importe}" sortOrder="descending" paginator="false" >			
+								<p:column headerText="Proveedor" sortBy="#{list.concepto}" styleClass="single-line"  style="width:10%;text-align:left;" >
+							    		<h:outputText value="#{list.concepto}"/>
+								</p:column>
+								<p:column headerText="Importe" sortBy="#{list.importe}" styleClass="single-line" style="width:5%;text-align:right;">
+							    		<h:outputText value="#{list.importe}">
+							    			<f:convertNumber type="currency"  pattern="$###,##0.00" />
+							    		</h:outputText>
+								</p:column> 																														 			 
+							</p:dataTable>
 	            	</h:panelGrid>
-	            	<h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">	
-	  					<p:outputLabel value="OBRA/PROYECTO" style="font-size:15px;font-weight:bold;color:#585858;"/>
+	            	<h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">
+	            		<p:outputLabel value="PROVEEDOR" style="font-size:15px;font-weight:bold;color:#585858;"/>	
+	  					<p:donutChart  model="#{vwGastos.donutModelProveedores}"  style="width:200px; height:200px;"/>
+	       		 	</h:panelGrid>
+	       		</h:panelGrid>
+       		</h:panelGrid>
+       		 <h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">
+				 <h:panelGrid  columns="2" styleClass="panelgrid-dotted-border">
+	  				<h:panelGrid  columns="1" style="text-align:center;width:400px;" styleClass="panelgrid-dotted-border">	
+							<p:dataTable  var="list" value="#{vwGastos.listaResumenObra}"  scrollable="true" scrollHeight="150"
+										sortBy="#{list.importe}" sortOrder="descending" paginator="false" >			
+								<p:column headerText="Obra/Proyecto" sortBy="#{list.concepto}" styleClass="single-line"  style="width:10%;text-align:left;" >
+							    		<h:outputText value="#{list.concepto}"/>
+								</p:column>
+								<p:column headerText="Importe" sortBy="#{list.importe}" styleClass="single-line" style="width:5%;text-align:right;">
+							    		<h:outputText value="#{list.importe}">
+							    			<f:convertNumber type="currency"  pattern="$###,##0.00" />
+							    		</h:outputText>
+								</p:column> 																														 			 
+							</p:dataTable>
+	            	</h:panelGrid>
+	            	<h:panelGrid   columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">	
+	            		<p:outputLabel value="OBRA/PROYECTO" style="font-size:15px;font-weight:bold;color:#585858;"/>
 	       		 		<p:donutChart model="#{vwGastos.donutModelObras}" style="width:200px; height:200px;"/>
 	       		 	</h:panelGrid>
-	       		 	<h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">	
+	       		 	<h:panelGrid rendered="false"  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">	
 	  					<p:outputLabel value="TIPO DE GASTO" style="font-size:15px;font-weight:bold;color:#585858;"/>
 	       		 		<p:donutChart model="#{vwGastos.donutModelTipo}" style="width:200px; height:200px;"/>
 	       		 	</h:panelGrid>
 	       		</h:panelGrid>
-
-	       		<h:outputLabel value="#{vwGastos.totalGasto}" style="font-size:15px;font-weight:bold;color:#585858;">
-					<f:convertNumber type="currency"  pattern="$###,##0.00" />
-				</h:outputLabel>
        		</h:panelGrid>	 			        
 	    </p:dialog>
 		
