@@ -14,6 +14,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -46,6 +47,7 @@ import com.idea.objects.business.Gasto;
 import com.idea.objects.business.Obra;
 import com.idea.objects.business.Orden;
 import com.idea.objects.business.Proveedor;
+import com.idea.objects.business.Resumen;
 import com.idea.objects.system.Body;
 import com.idea.objects.system.Configuracion;
 import com.idea.objects.system.Empleado;
@@ -85,6 +87,10 @@ public class vwGastos implements Serializable  {
 	private List<String>listaNombreEmpleados=new ArrayList<>();
 	private List<Orden> listaOrdenes;
 	private List<Archivo>listaArchivos=new ArrayList<>();
+	private List<Resumen> listaResumenProveedor;
+	private List<Resumen> listaResumenObra;
+	private List<Resumen> listaResumenTipo;
+	
 
 	
 	private Orden ordenSeleccionado;
@@ -751,10 +757,46 @@ public class vwGastos implements Serializable  {
 		
 		createDonutModelObras();
 		
-		createDonutModelTipo();
+		//createDonutModelTipo();
 		
-		
+		preparaListasResumen();
 	}	
+	
+	
+	private void preparaListasResumen() {
+		Resumen resumen;
+		Double importe;
+		listaResumenProveedor=new ArrayList<>();
+		List<String> proveedores = listaPrincipal.stream().filter(elem-> elem.getProveedor()!=null).map(elem -> elem.getProveedor().getNombre()).distinct().collect(Collectors.toList()); 
+        for(String proveedor : proveedores) {
+        	importe= listaPrincipal.stream().filter(elem-> elem.getProveedor()!=null).filter(elem-> elem.getProveedor().getNombre().equals(proveedor)).mapToDouble(elem->elem.getImporte()).sum();
+         	resumen = new Resumen();
+        	resumen.setConcepto(proveedor);        	
+        	resumen.setImporte(importe);
+        	listaResumenProveedor.add(resumen);
+        }
+        importe= listaPrincipal.stream().filter(elem-> elem.getProveedor()==null || elem.getProveedor().getId()==null).mapToDouble(elem->elem.getImporte()).sum();
+        resumen = new Resumen();
+    	resumen.setConcepto("Sin Proveedor");        	
+    	resumen.setImporte(importe);
+    	listaResumenProveedor.add(resumen);
+        
+        listaResumenObra=new ArrayList<>();
+		List<String> obras = listaPrincipal.stream().filter(elem-> elem.getObra()!=null).map(elem -> elem.getObra().getNombre()).distinct().collect(Collectors.toList()); 
+        for(String obra : obras) {
+        	importe= listaPrincipal.stream().filter(elem-> elem.getObra()!=null).filter(elem-> elem.getObra().getNombre().equals(obra)).mapToDouble(elem->elem.getImporte()).sum();
+        	resumen = new Resumen();
+        	resumen.setConcepto(obra);        	
+        	resumen.setImporte(importe);
+        	listaResumenObra.add(resumen);
+        }
+        importe= listaPrincipal.stream().filter(elem-> elem.getObra()==null || elem.getObra().getId()==null).mapToDouble(elem->elem.getImporte()).sum();
+        resumen = new Resumen();
+    	resumen.setConcepto("Sin Obra");        	
+    	resumen.setImporte(importe);
+    	listaResumenObra.add(resumen);
+	}
+	
 	
 	
 	private void createDonutModelTipo() {
@@ -800,6 +842,7 @@ public class vwGastos implements Serializable  {
         Random rand = new Random();
         Double valor;
         labels = listaPrincipal.stream().filter(elem-> elem.getObra()!=null).map(elem -> elem.getObra().getNombre()).distinct().collect(Collectors.toList()); 
+        Collections.sort(labels);
         for(String label:labels) {
         	valor = listaPrincipal.stream().filter(elem-> elem.getObra()!=null).filter(elem-> elem.getObra().getNombre().equals(label)).mapToDouble(elem->elem.getImporte()).sum();
         	values.add(valor);
@@ -834,6 +877,7 @@ public class vwGastos implements Serializable  {
         Random rand = new Random();
         Double valor;
         labels = listaPrincipal.stream().filter(elem-> elem.getProveedor()!=null).map(elem -> elem.getProveedor().getNombre()).distinct().collect(Collectors.toList()); 
+        Collections.sort(labels);
         for(String label:labels) {
         	valor = listaPrincipal.stream().filter(elem-> elem.getProveedor()!=null).filter(elem-> elem.getProveedor().getNombre().equals(label)).mapToDouble(elem->elem.getImporte()).sum();
         	values.add(valor);
@@ -1444,6 +1488,48 @@ public class vwGastos implements Serializable  {
 
 	public void setFactura_e(String factura_e) {
 		this.factura_e = factura_e;
+	}
+
+
+
+
+	public List<Resumen> getListaResumenTipo() {
+		return listaResumenTipo;
+	}
+
+
+
+
+	public void setListaResumenTipo(List<Resumen> listaResumenTipo) {
+		this.listaResumenTipo = listaResumenTipo;
+	}
+
+
+
+
+	public List<Resumen> getListaResumenProveedor() {
+		return listaResumenProveedor;
+	}
+
+
+
+
+	public void setListaResumenProveedor(List<Resumen> listaResumenProveedor) {
+		this.listaResumenProveedor = listaResumenProveedor;
+	}
+
+
+
+
+	public List<Resumen> getListaResumenObra() {
+		return listaResumenObra;
+	}
+
+
+
+
+	public void setListaResumenObra(List<Resumen> listaResumenObra) {
+		this.listaResumenObra = listaResumenObra;
 	}
 
 
