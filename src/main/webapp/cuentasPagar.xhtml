@@ -121,33 +121,34 @@
 								selectionMode="single" selection="#{vwCuentasPagar.seleccionado}" rowKey="#{list.id}" sortBy="#{list.id}" sortOrder="descending" 
 					            paginatorPosition="top" paginator="true"  rows="7">
 						<p:ajax event="rowSelect"  listener="#{vwCuentasPagar.seleccionarElemento()}" update=":formaID:capturaID"/>
-						<p:column headerText="ID"  styleClass="singleLine" style="width:3%;text-align:center;">
+						
+						<p:column headerText="ID" sortBy="#{list.id}"  styleClass="singleLine" style="width:3%;text-align:center;">
 					    		<h:outputText value="#{list.id}"/>
 						</p:column>		
-						<p:column headerText="Proveedor"  styleClass="single-line" style="width:15%;">
+						<p:column headerText="Proveedor" sortBy="#{list.proveedor.nombre}"  styleClass="single-line" style="width:15%;">
 					    		<h:outputText value="#{list.proveedor.nombre}"/>
 						</p:column>  
-						<p:column headerText="Obra"  styleClass="single-line" style="width:15%;">
+						<p:column headerText="Obra" sortBy="#{list.obra.nombre}"  styleClass="single-line" style="width:15%;">
 					    		<h:outputText value="#{list.obra.nombre}"/>
 						</p:column> 
-						<p:column headerText="Concepto"  styleClass="single-line" style="text-align:left;width:15%;">
+						<p:column headerText="Concepto" sortBy="#{list.concepto}"  styleClass="single-line" style="text-align:left;width:15%;">
 					    		<h:outputText value="#{list.concepto}"/>
 						</p:column>
-						<p:column headerText="Factura"  styleClass="single-line" style="text-align:center;width:10%;">
+						<p:column headerText="Factura" sortBy="#{list.factura}"  styleClass="single-line" style="text-align:center;width:10%;">
 					    		<h:outputText value="#{list.factura}"/>
 						</p:column>  
-						<p:column headerText="Vencimiento"  styleClass="single-line" style="text-align:center;width:10%;">
+						<p:column headerText="Vencimiento" sortBy="#{list.vencimiento}"  styleClass="single-line" style="text-align:center;width:10%;">
 					    		<h:outputText value="#{list.vencimiento}">
 					    			<f:convertDateTime type="date" pattern="dd/MMM/yyyy"  locale="es"/>
 					    		</h:outputText>
 						</p:column>        						
-						<p:column headerText="Dias"  styleClass="singleLine" style="width:3%;text-align:center;">
+						<p:column headerText="Dias" sortBy="#{list.diasVencimiento}"  styleClass="singleLine" style="width:4%;text-align:center;">
 					    		<h:outputText value="#{list.diasVencimiento}"/>
 						</p:column> 	
-						<p:column headerText="Estatus"  styleClass="single-line"  style="width:5%;">
+						<p:column headerText="Estatus" sortBy="#{list.estatus}"  styleClass="single-line"  style="width:5%;">
 					    		<h:outputText value="#{list.estatus}"/>
 						</p:column> 			
-						<p:column headerText="Importe"  styleClass="single-line" style="width:10%;text-align:right;">
+						<p:column headerText="Importe" sortBy="#{list.importe}"  styleClass="single-line" style="width:10%;text-align:right;">
 					    		<h:outputText value="#{list.importe}">
 					    			<f:convertNumber type="currency"  pattern="$###,##0.00" />
 					    		</h:outputText>
@@ -176,7 +177,7 @@
 						oncomplete="document.getElementById('formaID:downloadButton').click();">												
 						<p:fileDownload value="#{vwCuentasPagar.file_bajar}" />
 					</p:commandButton>						
-					<p:commandButton  id="btnResumen" value="Resumen"   disabled="#{vwCuentasPagar.listaPrincipal.size().equals(0)}"
+					<p:commandButton  id="btnResumen" value="Resumen"   disabled="#{vwCuentasPagar.listaPrincipal.size()==0}"
 						icon="fa fa-bar-chart" style="width:150px;height:35px;margin-top:30%;" styleClass="button-texto-icono" 
 						action="#{vwCuentasPagar.accionResumen()}"
 						update=":formaID"
@@ -268,7 +269,7 @@
 			          			</h:panelGrid >
 			          			<h:panelGrid columns="1" style="text-align:left;" styleClass="panelgrid-dotted-border" >
 			          				<p:outputLabel value="Detalle:" />
-				       				<p:inputTextarea rows="5"  value="#{vwCuentasPagar.detalle_e}" readonly="#{!vwGastos.editable}" style="width:480px;"/>
+				       				<p:inputTextarea rows="5"  value="#{vwCuentasPagar.detalle_e}" readonly="#{!vwCuentasPagar.editable}" style="width:480px;"/>
 		          				</h:panelGrid>			          				     				
 							</h:panelGrid>					
 						</p:tab>
@@ -368,28 +369,49 @@
 		</p:dialog>
 		
 		<p:dialog id="dialogResumen" widgetVar="dialogResumenVar" header="Resumen de Gastos"  modal="true" closable="true"  resizable="false" width="auto" height="auto" >		                 
-			 <h:panelGrid  columns="1" styleClass="panelgrid-dotted-border">
-				 <h:panelGrid  columns="3" styleClass="panelgrid-dotted-border">
-	  				<h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">	
-	  					<p:outputLabel value="PROVEEDOR" style="font-size:15px;font-weight:bold;color:#585858;"/>
-		            	</h:panelGrid>
-	            	<h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">	
-	  					<p:outputLabel value="OBRA/PROYECTO" style="font-size:15px;font-weight:bold;color:#585858;"/>
-	       		 	</h:panelGrid>
-	       		 	<h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">	
-	  					<p:outputLabel value="TIPO DE GASTO" style="font-size:15px;font-weight:bold;color:#585858;"/>
+			 <h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border"> 	
+				 <h:panelGrid  columns="2" styleClass="panelgrid-dotted-border">	
+	  				<h:panelGrid  columns="1" style="text-align:center;width:400px;" styleClass="panelgrid-dotted-border">		  					
+							<p:dataTable  var="list" value="#{vwCuentasPagar.listaResumenProveedor}"  scrollable="true" scrollHeight="150"
+										sortBy="#{list.importe}" sortOrder="descending" paginator="false" >			
+								<p:column headerText="Proveedor" sortBy="#{list.concepto}" styleClass="single-line"  style="width:10%;text-align:left;" >
+							    		<h:outputText value="#{list.concepto}"/>
+								</p:column>
+								<p:column headerText="Importe" sortBy="#{list.importe}" styleClass="single-line" style="width:5%;text-align:right;">
+							    		<h:outputText value="#{list.importe}">
+							    			<f:convertNumber type="currency"  pattern="$###,##0.00" />
+							    		</h:outputText>
+								</p:column> 																														 			 
+							</p:dataTable>
+	            	</h:panelGrid>
+	            	<h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">
+	            		<p:outputLabel value="PROVEEDOR" style="font-size:15px;font-weight:bold;color:#585858;"/>	
+	  					<p:donutChart  model="#{vwCuentasPagar.donutModelProveedores}"  style="width:200px; height:200px;"/>
 	       		 	</h:panelGrid>
 	       		</h:panelGrid>
-
-	       		<h:outputLabel value="" style="font-size:15px;font-weight:bold;color:#585858;">
-					<f:convertNumber type="currency"  pattern="$###,##0.00" />
-				</h:outputLabel>
+       		</h:panelGrid>
+       		 <h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">
+				 <h:panelGrid  columns="2" styleClass="panelgrid-dotted-border">
+	  				<h:panelGrid  columns="1" style="text-align:center;width:400px;" styleClass="panelgrid-dotted-border">	
+							<p:dataTable  var="list" value="#{vwCuentasPagar.listaResumenObra}"  scrollable="true" scrollHeight="150"
+										sortBy="#{list.importe}" sortOrder="descending" paginator="false" >			
+								<p:column headerText="Obra/Proyecto" sortBy="#{list.concepto}" styleClass="single-line"  style="width:10%;text-align:left;" >
+							    		<h:outputText value="#{list.concepto}"/>
+								</p:column>
+								<p:column headerText="Importe" sortBy="#{list.importe}" styleClass="single-line" style="width:5%;text-align:right;">
+							    		<h:outputText value="#{list.importe}">
+							    			<f:convertNumber type="currency"  pattern="$###,##0.00" />
+							    		</h:outputText>
+								</p:column> 																														 			 
+							</p:dataTable>
+	            	</h:panelGrid>
+	            	<h:panelGrid   columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">	
+	            		<p:outputLabel value="OBRA/PROYECTO" style="font-size:15px;font-weight:bold;color:#585858;"/>
+	       		 		<p:donutChart model="#{vwCuentasPagar.donutModelObras}" style="width:200px; height:200px;"/>
+	       		 	</h:panelGrid>
+	       		</h:panelGrid>
        		</h:panelGrid>	 			        
-	    </p:dialog>
-		
-		
-	    
-	    				
+	    </p:dialog>					    	    				
 	</h:form>
 </h:body>
 </html>

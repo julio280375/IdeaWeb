@@ -111,39 +111,31 @@
 								selectionMode="single" selection="#{vwGastos.seleccionado}" rowKey="#{list.id}" sortBy="#{list.id}" sortOrder="descending" 
 					            paginatorPosition="top" paginator="true"  rows="7">
 						<p:ajax event="rowSelect"  listener="#{vwGastos.seleccionarElemento()}" update=":formaID:capturaID"/>
-						
-				        
-				        
+
 						<p:column headerText="ID"  sortBy="#{list.id}"  styleClass="single-line" style="width:4%;text-align:center;">
 					    		<h:outputText value="#{list.id}"/>
 						</p:column>		           						
-						<p:column headerText="Movimiento"  styleClass="single-line" style="width:7%;text-align:center;">
+						<p:column headerText="Movimiento"  sortBy="#{list.movimiento}"  styleClass="single-line" style="width:9%;text-align:center;">
 					    		<h:outputText value="#{list.movimiento}"/>
 						</p:column>
-						<p:column headerText="Tipo"  styleClass="single-line"  style="width:20%;">
+						<p:column headerText="Tipo" sortBy="#{list.tipo}" styleClass="single-line"  style="width:20%;">
 					    		<h:outputText value="#{list.tipo}"/>
 						</p:column> 
-						<p:column headerText="Obra"  styleClass="single-line" style="width:20%;">
+						<p:column headerText="Obra"  sortBy="#{list.obra.nombre}" styleClass="single-line" style="width:20%;">
 					    		<h:outputText value="#{list.obra.nombre}"/>
 						</p:column>
-						<p:column headerText="Proveedor"  styleClass="single-line" style="width:20%;">
+						<p:column headerText="Proveedor" sortBy="#{list.proveedor.nombre}" styleClass="single-line" style="width:20%;">
 					    		<h:outputText value="#{list.proveedor.nombre}"/>
 						</p:column> 																
-						<p:column headerText="Fecha"  styleClass="single-line" style="text-align:center;width:10%;">
+						<p:column headerText="Fecha" sortBy="#{list.fecha}" styleClass="single-line" style="text-align:center;width:10%;">
 					    		<h:outputText value="#{list.fecha}">
 					    		<f:convertDateTime type="date" pattern="dd/MMM/yyyy"  locale="es"/>
 					    		</h:outputText>
 						</p:column>
-						<p:column headerText="Concepto"  styleClass="single-line" style="text-align:left;width:20%;">
+						<p:column headerText="Concepto" sortBy="#{list.concepto}" styleClass="single-line" style="text-align:left;width:20%;">
 					    		<h:outputText value="#{list.concepto}"/>
 						</p:column> 	
-												
-						<p:column headerText="Vencimiento" rendered="false" styleClass="single-line" style="text-align:center;width:10%;">
-					    		<h:outputText value="#{list.fecha_vencimiento}">
-					    			<f:convertDateTime type="date" pattern="dd/MMM/yyyy"  locale="es" />
-					    		</h:outputText>
-						</p:column>
-						<p:column headerText="Importe"  styleClass="single-line" style="width:10%;text-align:right;">
+						<p:column headerText="Importe" sortBy="#{list.importe}" styleClass="single-line" style="width:10%;text-align:right;">
 					    		<h:outputText value="#{list.importe}">
 					    			<f:convertNumber type="currency"  pattern="$###,##0.00" />
 					    		</h:outputText>
@@ -162,12 +154,12 @@
 				</h:panelGrid>
 				<h:panelGrid  columns="1" style="width:20%;text-align:center;"  >
 					
-					<h:commandLink>
+					<h:commandLink disabled="true" >
 	                    <p:graphicImage name="/images/csv.png" width="24"/>
 	                    <p:dataExporter type="xls" target="tablaPrincipal" fileName="gastos" />
 	                </h:commandLink>
 
-					<p:commandButton  id="btnDescargaFiles"  value="Descargar Listado"  									
+					<p:commandButton  id="btnDescargaFiles"  value="Descargar Listado" disabled="true" 									
 							icon="fa fa-download" style="width:130px;" 
 					 		ajax="false" >
 						<p:fileDownload value="#{vwGastos.descargarFilterFiles()}"></p:fileDownload>
