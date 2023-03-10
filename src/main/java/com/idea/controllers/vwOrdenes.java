@@ -11,6 +11,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -380,22 +381,25 @@ public class vwOrdenes  {
 		Body body = new Body();
 		body.setFilter("GASTOS");		
 		listaCatalogoGastos=tools.listadoString("tools/stringList", header, body, 30);
+		Collections.sort(listaCatalogoGastos);
 		
 		body.setFilter("ALL");
 		listaObras=tools.listadoObras("obra/filter", header, body, 30);
 		if(listaObras!=null && listaObras.size()>0) {
 			listaNombreObras=listaObras.stream().map(elem -> elem.getNombre()).distinct().collect(Collectors.toList());
+			Collections.sort(listaNombreObras);
 		}
 		
 		listaProveedores=tools.listadoProveedores("proveedor/filter", header, body, 30);
 		if(listaProveedores!=null && listaProveedores.size()>0) {
 			listaNombreProveedores=listaProveedores.stream().map(elem -> elem.getNombre()).distinct().collect(Collectors.toList());
+			Collections.sort(listaNombreProveedores);
 		}
 		
 		listaEmpleados=tools.listadoEmpleados("empleado/filter", header, body, 30);
 		if(listaEmpleados!=null && listaEmpleados.size()>0) {
-		listaNombreEmpleados=listaEmpleados.stream().map(elem -> elem.getNombre()).distinct().collect(Collectors.toList());
-	
+			listaNombreEmpleados=listaEmpleados.stream().map(elem -> elem.getNombre()).distinct().collect(Collectors.toList());
+			Collections.sort(listaNombreEmpleados);
 		}
 		
 		descargaListaPDF();

@@ -11,8 +11,10 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -24,6 +26,11 @@ import javax.servlet.http.HttpSession;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
+import org.primefaces.model.charts.ChartData;
+import org.primefaces.model.charts.donut.DonutChartDataSet;
+import org.primefaces.model.charts.donut.DonutChartModel;
+import org.primefaces.model.charts.donut.DonutChartOptions;
+import org.primefaces.model.charts.optionconfig.legend.Legend;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -33,6 +40,7 @@ import com.idea.Tools;
 import com.idea.objects.business.Archivo;
 import com.idea.objects.business.Ingreso;
 import com.idea.objects.business.Obra;
+import com.idea.objects.business.Resumen;
 import com.idea.objects.system.Body;
 import com.idea.objects.system.Configuracion;
 import com.idea.objects.system.Header;
@@ -66,6 +74,9 @@ public class vwIngresos  {
 	private Double totalIngreso;
 	private Tools tools =new Tools();
 
+	private List<Resumen> listaResumenObra;
+	private DonutChartModel donutModelObras;
+	
 	private String archivo_e;
 	private List<String> listaArchivosCombo;
 	private String pdf_to_show;
@@ -114,8 +125,79 @@ public class vwIngresos  {
 		
 		inicializaFiltros(true);
 		
+		donutModelObras = new DonutChartModel();
+
+		
 	}
 	
+	
+	
+	public void accionResumen(){		
+		
+		createDonutModelObras();
+		
+		preparaListasResumen();
+	}	
+	
+	
+	private void preparaListasResumen() {
+		Resumen resumen;
+		Double importe;
+        
+        listaResumenObra=new ArrayList<>();
+		List<String> obras = listaPrincipal.stream().filter(elem-> elem.getObra()!=null).map(elem -> elem.getObra().getNombre()).distinct().collect(Collectors.toList()); 
+        for(String obra : obras) {
+        	importe= listaPrincipal.stream().filter(elem-> elem.getObra()!=null).filter(elem-> elem.getObra().getNombre().equals(obra)).mapToDouble(elem->elem.getImporte()).sum();
+        	resumen = new Resumen();
+        	resumen.setConcepto(obra);        	
+        	resumen.setImporte(importe);
+        	listaResumenObra.add(resumen);
+        }
+        importe= listaPrincipal.stream().filter(elem-> elem.getObra()==null || elem.getObra().getId()==null).mapToDouble(elem->elem.getImporte()).sum();
+        resumen = new Resumen();
+    	resumen.setConcepto("Sin Obra");        	
+    	resumen.setImporte(importe);
+    	listaResumenObra.add(resumen);
+	}
+	
+	
+	
+	private void createDonutModelObras() {
+		ChartData data = new ChartData();
+        DonutChartDataSet dataSet = new DonutChartDataSet();
+        List<Number> values = new ArrayList<>();
+        List<String> colors = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
+        Random rand = new Random();
+        Double valor;
+        labels = listaPrincipal.stream().filter(elem-> elem.getObra()!=null).map(elem -> elem.getObra().getNombre()).distinct().collect(Collectors.toList()); 
+        Collections.sort(labels);
+        for(String label:labels) {
+        	valor = listaPrincipal.stream().filter(elem-> elem.getObra()!=null).filter(elem-> elem.getObra().getNombre().equals(label)).mapToDouble(elem->elem.getImporte()).sum();
+        	values.add(valor);
+        	String color=tools.regresaColor(rand.nextInt((138 - 1) + 1) + 1);
+        	colors.add(color);
+        }
+        valor = listaPrincipal.stream().filter(elem-> elem.getObra()==null || elem.getObra().getId()==null).mapToDouble(elem->elem.getImporte()).sum();
+        if(valor > 0d) {
+        	values.add(valor);
+        	labels.add("Sin Obra");
+        }
+        DonutChartOptions options = new DonutChartOptions();
+        Legend legend = new Legend();
+        legend.setDisplay(false);
+        options.setLegend(legend);
+        donutModelObras.setOptions(options);
+        
+        dataSet.setData(values);
+        dataSet.setBackgroundColor(colors);
+        data.setLabels(labels);
+        data.addChartDataSet(dataSet);
+        donutModelObras.setData(data);          
+	}	
+	
+	
+
 	
 	
 	
@@ -185,11 +267,13 @@ public class vwIngresos  {
 		Body body = new Body();
 		body.setFilter("INGRESOS");		
 		listaCatalogoIngresos=tools.listadoString("tools/stringList", header, body, 30);
+		Collections.sort(listaCatalogoIngresos);
 		
 		body.setFilter("ALL");
 		listaObras=tools.listadoObras("obra/filter", header, body, 30);
 		if(listaObras!=null && listaObras.size()>0) {
 			listaNombreObras=listaObras.stream().map(elem -> elem.getNombre()).distinct().collect(Collectors.toList());
+			Collections.sort(listaNombreObras);
 		}
 		
 		descargaListaPDF();
@@ -839,6 +923,30 @@ public class vwIngresos  {
 
 	public void setListaArchivosCombo(List<String> listaArchivosCombo) {
 		this.listaArchivosCombo = listaArchivosCombo;
+	}
+
+
+
+	public List<Resumen> getListaResumenObra() {
+		return listaResumenObra;
+	}
+
+
+
+	public void setListaResumenObra(List<Resumen> listaResumenObra) {
+		this.listaResumenObra = listaResumenObra;
+	}
+
+
+
+	public DonutChartModel getDonutModelObras() {
+		return donutModelObras;
+	}
+
+
+
+	public void setDonutModelObras(DonutChartModel donutModelObras) {
+		this.donutModelObras = donutModelObras;
 	}
 
 

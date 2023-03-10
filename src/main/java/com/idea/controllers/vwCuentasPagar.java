@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -53,6 +54,7 @@ import com.idea.objects.business.Gasto;
 import com.idea.objects.business.Obra;
 import com.idea.objects.business.Orden;
 import com.idea.objects.business.Proveedor;
+import com.idea.objects.business.Resumen;
 import com.idea.objects.system.Body;
 import com.idea.objects.system.Configuracion;
 import com.idea.objects.system.Empleado;
@@ -97,6 +99,12 @@ public class vwCuentasPagar  {
 	private Double totalCuentasPagar;
 	private Gasto gasto;
 	private Tools tools =new Tools();
+	
+	private List<Resumen> listaResumenProveedor;
+	private List<Resumen> listaResumenObra;
+
+	private DonutChartModel donutModelProveedores;
+	private DonutChartModel donutModelObras;
 	
 	private String archivo_e;
 	private List<String> listaArchivosPDF;
@@ -155,7 +163,128 @@ public class vwCuentasPagar  {
 		
 		inicializaFiltros(true);
 		
+		donutModelProveedores = new DonutChartModel();	
+		donutModelObras = new DonutChartModel();
+
+		
 	}
+	
+	
+	
+	public void accionResumen(){		
+		
+		createDonutModelProveedores();
+		
+		createDonutModelObras();
+		
+		preparaListasResumen();
+	}	
+	
+	
+	private void preparaListasResumen() {
+		Resumen resumen;
+		Double importe;
+		listaResumenProveedor=new ArrayList<>();
+		List<String> proveedores = listaPrincipal.stream().filter(elem-> elem.getProveedor()!=null).map(elem -> elem.getProveedor().getNombre()).distinct().collect(Collectors.toList()); 
+        for(String proveedor : proveedores) {
+        	importe= listaPrincipal.stream().filter(elem-> elem.getProveedor()!=null).filter(elem-> elem.getProveedor().getNombre().equals(proveedor)).mapToDouble(elem->elem.getImporte()).sum();
+         	resumen = new Resumen();
+        	resumen.setConcepto(proveedor);        	
+        	resumen.setImporte(importe);
+        	listaResumenProveedor.add(resumen);
+        }
+        importe= listaPrincipal.stream().filter(elem-> elem.getProveedor()==null || elem.getProveedor().getId()==null).mapToDouble(elem->elem.getImporte()).sum();
+        resumen = new Resumen();
+    	resumen.setConcepto("Sin Proveedor");        	
+    	resumen.setImporte(importe);
+    	listaResumenProveedor.add(resumen);
+        
+        listaResumenObra=new ArrayList<>();
+		List<String> obras = listaPrincipal.stream().filter(elem-> elem.getObra()!=null).map(elem -> elem.getObra().getNombre()).distinct().collect(Collectors.toList()); 
+        for(String obra : obras) {
+        	importe= listaPrincipal.stream().filter(elem-> elem.getObra()!=null).filter(elem-> elem.getObra().getNombre().equals(obra)).mapToDouble(elem->elem.getImporte()).sum();
+        	resumen = new Resumen();
+        	resumen.setConcepto(obra);        	
+        	resumen.setImporte(importe);
+        	listaResumenObra.add(resumen);
+        }
+        importe= listaPrincipal.stream().filter(elem-> elem.getObra()==null || elem.getObra().getId()==null).mapToDouble(elem->elem.getImporte()).sum();
+        resumen = new Resumen();
+    	resumen.setConcepto("Sin Obra");        	
+    	resumen.setImporte(importe);
+    	listaResumenObra.add(resumen);
+	}
+	
+	
+	
+	private void createDonutModelObras() {
+		ChartData data = new ChartData();
+        DonutChartDataSet dataSet = new DonutChartDataSet();
+        List<Number> values = new ArrayList<>();
+        List<String> colors = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
+        Random rand = new Random();
+        Double valor;
+        labels = listaPrincipal.stream().filter(elem-> elem.getObra()!=null).map(elem -> elem.getObra().getNombre()).distinct().collect(Collectors.toList()); 
+        Collections.sort(labels);
+        for(String label:labels) {
+        	valor = listaPrincipal.stream().filter(elem-> elem.getObra()!=null).filter(elem-> elem.getObra().getNombre().equals(label)).mapToDouble(elem->elem.getImporte()).sum();
+        	values.add(valor);
+        	String color=tools.regresaColor(rand.nextInt((138 - 1) + 1) + 1);
+        	colors.add(color);
+        }
+        valor = listaPrincipal.stream().filter(elem-> elem.getObra()==null || elem.getObra().getId()==null).mapToDouble(elem->elem.getImporte()).sum();
+        if(valor > 0d) {
+        	values.add(valor);
+        	labels.add("Sin Obra");
+        }
+        DonutChartOptions options = new DonutChartOptions();
+        Legend legend = new Legend();
+        legend.setDisplay(false);
+        options.setLegend(legend);
+        donutModelObras.setOptions(options);
+        
+        dataSet.setData(values);
+        dataSet.setBackgroundColor(colors);
+        data.setLabels(labels);
+        data.addChartDataSet(dataSet);
+        donutModelObras.setData(data);          
+	}	
+	
+	
+	private void createDonutModelProveedores() {
+		ChartData data = new ChartData();
+        DonutChartDataSet dataSet = new DonutChartDataSet();
+        List<Number> values = new ArrayList<>();
+        List<String> colors = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
+        Random rand = new Random();
+        Double valor;
+        labels = listaPrincipal.stream().filter(elem-> elem.getProveedor()!=null).map(elem -> elem.getProveedor().getNombre()).distinct().collect(Collectors.toList()); 
+        Collections.sort(labels);
+        for(String label:labels) {
+        	valor = listaPrincipal.stream().filter(elem-> elem.getProveedor()!=null).filter(elem-> elem.getProveedor().getNombre().equals(label)).mapToDouble(elem->elem.getImporte()).sum();
+        	values.add(valor);
+        	String color=tools.regresaColor(rand.nextInt((138 - 1) + 1) + 1);
+        	colors.add(color);
+        }
+        valor = listaPrincipal.stream().filter(elem-> elem.getProveedor()==null || elem.getProveedor().getId()==null).mapToDouble(elem->elem.getImporte()).sum();
+        if(valor > 0d) {
+        	values.add(valor);
+        	labels.add("Sin Proveedor");
+        }
+        DonutChartOptions options = new DonutChartOptions();
+        Legend legend = new Legend();
+        legend.setDisplay(false);
+        options.setLegend(legend);
+        donutModelProveedores.setOptions(options);
+        
+        dataSet.setData(values);
+        dataSet.setBackgroundColor(colors);
+        data.setLabels(labels);
+        data.addChartDataSet(dataSet);
+        donutModelProveedores.setData(data);          
+	}	
 	
 
 	
@@ -217,22 +346,25 @@ public class vwCuentasPagar  {
 		Body body = new Body();
 		body.setFilter("GASTOS");		
 		listaCatalogoGastos=tools.listadoString("tools/stringList", header, body, 30);
+		Collections.sort(listaCatalogoGastos);
 		
 		body.setFilter("ALL");
 		listaObras=tools.listadoObras("obra/filter", header, body, 30);
 		if(listaObras!=null && listaObras.size()>0) {
 			listaNombreObras=listaObras.stream().map(elem -> elem.getNombre()).distinct().collect(Collectors.toList());
+			Collections.sort(listaNombreObras);
 		}
 		
 		listaProveedores=tools.listadoProveedores("proveedor/filter", header, body, 30);
 		if(listaProveedores!=null && listaProveedores.size()>0) {
 			listaNombreProveedores=listaProveedores.stream().map(elem -> elem.getNombre()).distinct().collect(Collectors.toList());
+			Collections.sort(listaNombreProveedores);
 		}
 		
 		listaEmpleados=tools.listadoEmpleados("empleado/filter", header, body, 30);
 		if(listaEmpleados!=null && listaEmpleados.size()>0) {
-		listaNombreEmpleados=listaEmpleados.stream().map(elem -> elem.getNombre()).collect(Collectors.toList());
-	
+			listaNombreEmpleados=listaEmpleados.stream().map(elem -> elem.getNombre()).collect(Collectors.toList());
+			Collections.sort(listaNombreEmpleados);
 		}
 		
 		descargaListaPDF();
@@ -1221,6 +1353,54 @@ public class vwCuentasPagar  {
 
 	public void setEstatus_b(String estatus_b) {
 		this.estatus_b = estatus_b;
+	}
+
+
+
+	public List<Resumen> getListaResumenProveedor() {
+		return listaResumenProveedor;
+	}
+
+
+
+	public void setListaResumenProveedor(List<Resumen> listaResumenProveedor) {
+		this.listaResumenProveedor = listaResumenProveedor;
+	}
+
+
+
+	public List<Resumen> getListaResumenObra() {
+		return listaResumenObra;
+	}
+
+
+
+	public void setListaResumenObra(List<Resumen> listaResumenObra) {
+		this.listaResumenObra = listaResumenObra;
+	}
+
+
+
+	public DonutChartModel getDonutModelProveedores() {
+		return donutModelProveedores;
+	}
+
+
+
+	public void setDonutModelProveedores(DonutChartModel donutModelProveedores) {
+		this.donutModelProveedores = donutModelProveedores;
+	}
+
+
+
+	public DonutChartModel getDonutModelObras() {
+		return donutModelObras;
+	}
+
+
+
+	public void setDonutModelObras(DonutChartModel donutModelObras) {
+		this.donutModelObras = donutModelObras;
 	}
 
 
