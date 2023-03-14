@@ -97,7 +97,10 @@ public class vwCuentasCobrar  {
 	private Tools tools =new Tools();
 	
 	private List<Resumen> listaResumenObra;
+	private List<Resumen> listaResumenEstatus;
+	
 	private DonutChartModel donutModelObras;
+	private DonutChartModel donutModelEstatus;
 
 	private String archivo_e;
 	private List<String> listaArchivosPDF;
@@ -148,8 +151,50 @@ public class vwCuentasCobrar  {
 		inicializaFiltros(true);
 		
 		donutModelObras = new DonutChartModel();
+		
+		donutModelEstatus = new DonutChartModel();
 
 		
+	}
+	
+	
+	
+	public void generaExcelCSV() {
+		
+		writeCsvFromBean(carpeta_archivos + "cuentas_x_cobrar.csv");	
+		try {
+		    TimeUnit.MILLISECONDS.sleep(500);
+		} catch (InterruptedException ie) {
+		    Thread.currentThread().interrupt();
+		}
+		
+		try{
+	          Runtime.getRuntime().exec("cmd /c start "+carpeta_archivos + "cuentas_x_cobrar.csv");
+	          }catch(IOException  e){
+	              e.printStackTrace();
+	          }
+
+		addMessage("Archivo generado correctamente.","Se generó el archivo: "+carpeta_archivos + "cuentas_x_cobrar.csv",FacesMessage.SEVERITY_INFO);
+
+	}
+	
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void writeCsvFromBean(String path)  {
+		try {
+			if (listaPrincipal.size()>0) {					
+			    Writer writer  = new FileWriter(path.toString());
+			    StatefulBeanToCsv sbc = new StatefulBeanToCsvBuilder(writer)
+			       .withSeparator(CSVWriter.DEFAULT_SEPARATOR)			     
+			       .build();
+			    sbc.write(listaPrincipal);
+			    writer.close();
+			   
+			    LOG.info(path+" Guardado correctamente!");
+			}
+	    } catch (Exception e) { 
+	    	LOG.info("[writeCsvFromBean] "+e.getMessage());
+		}
 	}
 	
 	
@@ -158,6 +203,8 @@ public class vwCuentasCobrar  {
 		
 		createDonutModelObras();
 		
+		createDonutModelEstatus();
+		
 		preparaListasResumen();
 	}	
 	
@@ -165,7 +212,18 @@ public class vwCuentasCobrar  {
 	private void preparaListasResumen() {
 		Resumen resumen;
 		Double importe;
-        
+			        
+		listaResumenEstatus=new ArrayList<>();
+        for(String estatus : listaEstatus) {
+        	importe= listaPrincipal.stream().filter(elem-> elem.getEstatus().equals(estatus)).mapToDouble(elem->elem.getImporte()).sum();
+        	if(importe>0d) {
+	        	resumen = new Resumen();
+	        	resumen.setConcepto(estatus);        	
+	        	resumen.setImporte(importe);
+	        	listaResumenEstatus.add(resumen);
+        	}
+        }
+		    
         listaResumenObra=new ArrayList<>();
 		List<String> obras = listaPrincipal.stream().filter(elem-> elem.getObra()!=null).map(elem -> elem.getObra().getNombre()).distinct().collect(Collectors.toList()); 
         for(String obra : obras) {
@@ -183,6 +241,38 @@ public class vwCuentasCobrar  {
 	}
 	
 	
+	
+	private void createDonutModelEstatus() {
+		ChartData data = new ChartData();
+        DonutChartDataSet dataSet = new DonutChartDataSet();
+        List<Number> values = new ArrayList<>();
+        List<String> colors = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
+        Random rand = new Random();
+        Double valor;
+        
+        for(String label:listaEstatus) {
+        	valor = listaPrincipal.stream().filter(elem-> elem.getEstatus().equals(label)).mapToDouble(elem->elem.getImporte()).sum();
+        	if(valor>0d) {
+        		labels.add(label);
+	        	values.add(valor);
+	        	String color=tools.regresaColor(rand.nextInt((138 - 1) + 1) + 1);
+	        	colors.add(color);
+        	}
+        }
+
+        DonutChartOptions options = new DonutChartOptions();
+        Legend legend = new Legend();
+        legend.setDisplay(false);
+        options.setLegend(legend);
+        donutModelEstatus.setOptions(options);
+        
+        dataSet.setData(values);
+        dataSet.setBackgroundColor(colors);
+        data.setLabels(labels);
+        data.addChartDataSet(dataSet);
+        donutModelEstatus.setData(data);          
+	}	
 	
 	private void createDonutModelObras() {
 		ChartData data = new ChartData();
@@ -217,8 +307,6 @@ public class vwCuentasCobrar  {
         data.addChartDataSet(dataSet);
         donutModelObras.setData(data);          
 	}	
-	
-	
 	
 	
 	
@@ -355,6 +443,9 @@ public class vwCuentasCobrar  {
 			seleccionado=listaPrincipal.get(0);
 			totalCuentasCobrar = listaPrincipal.stream().mapToDouble(elem->elem.getImporte()).sum();
 		}
+		
+		//EXTRAE EL NOMBRE DE LA OBRA Y SE LO ASIGNA AL STR_OBRA
+		listaPrincipal.stream().filter(elem->elem.getObra()!=null).forEach(elem-> elem.setStr_obra(elem.getObra().getNombre()));
 
 		filtro_anterior=body.getFilter();
 		
@@ -431,6 +522,7 @@ public class vwCuentasCobrar  {
 		registro_guardar.setDetalle(detalle_e);
 		registro_guardar.setFactura(factura_e);
 		registro_guardar.setEstatus(estatus_e);
+		registro_guardar.setTipo_factura("CREDITO");
 		
 		registro_guardar.setObra(null);
 		if(obra_e!=null && !obra_e.equals("")) {
@@ -1065,6 +1157,30 @@ private void asignaValoresRegistroIngreso() {
 
 	public void setDonutModelObras(DonutChartModel donutModelObras) {
 		this.donutModelObras = donutModelObras;
+	}
+
+
+
+	public List<Resumen> getListaResumenEstatus() {
+		return listaResumenEstatus;
+	}
+
+
+
+	public void setListaResumenEstatus(List<Resumen> listaResumenEstatus) {
+		this.listaResumenEstatus = listaResumenEstatus;
+	}
+
+
+
+	public DonutChartModel getDonutModelEstatus() {
+		return donutModelEstatus;
+	}
+
+
+
+	public void setDonutModelEstatus(DonutChartModel donutModelEstatus) {
+		this.donutModelEstatus = donutModelEstatus;
 	}
 
 

@@ -124,12 +124,12 @@
 						<p:column headerText="Obra" sortBy="#{list.obra.nombre}" styleClass="single-line" style="width:20%;">
 					    		<h:outputText value="#{list.obra.nombre}"/>
 						</p:column>
+						<p:column headerText="Factura" sortBy="#{list.factura}" styleClass="single-line" style="text-align:left;width:7%;">
+					    		<h:outputText value="#{list.factura}"/>
+						</p:column>	
 						<p:column headerText="Concepto" sortBy="#{list.concepto}" styleClass="single-line" style="text-align:left;width:40%;">
 					    		<h:outputText value="#{list.concepto}"/>
-						</p:column> 
-						<p:column headerText="Estatus" sortBy="#{list.estatus}" styleClass="single-line" style="text-align:left;width:7%;">
-					    		<h:outputText value="#{list.estatus}"/>
-						</p:column>									
+						</p:column> 								
 						<p:column headerText="Importe" sortBy="#{list.importe}" styleClass="single-line" style="width:10%;text-align:right;">
 					    		<h:outputText value="#{list.importe}">
 					    			<f:convertNumber type="currency"  pattern="$###,##0.00" />
@@ -148,23 +148,18 @@
 					</p:dataTable>
 				</h:panelGrid>
 				<h:panelGrid  columns="1" style="width:20%;text-align:center;"  >					
-					<p:commandButton disabled="true" id="btnDescargaExcel" value="Generar Excel"   
+					<p:commandButton  id="btnDescargaExcel" value="Generar Excel"   
 						icon="fa fa-file-excel" style="width:150px;height:35px;" styleClass="button-texto-icono" 
-						onclick="PrimeFaces.monitorDownload(start, stop);"	update=":formaID"> 	
-						<p:fileDownload value="#{vwIngresos.descargarFilterFiles()}"></p:fileDownload>
+						action="#{vwIngresos.generaExcelCSV()}"	update=":formaID"> 	
 					</p:commandButton>						
-					<p:tooltip for="btnDescargaExcel" value="Generar Excel" position="right" />					
-					<p:commandButton disabled="true" id="btnDescargaPDF" value="Reporte PDF" 								 			
-						style="width:150px;height:35px;" icon="fa fa-file-pdf" styleClass="button-texto-icono"										   
-						oncomplete="document.getElementById('formaID:downloadButton').click();">												
-						<p:fileDownload value="#{vwIngresos.file_bajar}" />
-					</p:commandButton>						
-					<p:commandButton  id="btnResumen" value="Resumen"   disabled="#{vwIngresos.listaPrincipal.size().equals(0)}"
-						icon="fa fa-bar-chart" style="width:150px;height:35px;margin-top:30%;" styleClass="button-texto-icono" 
+					<p:tooltip for="btnDescargaExcel" value="Generar Excel" position="right" />										
+					<p:commandButton  id="btnResumen" value="Ver Resumen"   disabled="#{vwIngresos.listaPrincipal.size().equals(0)}"
+						icon="fa fa-bar-chart" style="width:150px;height:35px;" styleClass="button-texto-icono" 
 						action="#{vwIngresos.accionResumen()}"
 						update=":formaID"
 						oncomplete="PF('dialogResumenVar').show()"> 							
 					</p:commandButton>
+					<p:tooltip for="btnResumen" value="Ver Resumen" position="right" />										
 				</h:panelGrid>
 			</h:panelGrid>
 			<h:panelGrid id="capturaID" columns="2"  cellpadding="3" style="width:100%;text-align:center;" columnClasses="valign-top,valign-top" styleClass="panelgrid-dotted-border">
@@ -296,10 +291,10 @@
 					    <i class="fa fa-exclamation-triangle " style="font-size:2.8rem;color:#424242;"/>					   
 					</p:media>			        
 	    </p:dialog>	
-	    <p:dialog id="dialogResumen" widgetVar="dialogResumenVar" header="Resumen de Cuentas por Cobrar"  modal="true" closable="true"  resizable="false" width="auto" height="auto" >		                 
+	    <p:dialog id="dialogResumen" widgetVar="dialogResumenVar" header="Resumen de Ingresos"  modal="true" closable="true"  resizable="false" width="auto" height="auto" >		                 
        		 <h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">
 				 <h:panelGrid  columns="2" styleClass="panelgrid-dotted-border">
-	  				<h:panelGrid  columns="1" style="text-align:center;width:400px;" styleClass="panelgrid-dotted-border">	
+	  				<h:panelGrid  columns="1" style="text-align:center;width:400px;font-size:10px;" styleClass="panelgrid-dotted-border">	
 							<p:dataTable  var="list" value="#{vwIngresos.listaResumenObra}"  scrollable="true" scrollHeight="150"
 										sortBy="#{list.importe}" sortOrder="descending" paginator="false" >			
 								<p:column headerText="Obra/Proyecto" sortBy="#{list.concepto}" styleClass="single-line"  style="width:10%;text-align:left;" >
@@ -314,7 +309,7 @@
 	            	</h:panelGrid>
 	            	<h:panelGrid   columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">	
 	            		<p:outputLabel value="OBRA/PROYECTO" style="font-size:15px;font-weight:bold;color:#585858;"/>
-	       		 		<p:donutChart model="#{vwIngresos.donutModelObras}" style="width:200px; height:200px;"/>
+	       		 		<p:donutChart model="#{vwIngresos.donutModelObras}" style="width:150px; height:150px;"/>
 	       		 	</h:panelGrid>
 	       		</h:panelGrid>
        		</h:panelGrid>	 			        

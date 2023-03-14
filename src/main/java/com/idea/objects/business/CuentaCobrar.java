@@ -3,22 +3,45 @@ package com.idea.objects.business;
 import java.sql.Timestamp;
 import java.util.Date;
 
-public class CuentaCobrar  {
+import com.opencsv.bean.CsvBindByName;
 
+public class CuentaCobrar  {
+	
+	@CsvBindByName(column = "id")
 	private Integer id;
+	
 	private Date fecha;
+	@CsvBindByName(column = "fecha")
+	private String str_fecha;
+	
+	@CsvBindByName(column = "factura")
 	private String factura;
+	
+	@CsvBindByName(column = "tipo")
 	private String tipo;
+	
+	@CsvBindByName(column = "concepto")
 	private String concepto;
+	
+	@CsvBindByName(column = "importe")
 	private Double importe;
+	
+	@CsvBindByName(column = "tipo_factura")
 	private String tipo_factura;
+	
+	@CsvBindByName(column = "estatus")
 	private String estatus;
+	
+	private Obra obra;
+	@CsvBindByName(column = "obra")
+	private String str_obra;
+	
 	private String detalle;	
 	private Timestamp created;
 	private Timestamp deleted;	
 	
 	
-	private Obra obra;
+
 	
 	public Integer getId() {
 		return id;
@@ -91,6 +114,18 @@ public class CuentaCobrar  {
 	}
 	public void setDeleted(Timestamp deleted) {
 		this.deleted = deleted;
+	}
+	public String getStr_fecha() {
+		return str_fecha;
+	}
+	public void setStr_fecha(String str_fecha) {
+		this.str_fecha = str_fecha;
+	}
+	public String getStr_obra() {
+		return str_obra;
+	}
+	public void setStr_obra(String str_obra) {
+		this.str_obra = str_obra;
 	}
 	
 	

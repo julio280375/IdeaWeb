@@ -2,7 +2,9 @@ package com.idea.controllers;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -34,6 +36,7 @@ import org.primefaces.model.charts.optionconfig.legend.Legend;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.idea.Tools;
@@ -45,6 +48,9 @@ import com.idea.objects.system.Body;
 import com.idea.objects.system.Configuracion;
 import com.idea.objects.system.Header;
 import com.idea.objects.system.Respuesta;
+import com.opencsv.CSVWriter;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
 
 
 @SuppressWarnings("deprecation")
@@ -129,6 +135,45 @@ public class vwIngresos  {
 
 		
 	}
+	
+	public void generaExcelCSV() {
+					
+		writeCsvFromBean(carpeta_archivos + "ingresos.csv");	
+		try {
+		    TimeUnit.MILLISECONDS.sleep(500);
+		} catch (InterruptedException ie) {
+		    Thread.currentThread().interrupt();
+		}
+		
+		try{
+	          Runtime.getRuntime().exec("cmd /c start "+carpeta_archivos + "ingresos.csv");
+	          }catch(IOException  e){
+	              e.printStackTrace();
+	          }
+
+		addMessage("Archivo generado correctamente.","Se generó el archivo: "+carpeta_archivos + "ingresos.csv",FacesMessage.SEVERITY_INFO);
+
+	}
+	
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void writeCsvFromBean(String path)  {
+		try {
+			if (listaPrincipal.size()>0) {					
+			    Writer writer  = new FileWriter(path.toString());
+			    StatefulBeanToCsv sbc = new StatefulBeanToCsvBuilder(writer)
+			       .withSeparator(CSVWriter.DEFAULT_SEPARATOR)			     
+			       .build();
+			    sbc.write(listaPrincipal);
+			    writer.close();
+			   
+			    LOG.info(path+" Guardado correctamente!");
+			}
+	    } catch (Exception e) { 
+	    	LOG.info("[writeCsvFromBean] "+e.getMessage());
+		}
+	}
+	
 	
 	
 	
@@ -329,7 +374,14 @@ public class vwIngresos  {
 			seleccionado=listaPrincipal.get(0);
 			totalIngreso = listaPrincipal.stream().mapToDouble(elem->elem.getImporte()).sum();
 		}
+		
+		//EXTRAE EL NOMBRE DE LA OBRA Y SE LO ASIGNA AL STR_OBRA
+		listaPrincipal.stream().filter(elem->elem.getObra()!=null).forEach(elem-> elem.setStr_obra(elem.getObra().getNombre()));
 
+		
+		listaPrincipal.stream().forEach(elem-> elem.setStr_fecha(df_ddMMMyyyy.format(elem.getFecha()).replace(".", "")));
+
+		
 		filtro_anterior=body.getFilter();
 		
 		seleccionarElemento();
@@ -404,6 +456,7 @@ public class vwIngresos  {
 		registro_guardar.setConcepto(concepto_e);
 		registro_guardar.setDetalle(detalle_e);
 		registro_guardar.setFactura(factura_e);
+		registro_guardar.setTipo_factura("CONTADO");
 		registro_guardar.setObra(null);
 		if(obra_e!=null && !obra_e.equals("")) {
 			Obra obra=listaObras.stream().filter(elem->elem.getNombre().toUpperCase().equals(obra_e.toUpperCase())).findFirst().orElse(null);
