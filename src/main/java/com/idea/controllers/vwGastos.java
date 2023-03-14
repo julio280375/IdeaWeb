@@ -167,13 +167,13 @@ public class vwGastos implements Serializable  {
 		} catch (InterruptedException ie) {
 		    Thread.currentThread().interrupt();
 		}
-		
+		/*
 		try{
 	       Runtime.getRuntime().exec("cmd /c start "+carpeta_archivos + "gastos.csv");
 		}catch(IOException  e){
           e.printStackTrace();
 		}
-
+		*/
 		addMessage("Archivo generado correctamente.","Se generó el archivo: "+carpeta_archivos + "gastos.csv",FacesMessage.SEVERITY_INFO);
 
 	}

@@ -183,13 +183,13 @@ public class vwCuentasPagar  {
 		} catch (InterruptedException ie) {
 		    Thread.currentThread().interrupt();
 		}
-		
+		/*
 		try{
 	          Runtime.getRuntime().exec("cmd /c start "+carpeta_archivos + "cuentas_x_pagar.csv");
 	          }catch(IOException  e){
 	              e.printStackTrace();
 	          }
-
+		*/
 		addMessage("Archivo generado correctamente.","Se generó el archivo: "+carpeta_archivos + "cuentas_x_pagar.csv",FacesMessage.SEVERITY_INFO);
 
 	}

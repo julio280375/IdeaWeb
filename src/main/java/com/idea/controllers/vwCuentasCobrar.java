@@ -168,12 +168,13 @@ public class vwCuentasCobrar  {
 		    Thread.currentThread().interrupt();
 		}
 		
-		try{
+		/*
+		 * try{
 	          Runtime.getRuntime().exec("cmd /c start "+carpeta_archivos + "cuentas_x_cobrar.csv");
 	          }catch(IOException  e){
 	              e.printStackTrace();
 	          }
-
+		*/
 		addMessage("Archivo generado correctamente.","Se generó el archivo: "+carpeta_archivos + "cuentas_x_cobrar.csv",FacesMessage.SEVERITY_INFO);
 
 	}

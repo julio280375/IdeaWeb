@@ -145,12 +145,13 @@ public class vwIngresos  {
 		    Thread.currentThread().interrupt();
 		}
 		
+		/*
 		try{
 	          Runtime.getRuntime().exec("cmd /c start "+carpeta_archivos + "ingresos.csv");
 	          }catch(IOException  e){
 	              e.printStackTrace();
 	          }
-
+		*/
 		addMessage("Archivo generado correctamente.","Se generó el archivo: "+carpeta_archivos + "ingresos.csv",FacesMessage.SEVERITY_INFO);
 
 	}
