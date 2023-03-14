@@ -107,7 +107,7 @@
 			 	
 					<h:panelGrid  columns="1" style="text-align:left;font-size:9px;" styleClass="panel-height"> 
 	
-					<p:dataTable id="tablaPrincipal" var="list" value="#{vwGastos.listaPrincipal}"  style="width:100%;"
+						<p:dataTable id="tablaPrincipal" var="list" value="#{vwGastos.listaPrincipal}"  style="width:100%;"
 								selectionMode="single" selection="#{vwGastos.seleccionado}" rowKey="#{list.id}" sortBy="#{list.id}" sortOrder="descending" 
 					            paginatorPosition="top" paginator="true"  rows="7">
 						<p:ajax event="rowSelect"  listener="#{vwGastos.seleccionarElemento()}" update=":formaID:capturaID"/>
@@ -153,25 +153,18 @@
 					</p:dataTable>
 				</h:panelGrid>
 				<h:panelGrid  columns="1" style="width:20%;text-align:center;"  >
-					
-					<h:commandLink disabled="true" >
-	                    <p:graphicImage name="/images/csv.png" width="24"/>
-	                    <p:dataExporter type="xls" target="tablaPrincipal" fileName="gastos" />
-	                </h:commandLink>
-
-					<p:commandButton  id="btnDescargaFiles"  value="Descargar Listado" disabled="true" 									
-							icon="fa fa-download" style="width:130px;" 
-					 		ajax="false" >
-						<p:fileDownload value="#{vwGastos.descargarFilterFiles()}"></p:fileDownload>
-					</p:commandButton>		
-									
-											
+					<p:commandButton  id="btnDescargaExcel" value="Generar Excel"   
+						icon="fa fa-file-excel" style="width:150px;height:35px;" styleClass="button-texto-icono" 
+						action="#{vwGastos.generaExcelCSV()}"	update=":formaID"> 	
+					</p:commandButton>						
+					<p:tooltip for="btnDescargaExcel" value="Generar Excel" position="right" />																				
 					<p:commandButton  id="btnResumen" value="Resumen"   disabled="#{vwGastos.listaPrincipal.size()==0}"
-						icon="fa fa-bar-chart" style="width:150px;height:35px;margin-top:30%;" styleClass="button-texto-icono" 
+						icon="fa fa-bar-chart" style="width:150px;height:35px;" styleClass="button-texto-icono" 
 						action="#{vwGastos.accionResumen()}"
 						update=":formaID"
 						oncomplete="PF('dialogResumenVar').show()"> 							
 					</p:commandButton>
+					<p:tooltip for="btnResumen" value="Ver Resumen" position="right" />	
 				</h:panelGrid>
 			</h:panelGrid>
 			<h:panelGrid id="capturaID" columns="2"  cellpadding="3" style="width:100%;text-align:center;" columnClasses="valign-top,valign-top" styleClass="panelgrid-dotted-border">
@@ -328,7 +321,7 @@
 		<p:dialog id="dialogResumen" widgetVar="dialogResumenVar" header="Resumen de Gastos"  modal="true" closable="true"  resizable="false" width="auto" height="auto" >		                 
 			 <h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border"> 	
 				 <h:panelGrid  columns="2" styleClass="panelgrid-dotted-border">	
-	  				<h:panelGrid  columns="1" style="text-align:center;width:400px;" styleClass="panelgrid-dotted-border">		  					
+	  				<h:panelGrid  columns="1" style="text-align:center;width:400px;font-size:10px;" styleClass="panelgrid-dotted-border">		  					
 							<p:dataTable  var="list" value="#{vwGastos.listaResumenProveedor}"  scrollable="true" scrollHeight="150"
 										sortBy="#{list.importe}" sortOrder="descending" paginator="false" >			
 								<p:column headerText="Proveedor" sortBy="#{list.concepto}" styleClass="single-line"  style="width:10%;text-align:left;" >
@@ -343,13 +336,13 @@
 	            	</h:panelGrid>
 	            	<h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">
 	            		<p:outputLabel value="PROVEEDOR" style="font-size:15px;font-weight:bold;color:#585858;"/>	
-	  					<p:donutChart  model="#{vwGastos.donutModelProveedores}"  style="width:200px; height:200px;"/>
+	  					<p:donutChart  model="#{vwGastos.donutModelProveedores}" style="width:150px; height:150px;"/>
 	       		 	</h:panelGrid>
 	       		</h:panelGrid>
        		</h:panelGrid>
        		 <h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">
 				 <h:panelGrid  columns="2" styleClass="panelgrid-dotted-border">
-	  				<h:panelGrid  columns="1" style="text-align:center;width:400px;" styleClass="panelgrid-dotted-border">	
+	  				<h:panelGrid  columns="1" style="text-align:center;width:400px;font-size:10px;" styleClass="panelgrid-dotted-border">	
 							<p:dataTable  var="list" value="#{vwGastos.listaResumenObra}"  scrollable="true" scrollHeight="150"
 										sortBy="#{list.importe}" sortOrder="descending" paginator="false" >			
 								<p:column headerText="Obra/Proyecto" sortBy="#{list.concepto}" styleClass="single-line"  style="width:10%;text-align:left;" >
@@ -364,11 +357,7 @@
 	            	</h:panelGrid>
 	            	<h:panelGrid   columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">	
 	            		<p:outputLabel value="OBRA/PROYECTO" style="font-size:15px;font-weight:bold;color:#585858;"/>
-	       		 		<p:donutChart model="#{vwGastos.donutModelObras}" style="width:200px; height:200px;"/>
-	       		 	</h:panelGrid>
-	       		 	<h:panelGrid rendered="false"  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">	
-	  					<p:outputLabel value="TIPO DE GASTO" style="font-size:15px;font-weight:bold;color:#585858;"/>
-	       		 		<p:donutChart model="#{vwGastos.donutModelTipo}" style="width:200px; height:200px;"/>
+	       		 		<p:donutChart model="#{vwGastos.donutModelObras}" style="width:150px; height:150px;"/>
 	       		 	</h:panelGrid>
 	       		</h:panelGrid>
        		</h:panelGrid>	 			        

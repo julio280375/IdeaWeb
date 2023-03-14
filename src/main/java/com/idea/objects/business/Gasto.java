@@ -5,30 +5,55 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 import com.idea.objects.system.Empleado;
+import com.opencsv.bean.CsvBindByName;
 
 
 public class Gasto {
+	@CsvBindByName(column = "id")
 	private Integer id;
+	
 	private Date fecha;
+	@CsvBindByName(column = "fecha")
+	private String str_fecha;
+	
+	@CsvBindByName(column = "tipo")
 	private String tipo;
+	
+	@CsvBindByName(column = "concepto")
 	private String concepto;
+	
+	@CsvBindByName(column = "importe")
 	private Double importe;
+	
+	@CsvBindByName(column = "movimiento")
 	private Long movimiento;
+	
 	private String detalle;
+	
 	private Date vencimiento;	
+
+	@CsvBindByName(column = "factura")
 	private String factura;
+	
+	@CsvBindByName(column = "tipo_factura")
 	private String tipo_factura;
+	
 	private String estatus;
-	private Timestamp created;
-	private Timestamp deleted;
 	
 	private Proveedor proveedor;
+	@CsvBindByName(column = "proveedor")
+	private String str_proveedor;
+	
 	private Obra obra;
+	@CsvBindByName(column = "obra")
+	private String str_obra;
+	
 	private Empleado solicito;
 	private Empleado autorizo;
 	private Orden orden;
 	
-	
+	private Timestamp created;
+	private Timestamp deleted;
 	
 	public Integer getId() {
 		return id;
@@ -137,5 +162,23 @@ public class Gasto {
 	}
 	public void setDeleted(Timestamp deleted) {
 		this.deleted = deleted;
+	}
+	public String getStr_fecha() {
+		return str_fecha;
+	}
+	public void setStr_fecha(String str_fecha) {
+		this.str_fecha = str_fecha;
+	}
+	public String getStr_proveedor() {
+		return str_proveedor;
+	}
+	public void setStr_proveedor(String str_proveedor) {
+		this.str_proveedor = str_proveedor;
+	}
+	public String getStr_obra() {
+		return str_obra;
+	}
+	public void setStr_obra(String str_obra) {
+		this.str_obra = str_obra;
 	}
 }

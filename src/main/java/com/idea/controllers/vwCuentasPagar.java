@@ -102,9 +102,11 @@ public class vwCuentasPagar  {
 	
 	private List<Resumen> listaResumenProveedor;
 	private List<Resumen> listaResumenObra;
+	private List<Resumen> listaResumenEstatus;
 
 	private DonutChartModel donutModelProveedores;
 	private DonutChartModel donutModelObras;
+	private DonutChartModel donutModelEstatus;
 	
 	private String archivo_e;
 	private List<String> listaArchivosPDF;
@@ -128,7 +130,6 @@ public class vwCuentasPagar  {
 	private Double importe_e;
 	private Date vencimiento_e;	
 	private String factura_e;
-	private String tipo_factura_e;
 	private String estatus_e;
 	private String detalle_e;
 
@@ -164,10 +165,54 @@ public class vwCuentasPagar  {
 		inicializaFiltros(true);
 		
 		donutModelProveedores = new DonutChartModel();	
+		
 		donutModelObras = new DonutChartModel();
+		
+		donutModelEstatus = new DonutChartModel();
 
 		
 	}
+	
+	
+
+	public void generaExcelCSV() {
+		
+		writeCsvFromBean(carpeta_archivos + "cuentas_x_pagar.csv");	
+		try {
+		    TimeUnit.MILLISECONDS.sleep(500);
+		} catch (InterruptedException ie) {
+		    Thread.currentThread().interrupt();
+		}
+		
+		try{
+	          Runtime.getRuntime().exec("cmd /c start "+carpeta_archivos + "cuentas_x_pagar.csv");
+	          }catch(IOException  e){
+	              e.printStackTrace();
+	          }
+
+		addMessage("Archivo generado correctamente.","Se generó el archivo: "+carpeta_archivos + "cuentas_x_pagar.csv",FacesMessage.SEVERITY_INFO);
+
+	}
+	
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void writeCsvFromBean(String path)  {
+		try {
+			if (listaPrincipal.size()>0) {					
+			    Writer writer  = new FileWriter(path.toString());
+			    StatefulBeanToCsv sbc = new StatefulBeanToCsvBuilder(writer)
+			       .withSeparator(CSVWriter.DEFAULT_SEPARATOR)			     
+			       .build();
+			    sbc.write(listaPrincipal);
+			    writer.close();
+			   
+			    LOG.info(path+" Guardado correctamente!");
+			}
+	    } catch (Exception e) { 
+	    	LOG.info("[writeCsvFromBean] "+e.getMessage());
+		}
+	}
+	
 	
 	
 	
@@ -177,6 +222,8 @@ public class vwCuentasPagar  {
 		
 		createDonutModelObras();
 		
+		createDonutModelEstatus();
+		
 		preparaListasResumen();
 	}	
 	
@@ -184,6 +231,18 @@ public class vwCuentasPagar  {
 	private void preparaListasResumen() {
 		Resumen resumen;
 		Double importe;
+		
+		listaResumenEstatus=new ArrayList<>();
+        for(String estatus : listaEstatus) {
+        	importe= listaPrincipal.stream().filter(elem-> elem.getEstatus().equals(estatus)).mapToDouble(elem->elem.getImporte()).sum();
+        	if(importe>0d) {
+	        	resumen = new Resumen();
+	        	resumen.setConcepto(estatus);        	
+	        	resumen.setImporte(importe);
+	        	listaResumenEstatus.add(resumen);
+        	}
+        }
+		
 		listaResumenProveedor=new ArrayList<>();
 		List<String> proveedores = listaPrincipal.stream().filter(elem-> elem.getProveedor()!=null).map(elem -> elem.getProveedor().getNombre()).distinct().collect(Collectors.toList()); 
         for(String proveedor : proveedores) {
@@ -214,6 +273,38 @@ public class vwCuentasPagar  {
     	resumen.setImporte(importe);
     	listaResumenObra.add(resumen);
 	}
+	
+	
+	private void createDonutModelEstatus() {
+		ChartData data = new ChartData();
+        DonutChartDataSet dataSet = new DonutChartDataSet();
+        List<Number> values = new ArrayList<>();
+        List<String> colors = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
+        Random rand = new Random();
+        Double valor;
+        for(String label:listaEstatus) {
+        	valor = listaPrincipal.stream().filter(elem-> elem.getEstatus().equals(label)).mapToDouble(elem->elem.getImporte()).sum();
+        	if(valor>0d) {
+        		labels.add(label);
+	        	values.add(valor);
+	        	String color=tools.regresaColor(rand.nextInt((138 - 1) + 1) + 1);
+	        	colors.add(color);
+        	}
+        }
+
+        DonutChartOptions options = new DonutChartOptions();
+        Legend legend = new Legend();
+        legend.setDisplay(false);
+        options.setLegend(legend);
+        donutModelEstatus.setOptions(options);
+        
+        dataSet.setData(values);
+        dataSet.setBackgroundColor(colors);
+        data.setLabels(labels);
+        data.addChartDataSet(dataSet);
+        donutModelEstatus.setData(data);          
+	}	
 	
 	
 	
@@ -447,8 +538,20 @@ public class vwCuentasPagar  {
 			seleccionado=listaPrincipal.get(0);
 			totalCuentasPagar = listaPrincipal.stream().mapToDouble(elem->elem.getImporte()).sum();
 			listaPrincipal.stream().forEach(elem-> elem.setDiasVencimiento(calculaDiasVencimiento(elem.getVencimiento().getTime(), elem.getEstatus())));
-			listaPrincipal.stream().filter(elem -> elem.getDiasVencimiento().equals(0l) && !elem.getEstatus().equals("PAGADO")).forEach(elem->elem.setEstatus("VENCIDO"));
+			//listaPrincipal.stream().filter(elem -> elem.getDiasVencimiento().equals(0l) && !elem.getEstatus().equals("PAGADO")).forEach(elem->elem.setEstatus("VENCIDO"));
 		}
+		
+		
+		//EXTRAE EL NOMBRE DE LA OBRA Y SE LO ASIGNA AL STR_OBRA
+		listaPrincipal.stream().filter(elem->elem.getObra()!=null).forEach(elem-> elem.setStr_obra(elem.getObra().getNombre()));
+
+		//EXTRAE EL NOMBRE DEL PROVEEDOR Y SE LO ASIGNA AL STR_PROVEEDOR
+		listaPrincipal.stream().filter(elem->elem.getProveedor()!=null).forEach(elem-> elem.setStr_proveedor(elem.getProveedor().getNombre()));
+
+		listaPrincipal.stream().forEach(elem-> elem.setStr_fecha(df_ddMMMyyyy.format(elem.getFecha()).replace(".", "")));
+
+		listaPrincipal.stream().forEach(elem-> elem.setStr_vencimiento(df_ddMMMyyyy.format(elem.getVencimiento()).replace(".", "")));
+		
 	    filtro_anterior=body.getFilter();
 		
 		seleccionarElemento();
@@ -459,7 +562,7 @@ public class vwCuentasPagar  {
 		Date now = Calendar.getInstance().getTime();
 		Long result = TimeUnit.DAYS.convert(Math.abs(now.getTime() - fecha), TimeUnit.MILLISECONDS);
 		if(now.getTime() > fecha) return 0l;
-		return result;
+		return result+1;
 	}
 	
 	
@@ -481,7 +584,6 @@ public class vwCuentasPagar  {
 			concepto_e=seleccionado.getConcepto();
 			vencimiento_e= seleccionado.getVencimiento();
 			factura_e=seleccionado.getFactura();
-			tipo_factura_e=seleccionado.getTipo_factura();
 			estatus_e=seleccionado.getEstatus();
 			detalle_e=seleccionado.getDetalle();
 			
@@ -534,7 +636,6 @@ public class vwCuentasPagar  {
 		archivo_e="";
 		vencimiento_e= Calendar.getInstance().getTime();
 		factura_e="";
-		tipo_factura_e="CREDITO";
 		estatus_e="PENDIENTE";
 		pdf_to_show=carpeta_trabajo+"error.pdf";
 		obra_e = "";
@@ -558,7 +659,7 @@ public class vwCuentasPagar  {
 		registro_guardar.setDiasVencimiento(calculaDiasVencimiento(vencimiento_e.getTime(), estatus_e));
 		registro_guardar.setFactura(factura_e);
 		registro_guardar.setEstatus(estatus_e);
-		registro_guardar.setTipo_factura(tipo_factura_e);
+		registro_guardar.setTipo_factura("CREDITO");
 		registro_guardar.setDetalle(detalle_e);
 		
 		registro_guardar.setObra(null);
@@ -1297,18 +1398,6 @@ public class vwCuentasPagar  {
 
 
 
-	public String getTipo_factura_e() {
-		return tipo_factura_e;
-	}
-
-
-
-	public void setTipo_factura_e(String tipo_factura_e) {
-		this.tipo_factura_e = tipo_factura_e;
-	}
-
-
-
 	public String getEstatus_e() {
 		return estatus_e;
 	}
@@ -1401,6 +1490,30 @@ public class vwCuentasPagar  {
 
 	public void setDonutModelObras(DonutChartModel donutModelObras) {
 		this.donutModelObras = donutModelObras;
+	}
+
+
+
+	public List<Resumen> getListaResumenEstatus() {
+		return listaResumenEstatus;
+	}
+
+
+
+	public void setListaResumenEstatus(List<Resumen> listaResumenEstatus) {
+		this.listaResumenEstatus = listaResumenEstatus;
+	}
+
+
+
+	public DonutChartModel getDonutModelEstatus() {
+		return donutModelEstatus;
+	}
+
+
+
+	public void setDonutModelEstatus(DonutChartModel donutModelEstatus) {
+		this.donutModelEstatus = donutModelEstatus;
 	}
 
 

@@ -23,15 +23,12 @@ import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.application.FacesMessage.Severity;
-import javax.faces.bean.RequestScoped;
-import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.servlet.http.HttpSession;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.StreamedContent;
 import org.primefaces.model.charts.ChartData;
 import org.primefaces.model.charts.donut.DonutChartDataSet;
 import org.primefaces.model.charts.donut.DonutChartModel;
@@ -131,8 +128,6 @@ public class vwGastos implements Serializable  {
 	private Integer orden_id_e;
 	private String orden_tipo_e;
 
-	
-	
 
 	public void iniciaVista() {
 		LOG.info("***************** vwGastos.iniciaVista() ****************");
@@ -160,9 +155,46 @@ public class vwGastos implements Serializable  {
 		donutModelProveedores = new DonutChartModel();	
 		donutModelObras = new DonutChartModel();
 		donutModelTipo = new DonutChartModel();
-		
-		//fileDOWN=downloadReviewReportStreamed();
 
+	}
+	
+	
+	public void generaExcelCSV() {
+		
+		writeCsvFromBean(carpeta_archivos + "gastos.csv");	
+		try {
+		    TimeUnit.MILLISECONDS.sleep(500);
+		} catch (InterruptedException ie) {
+		    Thread.currentThread().interrupt();
+		}
+		
+		try{
+	       Runtime.getRuntime().exec("cmd /c start "+carpeta_archivos + "gastos.csv");
+		}catch(IOException  e){
+          e.printStackTrace();
+		}
+
+		addMessage("Archivo generado correctamente.","Se generó el archivo: "+carpeta_archivos + "gastos.csv",FacesMessage.SEVERITY_INFO);
+
+	}
+	
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void writeCsvFromBean(String path)  {
+		try {
+			if (listaPrincipal.size()>0) {					
+			    Writer writer  = new FileWriter(path.toString());
+			    StatefulBeanToCsv sbc = new StatefulBeanToCsvBuilder(writer)
+			       .withSeparator(CSVWriter.DEFAULT_SEPARATOR)			     
+			       .build();
+			    sbc.write(listaPrincipal);
+			    writer.close();
+			   
+			    LOG.info(path+" Guardado correctamente!");
+			}
+	    } catch (Exception e) { 
+	    	LOG.info("[writeCsvFromBean] "+e.getMessage());
+		}
 	}
 	
 	
@@ -206,75 +238,8 @@ public class vwGastos implements Serializable  {
 		}
 	}
 	
-	
-	
-	
-	
-	
-
-	public DefaultStreamedContent  downloadReviewReportStreamed() {
-		fileDOWN= DefaultStreamedContent.builder().name("boromir.jpg")
-	            .contentType("image/jpg")
-	            .stream(() -> FacesContext.getCurrentInstance().getExternalContext()
-	                    .getResourceAsStream("/resources/images/downloaded_boruuuuomir.jpg"))
-	            .build();
-	    LOG.info("downloadReviewReportStreamed(): OK!");
-	    return fileDOWN;
-	}
 	 
 	
-	
-	public DefaultStreamedContent descargarFilterFiles() {
-
-
-
-		String pathArchivos=System.getProperty("user.dir").replace("\\", "/")+"/src/main/webapp/resources/gastos.csv";
-		//String pathArchivos="C:\\ToolsAPP\\gastos.csv";
-			
-		writeCsvFromBean(pathArchivos);	
-		
-		try {
-	
-			FileDownload(pathArchivos);
-			
-			deleteFiles(pathArchivos);
-		
-		
-		} catch (Exception e) {
-			LOG.error(e.getMessage());
-		}	
-			
-		return fileDOWN;
-	
-	}
-	
-	
-	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void writeCsvFromBean(String path)  {
-		try {
-			if (listaPrincipal.size()>0) {					
-			    Writer writer  = new FileWriter(path.toString());
-			    StatefulBeanToCsv sbc = new StatefulBeanToCsvBuilder(writer)
-			       .withSeparator(CSVWriter.DEFAULT_SEPARATOR)
-			       .withIgnoreField(Gasto.class, Gasto.class.getDeclaredField("orden"))
-			       .withIgnoreField(Gasto.class, Gasto.class.getDeclaredField("obra"))
-			       .withIgnoreField(Gasto.class, Gasto.class.getDeclaredField("autorizo"))
-			       .withIgnoreField(Gasto.class, Gasto.class.getDeclaredField("solicito"))
-			       .withIgnoreField(Gasto.class, Gasto.class.getDeclaredField("proveedor"))
-			       .withOrderedResults(true)
-			       .build();
-			    sbc.setOrderedResults(true);
-			    sbc.write(listaPrincipal);
-			    writer.close();
-			   
-			    LOG.info(path+" Guardado correctamente!");
-			}
-	    } catch (Exception e) { 
-	    	LOG.error("[writeCsvFromBean] "+e.getMessage());
-		}
-	}
-    
 
 
 	private void FileDownload(String filePath) {
@@ -428,6 +393,17 @@ public class vwGastos implements Serializable  {
 		}else {
 			listaPrincipal=new ArrayList<>();
 		}
+		
+		
+		//EXTRAE EL NOMBRE DE LA OBRA Y SE LO ASIGNA AL STR_OBRA
+		listaPrincipal.stream().filter(elem->elem.getObra()!=null).forEach(elem-> elem.setStr_obra(elem.getObra().getNombre()));
+
+		//EXTRAE EL NOMBRE DEL PROVEEDOR Y SE LO ASIGNA AL STR_PROVEEDOR
+		listaPrincipal.stream().filter(elem->elem.getProveedor()!=null).forEach(elem-> elem.setStr_proveedor(elem.getProveedor().getNombre()));
+
+
+		listaPrincipal.stream().forEach(elem-> elem.setStr_fecha(df_ddMMMyyyy.format(elem.getFecha()).replace(".", "")));
+
 
 		filtro_anterior=body.getFilter();
 		
@@ -1534,7 +1510,6 @@ public class vwGastos implements Serializable  {
 	public void setListaResumenObra(List<Resumen> listaResumenObra) {
 		this.listaResumenObra = listaResumenObra;
 	}
-
 
 
 
