@@ -9,6 +9,7 @@ public class Empleado {
 	private String nombre;
 	private String puesto;	
 	private String departamento;
+	private Boolean superusuario;
 	
 	public Integer getId() {
 		return id;
@@ -45,6 +46,12 @@ public class Empleado {
 	}
 	public void setDepartamento(String departamento) {
 		this.departamento = departamento;
+	}
+	public Boolean getSuperusuario() {
+		return superusuario;
+	}
+	public void setSuperusuario(Boolean superusuario) {
+		this.superusuario = superusuario;
 	}	
 	
 	

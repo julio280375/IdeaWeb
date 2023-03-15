@@ -268,6 +268,19 @@
 							disabled="#{!vwIngresos.editable}"	    						
 							update=":formaID:capturaID"
 							style="width:150px;height:30px;" icon="fa fa-undo" />
+						<p:commandButton value="Eliminar" 
+							action="#{vwIngresos.accionEliminar()}"
+							styleClass="button-texto-icono"
+							disabled="#{vwIngresos.editable}"
+							rendered="#{vwIngresos.header.empleado.superusuario}"	    						
+							update=":formaID"
+							style="width:150px;height:30px;" icon="fa fa-minus-circle" >
+							<p:confirm header="Eliminar registro" message="Desea eliminar el registro seleccionado?" icon="pi pi-exclamation-triangle"/>					
+						</p:commandButton>						
+						<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+				            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+				            <p:commandButton value="Si, Eliminar" type="button" styleClass="ui-confirmdialog-yes" />
+				        </p:confirmDialog>
 						<p:commandButton value="Guardar"
 							action="#{vwIngresos.accionGuardar()}" 
 							styleClass="button-texto-icono" 

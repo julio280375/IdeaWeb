@@ -652,12 +652,14 @@ private void asignaValoresRegistroIngreso() {
 		//SE ASIGNAN VALORES AL REGISTRO YA SEA NUEVO O NO 
 		asignaValoresRegistro();
 		
+		guardaRegistro();
+		/*
 		if(!estatus_e.equals("PAGADO")) {
 			guardaRegistro();
 		}else {
 			guardaRegistroPagado();
 		}
-		
+		*/
 	}
 	
 	
@@ -763,8 +765,8 @@ private void asignaValoresRegistroIngreso() {
 	
 	
 	private String resultadoValidaGuardado() {
-		String result="TIPO";
-		//if (tipo_e==null || tipo_e.equals("")) return result;
+		String result="FECHA";
+		if (fecha_e==null || fecha_e.equals("")) return result;
 		//result="PROVEEDOR";
 		//if (proveedor_e==null || proveedor_e.equals("")) return result;
 		//result="SOLICITO";

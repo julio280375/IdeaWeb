@@ -75,11 +75,11 @@
 		    				</p:selectOneMenu>		    			
 							<p:commandButton id="btnLeerArchivoID" style="font-size:15px;" icon="fa fa-search" 																				
 								action="#{vwMovimientos.llenaListaMovimientos()}"
-								update=":formaID:tabviewID :formaID:capturaID">																		
+								update=":formaID:tabviewID :formaID:importarID">																		
 							</p:commandButton>		
 							<p:commandButton id="btnLimpiarID" style="font-size:15px;" icon="fa fa-recycle"														
 								action="#{vwMovimientos.limpiaListaMovimientos()}"
-								update=":formaID:tabviewID :formaID:capturaID">																		
+								update=":formaID:tabviewID :formaID:importarID">																		
 							</p:commandButton>						
 						</h:panelGrid>	
 				</h:panelGrid>
@@ -170,7 +170,7 @@
 					</h:panelGrid>					
 				</p:tab>
 			</p:tabView>
-			<h:panelGrid columns="1"  styleClass="ui-noborder" style="text-align:right;">
+			<h:panelGrid id="importarID" columns="1"  styleClass="ui-noborder" style="text-align:right;">
 				<p:commandButton  id="btnImportarGastosID" value="Importar Movimientos"  icon="fa fa-upload" style="width:150px;height:35px;" styleClass="button-texto-icono" 
 					disabled="#{vwMovimientos.listaGastosBanorte==null and vwMovimientos.listaIngresosBanorte==null}"	
 					action="#{vwMovimientos.importaMovimientos()}" 

@@ -555,6 +555,22 @@ public class vwIngresos  {
 	
 
 	
+	public void accionEliminar(){
+		LOG.info("***************** vwIngresos.accionEliminar() ****************");
+		Body body = new Body();
+		body.setIngreso(seleccionado);
+		Respuesta resp = tools.ejecutaRespuesta("ingreso/delete", header, body, 30);
+		if(resp!=null && resp.getCode()==200) {
+			addMessage("Registro ha sido eliminado","El registro se elimino correctamente.", FacesMessage.SEVERITY_INFO);			
+			inicializaFiltros(true);
+		}else {
+			addMessage("Error al eliminar el registro","Elimine archivos relacionados al registro", FacesMessage.SEVERITY_WARN);
+		}
+		
+	}
+	
+	
+	
 	public void accionGuardar(){
 		LOG.info("***************** vwIngresos.accionGuardar() ****************");
 		String strValida=resultadoValidaGuardado();
@@ -623,7 +639,9 @@ public class vwIngresos  {
 	
 	
 	private String resultadoValidaGuardado() {
-		//String result="TIPO";
+		String result="FECHA";
+		if (fecha_e==null || fecha_e.equals("")) return result;
+
 		//if (tipo_e==null || tipo_e.equals("")) return result;
 		//result="PROVEEDOR";
 		//if (proveedor_e==null || proveedor_e.equals("")) return result;

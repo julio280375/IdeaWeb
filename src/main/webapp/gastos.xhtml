@@ -114,24 +114,30 @@
 
 						<p:column headerText="ID"  sortBy="#{list.id}"  styleClass="single-line" style="width:4%;text-align:center;">
 					    		<h:outputText value="#{list.id}"/>
-						</p:column>		           						
+						</p:column>	
 						<p:column headerText="Movimiento"  sortBy="#{list.movimiento}"  styleClass="single-line" style="width:9%;text-align:center;">
 					    		<h:outputText value="#{list.movimiento}"/>
-						</p:column>
+						</p:column>	
+						<p:column headerText="Proveedor" sortBy="#{list.proveedor.nombre}" styleClass="single-line" style="width:20%;">
+					    		<h:outputText value="#{list.proveedor.nombre}"/>
+						</p:column>  
+						<p:column headerText="Fecha" sortBy="#{list.fecha}" styleClass="single-line" style="text-align:center;width:10%;">
+					    		<h:outputText value="#{list.fecha}">
+					    		<f:convertDateTime type="date" pattern="dd/MMM/yyyy"  locale="es"/>
+					    		</h:outputText>
+						</p:column>          						
 						<p:column headerText="Tipo" sortBy="#{list.tipo}" styleClass="single-line"  style="width:20%;">
 					    		<h:outputText value="#{list.tipo}"/>
 						</p:column> 
 						<p:column headerText="Obra"  sortBy="#{list.obra.nombre}" styleClass="single-line" style="width:20%;">
 					    		<h:outputText value="#{list.obra.nombre}"/>
 						</p:column>
-						<p:column headerText="Proveedor" sortBy="#{list.proveedor.nombre}" styleClass="single-line" style="width:20%;">
-					    		<h:outputText value="#{list.proveedor.nombre}"/>
-						</p:column> 																
-						<p:column headerText="Fecha" sortBy="#{list.fecha}" styleClass="single-line" style="text-align:center;width:10%;">
-					    		<h:outputText value="#{list.fecha}">
-					    		<f:convertDateTime type="date" pattern="dd/MMM/yyyy"  locale="es"/>
-					    		</h:outputText>
+						<p:column headerText="Factura" sortBy="#{list.factura}" styleClass="single-line" style="text-align:left;width:7%;">
+					    		<h:outputText value="#{list.factura}"/>
 						</p:column>
+						<p:column headerText="Movimiento"  sortBy="#{list.movimiento}"  styleClass="single-line" style="width:10%;text-align:center;">
+					    		<h:outputText value="#{list.movimiento}"/>
+						</p:column>																
 						<p:column headerText="Concepto" sortBy="#{list.concepto}" styleClass="single-line" style="text-align:left;width:20%;">
 					    		<h:outputText value="#{list.concepto}"/>
 						</p:column> 	
@@ -303,6 +309,19 @@
 							disabled="#{!vwGastos.editable}"	    						
 							update=":formaID:capturaID"
 							style="width:150px;height:30px;" icon="fa fa-undo" />
+						<p:commandButton value="Eliminar" 
+							action="#{vwGastos.accionEliminar()}"
+							styleClass="button-texto-icono"
+							disabled="#{vwGastos.editable}"
+							rendered="#{vwGastos.header.empleado.superusuario}"	    						
+							update=":formaID"
+							style="width:150px;height:30px;" icon="fa fa-minus-circle" >
+							<p:confirm header="Eliminar registro" message="Desea eliminar el registro seleccionado?" icon="pi pi-exclamation-triangle"/>					
+						</p:commandButton>						
+						<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+				            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+				            <p:commandButton value="Si, Eliminar" type="button" styleClass="ui-confirmdialog-yes" />
+				        </p:confirmDialog>
 						<p:commandButton value="Guardar"
 							action="#{vwGastos.accionGuardar()}" 
 							styleClass="button-texto-icono" 

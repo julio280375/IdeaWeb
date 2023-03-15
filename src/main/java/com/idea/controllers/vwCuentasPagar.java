@@ -824,12 +824,15 @@ public class vwCuentasPagar  {
 		//SE ASIGNAN VALORES AL REGISTRO YA SEA NUEVO O NO 
 		asignaValoresRegistro();
 		
+		
+		guardaRegistro();
+		/*
 		if(!estatus_e.equals("PAGADO")) {
 			guardaRegistro();
 		}else {
 			guardaRegistroPagado();
 		}
-		
+		*/
 	}
 	
 	
@@ -930,7 +933,9 @@ public class vwCuentasPagar  {
 	
 	
 	private String resultadoValidaGuardado() {
-		String result="TIPO";
+		String result="FECHA";
+		if (fecha_e==null || fecha_e.equals("")) return result;
+
 		//if (tipo_e==null || tipo_e.equals("")) return result;
 		//result="PROVEEDOR";
 		//if (proveedor_e==null || proveedor_e.equals("")) return result;
