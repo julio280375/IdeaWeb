@@ -30,10 +30,10 @@
 						<i class="fa fa-user-circle" style="font-size:2.8rem;color:#424242;"/>
 						<h:panelGrid columns="1" styleClass="ui-noborder"  style="text-align:left;margin-left:2%;">
 							<p:outputLabel value="#{vwMovimientos.header.empleado.nombre}" style="font-size:15px;font-weight:bold;color:#585858;" />
-							<p:outputLabel value="#{vwMovimientos.header.empleado.departamento}-#{vwMovimientos.header.empleado.puesto}" style="font-family:Bahnschrift Light;font-size:10px;font-weight:bold;color:#A4A4A4;" />
+							<p:outputLabel value="#{vwMovimientos.header.empleado.puesto}" style="font-family:Bahnschrift Light;font-size:10px;font-weight:bold;color:#A4A4A4;" />
 						</h:panelGrid>
 					</h:panelGrid>
-					<h:panelGrid columns="3"  style="width:100%;text-align:center;" styleClass="ui-noborder">						
+					<h:panelGrid columns="3"  style="width:100%;text-align:center;">						
 						<i class="fa fa-map-marker" style="font-size:1.3rem;color:#FBFBEF;"></i>
 						<h:panelGrid columns="1" styleClass="ui-noborder"  style="text-align:left;">							
 							<h:panelGrid columns="2" styleClass="ui-noborder"  style="text-align:left;">
@@ -60,9 +60,9 @@
 					</h:panelGrid>
 			</h:panelGrid>
 
-			<h:panelGrid id="capturaID" columns="4"  cellpadding="5" style="width:96%;text-align:center;margin-left:2%;margin-top:1%;" columnClasses="valign-top,valign-top,valign-top,valign-center" styleClass="panelgrid-dotted-border">
-				<h:panelGrid columns="1" styleClass="panelgrid-dotted-border" >
-				        <h:panelGrid   id="listaArchivosID"  columns="7" style="text-align:left;" styleClass="panelgrid-dotted-border">
+			<h:panelGrid id="capturaID" columns="4"  cellpadding="5" style="width:90%;text-align:center;margin-top:1%;" columnClasses="valign-top,valign-top,valign-top,valign-center" >
+				<h:panelGrid columns="1" >
+				        <h:panelGrid   id="listaArchivosID"  columns="7" style="text-align:left;">
 				        	<p:outputLabel value="Banco:" />
 		          			<p:selectOneMenu  value="#{vwMovimientos.banco}"  styleClass="MyOneMenu" style="font-size:10px;width:150px" multiple="false" filter="false"  >									
 		        				<f:selectItems value="#{vwMovimientos.listaBancos}"/>	        		
@@ -85,7 +85,7 @@
 				</h:panelGrid>
 			</h:panelGrid>
 			
-			<p:tabView id="tabviewID" >										
+			<p:tabView id="tabviewID" style="width:98%;">										
 				<p:tab  title="Gastos" >
 					<h:panelGrid  columns="1" style="text-align:left;font-size:9px;" styleClass="panel-height"> 
 	

@@ -27,7 +27,7 @@
 						<i class="fa fa-user-circle" style="font-size:2.8rem;color:#424242;"/>
 						<h:panelGrid columns="1" styleClass="ui-noborder"  style="text-align:left;margin-left:2%;">
 							<p:outputLabel value="#{vwEmpleados.header.empleado.nombre}" style="font-size:15px;font-weight:bold;color:#585858;" />
-							<p:outputLabel value="#{vwEmpleados.header.empleado.departamento}-#{vwEmpleados.header.empleado.puesto}" style="font-family:Bahnschrift Light;font-size:10px;font-weight:bold;color:#A4A4A4;" />
+							<p:outputLabel value="#{vwEmpleados.header.empleado.puesto}" style="font-family:Bahnschrift Light;font-size:10px;font-weight:bold;color:#A4A4A4;" />
 						</h:panelGrid>
 					</h:panelGrid>
 					<h:panelGrid columns="3"  style="width:100%;text-align:center;" styleClass="ui-noborder">						
@@ -95,53 +95,44 @@
 				</p:toolbar>
 			</h:panelGrid>
 			
-			<h:panelGrid  columns="3" style="width:95%;margin-left:2%;" columnClasses="valign-center,valign-top,valign-top" >
-			 
-			<img src="resources/images/height.png" />
-			
-			<h:panelGrid  id="tablaID" columns="1" style="text-align:left;" styleClass="panel-height"> 
-	
-					<p:dataTable  var="list" value="#{vwEmpleados.listaPrincipal}" 
-								selectionMode="single" selection="#{vwEmpleados.seleccionado}" rowKey="#{list.id}" sortBy="#{list.id}" sortOrder="descending" 
-					            paginatorPosition="bottom" paginator="true"  rows="7">
-						<p:ajax event="rowSelect"  listener="#{vwEmpleados.seleccionarElemento()}" update=":formaID:capturaID"/>
-						<f:facet name="header">Listado de Empleados</f:facet>			           						
-						<p:column headerText="Nombre"  styleClass="singleLine" style="width:8%;">
+			<h:panelGrid  columns="2" style="width:96%;margin-left:2%;" styleClass="panelgrid-dotted-border" columnClasses="valign-center,valign-top" >
+				<h:panelGrid  id="tablaID" columns="1" style="font-size:9px;text-align:left;" > 
+					<p:dataTable  var="list" value="#{vwEmpleados.listaPrincipal}" selectionMode="single" selection="#{vwEmpleados.seleccionado}" 
+							rowKey="#{list.id}" sortBy="#{list.id}" sortOrder="descending" paginatorPosition="top" paginator="true"  rows="7">
+						<p:ajax event="rowSelect"  listener="#{vwEmpleados.seleccionarElemento()}" update=":formaID:capturaID"/>			           						
+						<p:column headerText="Id"  styleClass="singleLine" style="width:5%;text-align:center;">
+					    		<h:outputText value="#{list.id}"/>
+						</p:column>
+						<p:column headerText="Nombre"  styleClass="singleLine" style="width:55%;">
 					    		<h:outputText value="#{list.nombre}"/>
 						</p:column>  
-						<p:column headerText="Departamento"  styleClass="singleLine" style="width:5%;">
+						<p:column headerText="Departamento"  styleClass="singleLine" style="width:20%;">
 					    		<h:outputText value="#{list.departamento}"/>
 						</p:column>
-						<p:column headerText="Puesto"  styleClass="singleLine" style="width:5%;">
+						<p:column headerText="Puesto"  styleClass="singleLine" style="width:20%;">
 					    		<h:outputText value="#{list.puesto}"/>
-						</p:column> 								
-																						 			 
+						</p:column> 																						 			 
 					</p:dataTable>
-
 				</h:panelGrid>
 				<h:panelGrid  columns="1" style="width:20%;text-align:center;" cellpadding="3"   >
-					<p:commandButton value="Reporte PDF"
-						styleClass="button-texto-icono"						
-						style="width:150px;height:40px;" icon="fa fa-file-pdf-o" 	
-						actionListener="#{vwEmpleados.accionDescargarPDF('RPT_EMPLEADOS_01')}" 								   
-						oncomplete="document.getElementById('formaID:downloadButton').click();"/>
-						<p:commandButton id="downloadButton" ajax="false"
-							style="display:none;">
-							<p:fileDownload value="#{vwEmpleados.descarga}" />
-						</p:commandButton>	
+					<p:commandButton  id="btnDescargaExcel" value="Generar Excel" disabled="true"  
+						icon="fa fa-file-excel" style="width:150px;height:35px;" styleClass="button-texto-icono" 
+						update=":formaID"> 	
+					</p:commandButton>						
+					<p:tooltip for="btnDescargaExcel" value="Generar Excel" position="right" />	
 				</h:panelGrid>
 			</h:panelGrid>
 			<h:panelGrid id="capturaID" columns="4"  cellpadding="5" style="width:96%;text-align:center;margin-left:2%;margin-top:1%;" columnClasses="valign-top,valign-top,valign-top,valign-center" styleClass="panelgrid-dotted-border">
-				<h:panelGrid columns="1" styleClass="panelgrid-dotted-border" >
+				<h:panelGrid columns="1"  >
 					<p:outputLabel value="DATOS PERSONALES" style="font-size:15px;font-weight:bold;color:#585858;" />    
-					<h:panelGrid columns="2" style="text-align:left;" styleClass="panelgrid-dotted-border" >    				
+					<h:panelGrid columns="2" style="text-align:left;"  >    				
 	       				<p:outputLabel value="Nombre:" />
 	          			<p:inputText value="#{vwEmpleados.nombre_e}" readonly="#{!vwEmpleados.editable}" style="width:300px;"/>           			 	          			 			           			 	
 					</h:panelGrid>
 				</h:panelGrid>
-				<h:panelGrid columns="1" styleClass="panelgrid-dotted-border" >
+				<h:panelGrid columns="1"  >
 					<p:outputLabel value="DATOS LABORALES" style="font-size:15px;font-weight:bold;color:#585858;" />    
-					<h:panelGrid columns="2" style="text-align:left;" styleClass="panelgrid-dotted-border" >    				          			 	          			 			           			 	
+					<h:panelGrid columns="2" style="text-align:left;" >    				          			 	          			 			           			 	
 	       				<p:outputLabel value="Departamento:" />
 	       				<p:inputText value="#{vwEmpleados.departamento_e}" rendered="#{!vwEmpleados.editable}" readonly="true" style="width:222px;"/>
 	       				<p:selectOneMenu  value="#{vwEmpleados.departamento_e}"  rendered="#{vwEmpleados.editable}"  style="width:210px;" editable="true" multiple="false"  >	           			 			
@@ -156,9 +147,9 @@
 			        	</p:selectOneMenu>			    			     
 					</h:panelGrid>
 				</h:panelGrid>
-				<h:panelGrid columns="1" styleClass="panelgrid-dotted-border" >
+				<h:panelGrid columns="1"  >
 					<p:outputLabel value="DATOS DE USUARIO" style="font-size:15px;font-weight:bold;color:#585858;" />    
-					<h:panelGrid columns="2" style="text-align:left;" styleClass="panelgrid-dotted-border" >    				          			 	          			 			           			 		       				
+					<h:panelGrid columns="2" style="text-align:left;"  >    				          			 	          			 			           			 		       				
 			        	<p:outputLabel value="Usuario:" />
 	          			<p:inputText value="#{vwEmpleados.cuenta_e}" readonly="#{!vwEmpleados.editable}" style="width:200px;"/>
 	          			<p:outputLabel value="Password:" />
@@ -167,7 +158,7 @@
 	          			<p:inputText    value="#{vwEmpleados.confirmar_e}"  type='password' readonly="#{!vwEmpleados.editable}"  style="width:100px" />			        	
 					</h:panelGrid>
 				</h:panelGrid>
-				<h:panelGrid  columns="1" style="text-align:center;margin-left:10%;" cellpadding="3" styleClass="panelgrid-dotted-border" >
+				<h:panelGrid  columns="1" style="text-align:center;margin-left:10%;" cellpadding="3"  >
 						<p:commandButton value="Agregar" 
 							action="#{vwEmpleados.accionAgregar()}"    				    						
 							update=":formaID:capturaID" 

@@ -636,6 +636,22 @@ private void asignaValoresRegistroIngreso() {
 	
 
 	
+	public void accionEliminar(){
+		LOG.info("***************** vwCuentasCobrar.accionEliminar() ****************");
+		Body body = new Body();
+		body.setCuentaCobrar(seleccionado);
+		Respuesta resp = tools.ejecutaRespuesta("cuentaCobrar/delete", header, body, 30);
+		if(resp!=null && resp.getCode()==200) {
+			addMessage("Registro ha sido eliminado","El registro se elimino correctamente.", FacesMessage.SEVERITY_INFO);			
+			inicializaFiltros(true);
+		}else {
+			addMessage("Error al eliminar el registro","Elimine archivos relacionados al registro", FacesMessage.SEVERITY_WARN);
+		}
+		
+	}
+	
+	
+	
 	public void accionGuardar(){
 		LOG.info("***************** vwCuentasCobrar.accionGuardar() ****************");
 		String strValida=resultadoValidaGuardado();

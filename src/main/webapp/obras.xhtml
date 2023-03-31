@@ -30,7 +30,7 @@
 						<i class="fa fa-user-circle" style="font-size:2.8rem;color:#424242;"/>
 						<h:panelGrid columns="1" styleClass="ui-noborder"  style="text-align:left;margin-left:2%;">
 							<p:outputLabel value="#{vwObras.header.empleado.nombre}" style="font-size:15px;font-weight:bold;color:#585858;" />
-							<p:outputLabel value="#{vwObras.header.empleado.departamento}-#{vwObras.header.empleado.puesto}" style="font-family:Bahnschrift Light;font-size:10px;font-weight:bold;color:#A4A4A4;" />
+							<p:outputLabel value="#{vwObras.header.empleado.puesto}" style="font-family:Bahnschrift Light;font-size:10px;font-weight:bold;color:#A4A4A4;" />
 						</h:panelGrid>
 					</h:panelGrid>
 					<h:panelGrid columns="3"  style="width:100%;text-align:center;" styleClass="ui-noborder">						
@@ -87,49 +87,39 @@
 				</p:toolbar>
 			</h:panelGrid>
 			
-			<h:panelGrid  columns="3" style="width:95%;margin-left:2%;" columnClasses="valign-center,valign-top,valign-top" >
-			 
-			<img src="resources/images/height.png" />
-			
-			<h:panelGrid  id="tablaID" columns="1" style="text-align:left;" styleClass="panel-height"> 
+			<h:panelGrid  columns="2" style="width:96%;margin-left:2%;" styleClass="panelgrid-dotted-border" columnClasses="valign-center,valign-top" >	
+				<h:panelGrid  id="tablaID" columns="1" style="font-size:9px;text-align:left;"  > 
 	
 					<p:dataTable  var="list" value="#{vwObras.listaPrincipal}" 
 								selectionMode="single" selection="#{vwObras.seleccionado}" rowKey="#{list.id}" sortBy="#{list.id}" sortOrder="descending" 
-					            paginatorPosition="bottom" paginator="true"  rows="7">
+					            paginatorPosition="top" paginator="true"  rows="7">
 						<p:ajax event="rowSelect"  listener="#{vwObras.seleccionarElemento()}" update=":formaID:capturaID"/>
-						<f:facet name="header">Listado de Obras</f:facet>
-						<p:column headerText="Id"  styleClass="singleLine" style="width:10%;text-align:center;">
+						<p:column headerText="Id"  styleClass="singleLine" style="width:5%;text-align:center;">
 					    		<h:outputText value="#{list.id}"/>
 						</p:column>			           						
-						<p:column headerText="Descripcion"  styleClass="singleLine" style="width:30%;">
+						<p:column headerText="Descripcion"  styleClass="singleLine" style="width:95%;">
 					    		<h:outputText value="#{list.nombre}"/>
 						</p:column>  																																			 			 
 					</p:dataTable>
-
 				</h:panelGrid>
-				<h:panelGrid  columns="1" style="width:20%;text-align:center;" cellpadding="3"   >
-					<h:panelGrid  columns="1" style="width:20%;text-align:center;"  >					
-				
-				
-				
-					<p:commandButton  id="btnDescargaExcel" value="Generar Excel" disabled="#{vwObras.listaPrincipal.size()==0}"	
+				<h:panelGrid  columns="1" style="width:20%;text-align:center;" cellpadding="3">																
+					<p:commandButton  id="btnDescargaExcel" value="Generar Excel" disabled="true"	
 						icon="fa fa-file-excel" style="width:150px;height:35px;" styleClass="button-texto-icono" 
 						onclick="PrimeFaces.monitorDownload(start, stop);"	update=":formaID"> 							
 					</p:commandButton>		
 					<p:tooltip for="btnDescargaExcel" value="Generar Excel" position="right" />					
 				</h:panelGrid>
-				</h:panelGrid>
 			</h:panelGrid>
 			<h:panelGrid id="capturaID" columns="4"  cellpadding="5" style="width:96%;text-align:center;margin-left:2%;margin-top:1%;" columnClasses="valign-top,valign-top,valign-top,valign-center" styleClass="panelgrid-dotted-border">
-				<h:panelGrid columns="1" styleClass="panelgrid-dotted-border" >
+				<h:panelGrid columns="1"  >
 					<p:outputLabel value="DATOS OBRA" style="font-size:15px;font-weight:bold;color:#585858;" />    
-					<h:panelGrid columns="2" style="text-align:left;" styleClass="panelgrid-dotted-border" >    				
+					<h:panelGrid columns="2" style="text-align:left;"  >    				
 	       				<p:outputLabel value="Descripcion:" />
 	          			<p:inputText value="#{vwObras.descripcion_e}" readonly="#{!vwObras.editable}" style="width:300px;"/>           			 	          			 			           			 						   
 					</h:panelGrid>
 				</h:panelGrid>
 
-				<h:panelGrid  columns="1" style="text-align:center;margin-left:10%;" cellpadding="3" styleClass="panelgrid-dotted-border" >
+				<h:panelGrid  columns="1" style="text-align:center;margin-left:10%;" cellpadding="3" >
 						<p:commandButton value="Agregar" 
 							action="#{vwObras.accionAgregar()}"    				    						
 							update=":formaID:capturaID" 

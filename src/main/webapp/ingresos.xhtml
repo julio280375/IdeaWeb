@@ -10,13 +10,11 @@
    	<script src="https://kit.fontawesome.com/1f0a45e941.js" crossorigin="anonymous"></script>    
     <link rel="stylesheet" type="text/css" href="resources/css/default.css" media="all" />
     <h:outputScript library="js" name="resources/javascript/calendar.js" />
-    <title>Idea Los Cabos [GASTOS]</title>  
+    <title>Idea Los Cabos</title>  
     <script type="text/javascript">    
 		function start() {PF('statusDialog').show();}		 
 		function stop() {PF('statusDialog').hide();	}
 	</script>     
-
-	
 </h:head>
 <h:body onload="#{vwIngresos.iniciaVista()}" >	
  
@@ -28,7 +26,7 @@
 			<h:panelGrid id="headerID" columns="3" columnClasses="columnWith80,columnWith20,columnWith10" styleClass="ui-noborder" style="background-color:#D8D8D8">
 					<h:panelGrid columns="2" columnClasses="columnWith10,columnWith90" styleClass="ui-noborder" style="text-align:left;">
 						<i class="fa fa-user-circle" style="font-size:2.8rem;color:#424242;"/>
-						<h:panelGrid columns="1" styleClass="panelgrid-dotted-border"  style="text-align:left;margin-left:2%;">
+						<h:panelGrid columns="1" styleClass="ui-noborder"  style="text-align:left;margin-left:2%;">
 							<p:outputLabel value="#{vwIngresos.header.empleado.nombre}" style="font-size:15px;font-weight:bold;color:#585858;" />
 							<p:outputLabel value="#{vwIngresos.header.empleado.departamento}-#{vwIngresos.header.empleado.puesto}" style="font-family:Bahnschrift Light;font-size:10px;font-weight:bold;color:#A4A4A4;" />
 						</h:panelGrid>
@@ -47,7 +45,7 @@
 						</h:panelGrid>
 					</h:panelGrid>					
 					<h:panelGrid columns="7"  styleClass="ui-noborder" style="text-align:left;">
-						<p:commandButton id="btnOrdenID" icon="fa fa-list-alt" 
+						<p:commandButton id="btnOrdenID" icon="fa fa-calculator" 
 						 	action="#{vwIngresos.redirectOrdenes()}"
 						 	style="color:#FA8258;width:35px;height:35px;font-size:13px;font-weight:bold;" 
 						 	styleClass="rounded-button" />
@@ -64,7 +62,7 @@
 						 <p:tooltip for="btnLogoutID" value="Cerrar Sesión" position="right" />
 					</h:panelGrid>
 			</h:panelGrid>
-			<h:panelGrid id="toolbarID"  styleClass="panelgrid-dotted-border"  style="width:100%;"  >
+			<h:panelGrid id="toolbarID"  styleClass="ui-noborder"  style="width:100%;"  >
 	 			<p:toolbar    >
 					<f:facet name="left"  >
 						<h:panelGrid columns="22"  >							
@@ -147,7 +145,7 @@
 							</f:facet>																									 			 
 					</p:dataTable>
 				</h:panelGrid>
-				<h:panelGrid  columns="1" style="width:20%;text-align:center;"  >					
+				<h:panelGrid  columns="1" style="width:20%;text-align:center;">				
 					<p:commandButton  id="btnDescargaExcel" value="Generar Excel"   
 						icon="fa fa-file-excel" style="width:150px;height:35px;" styleClass="button-texto-icono" 
 						action="#{vwIngresos.generaExcelCSV()}"	update=":formaID"> 	
@@ -163,11 +161,11 @@
 				</h:panelGrid>
 			</h:panelGrid>
 			<h:panelGrid id="capturaID" columns="2"  cellpadding="3" style="width:100%;text-align:center;" columnClasses="valign-top,valign-top" styleClass="panelgrid-dotted-border">
-				<h:panelGrid   columns="1"  styleClass="panelgrid-dotted-border" >
+				<h:panelGrid   columns="1"  styleClass="ui-noborder" >
 					<p:tabView >
 		        		<p:tab title="DATOS" columns="3" >								
-						    <h:panelGrid   columns="3" styleClass="panelgrid-dotted-border"  columnClasses="valign-top,valign-top,valign-top" >
-								<h:panelGrid  columns="2" style="text-align:left;" styleClass="panelgrid-dotted-border" > 
+						    <h:panelGrid   columns="3" styleClass="ui-noborder"  columnClasses="valign-top,valign-top,valign-top" >
+								<h:panelGrid  columns="2" style="text-align:left;" styleClass="ui-noborder" > 
 									<p:outputLabel value="Concepto:" />
 				       				<p:inputText value="#{vwIngresos.concepto_e}" rendered="#{!vwIngresos.editable}" readonly="true" style="width:300px;"/>
 				       				<p:selectOneMenu  value="#{vwIngresos.concepto_e}" placeholder="Seleccionar..." rendered="#{vwIngresos.editable}"  style="width:288px;" editable="true" filter="true" filterMatchMode="contains" multiple="false"  >	           			 			
@@ -181,7 +179,7 @@
 											<f:selectItems value="#{vwIngresos.listaNombreObras}" />
 							        </p:selectOneMenu>
 					        	</h:panelGrid> 
-					        	<h:panelGrid  columns="2" style="text-align:left;" styleClass="panelgrid-dotted-border" >         			
+					        	<h:panelGrid  columns="2" style="text-align:left;" styleClass="ui-noborder" >         			
 					          			<p:outputLabel value="Fecha:"  />	
 						        	 	<p:inputText value="#{vwIngresos.fecha_e}" rendered="#{!vwIngresos.editable}" style="width:153px;" readonly="true">
 									    			<f:convertDateTime type="date" pattern="dd/MMM/yyyy"  locale="es" />
@@ -198,15 +196,15 @@
 					          				<f:convertNumber type="currency"  pattern="###,##0.00" />
 					          			</p:inputText>					          					          																			
 			          				</h:panelGrid >
-			          				<h:panelGrid columns="1" style="text-align:left;" styleClass="panelgrid-dotted-border" >
+			          				<h:panelGrid columns="1" style="text-align:left;" styleClass="ui-noborder" >
 				          				<p:outputLabel value="Detalle:" />
 					       				<p:inputTextarea rows="5"  value="#{vwIngresos.detalle_e}" readonly="#{!vwIngresos.editable}" style="width:355px;"/>
 			          				</h:panelGrid>	          				
 							</h:panelGrid>					
 						</p:tab>
 						<p:tab title="FACTURAS Y PRESUPUESTOS" columns="2" >
-							<h:panelGrid  columns="2" style="text-align:left;" columnClasses="valign-top,valign-top" styleClass="panelgrid-dotted-border"  > 			         			
-						        <h:panelGrid     columns="5" styleClass="panelgrid-dotted-border">
+							<h:panelGrid  columns="2" style="text-align:left;" columnClasses="valign-top,valign-top" styleClass="ui-noborder"  > 			         			
+						        <h:panelGrid columns="5" styleClass="ui-noborder">
 						        	<p:outputLabel value="Archivo:" />
 							        <p:inputText value="#{vwIngresos.archivo_e}"  rendered="#{!vwIngresos.editable}" readonly="true" style="width:295px;"/>
 				          			<p:selectOneMenu  value="#{vwIngresos.archivo_e}" rendered="#{vwIngresos.editable}" styleClass="MyOneMenu" style="font-size:10px;width:240px" multiple="false" filter="true"  >
@@ -220,9 +218,9 @@
 									<p:tooltip for="btnAgregarPDF" value="Agregar Factura" position="right" />
 								</h:panelGrid>
 								
-								<h:panelGrid   columns="1" style="text-align:left;font-size:9px;" styleClass="panelgrid-dotted-border"  >
+								<h:panelGrid   columns="1" style="text-align:left;font-size:9px;" styleClass="ui-noborder"  >
 		
-									<p:dataTable id="tablaArchivosID" var="list" value="#{vwIngresos.listaArchivos}"  style="width:100%;"
+									<p:dataTable id="tablaArchivosID" var="list" value="#{vwIngresos.listaArchivos}" 
 											selectionMode="single" selection="#{vwIngresos.archivoSeleccionado}" rowKey="#{list.nombre}" sortBy="#{list.id}" 
 									        paginator="false"  rows="5">
 										<p:column headerText="Archivo"  styleClass="singleLine" style="width:80%;text-align:left;">
@@ -249,7 +247,7 @@
 						</p:tab>
 					</p:tabView>
 				</h:panelGrid>
-				<h:panelGrid   columns="1" style="text-align:center;" cellpadding="3" styleClass="panelgrid-dotted-border" >
+				<h:panelGrid   columns="1" style="text-align:center;" cellpadding="3" styleClass="ui-noborder" >
 						<p:commandButton value="Agregar" 
 							action="#{vwIngresos.accionAgregar()}"    				    						
 							update=":formaID:capturaID" 
@@ -306,8 +304,8 @@
 	    </p:dialog>	
 	    <p:dialog id="dialogResumen" widgetVar="dialogResumenVar" header="Resumen de Ingresos"  modal="true" closable="true"  resizable="false" width="auto" height="auto" >		                 
        		 <h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">
-				 <h:panelGrid  columns="2" styleClass="panelgrid-dotted-border">
-	  				<h:panelGrid  columns="1" style="text-align:center;width:400px;font-size:10px;" styleClass="panelgrid-dotted-border">	
+				 <h:panelGrid  columns="2" >
+	  				<h:panelGrid  columns="1" style="text-align:center;width:400px;font-size:10px;" styleClass="ui-noborder">	
 							<p:dataTable  var="list" value="#{vwIngresos.listaResumenObra}"  scrollable="true" scrollHeight="150"
 										sortBy="#{list.importe}" sortOrder="descending" paginator="false" >			
 								<p:column headerText="Obra/Proyecto" sortBy="#{list.concepto}" styleClass="single-line"  style="width:10%;text-align:left;" >

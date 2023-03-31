@@ -913,9 +913,9 @@ public class vwGastos implements Serializable  {
 	
 	
     
-	public void redirectOrdenes() {
+	public void redirectCuentasPagar() {
 		try {
-			FacesContext.getCurrentInstance().getExternalContext().redirect("ordenes.xhtml");
+			FacesContext.getCurrentInstance().getExternalContext().redirect("cuentasPagar.xhtml");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

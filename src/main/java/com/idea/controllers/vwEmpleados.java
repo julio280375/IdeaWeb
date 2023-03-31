@@ -132,6 +132,10 @@ public class vwEmpleados  {
 			body.setFilter("BY_DEPTO");
 			body.setFilter1(departamento_b);
 			break;
+		case "#PUESTO#":
+			body.setFilter("BY_PUESTO");
+			body.setFilter1(puesto_b);
+			break;
 		case "#NOMBRE##DEPTO#":
 			body.setFilter("BY_NOMBRE_DEPTO");
 			body.setFilter1(nombre_b);

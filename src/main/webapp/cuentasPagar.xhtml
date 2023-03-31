@@ -10,7 +10,7 @@
    	<script src="https://kit.fontawesome.com/1f0a45e941.js" crossorigin="anonymous"></script>    
     <link rel="stylesheet" type="text/css" href="resources/css/default.css" media="all" />
     <h:outputScript library="js" name="resources/javascript/calendar.js" />
-    <title>Idea Los Cabos [GASTOS]</title>  
+    <title>Idea Los Cabos</title>  
     <script type="text/javascript">    
 		function start() {PF('statusDialog').show();}		 
 		function stop() {PF('statusDialog').hide();	}
@@ -24,15 +24,15 @@
 		<p:growl id="mensajeID" showDetail="true" sticky="false" life="1000"    />
 		
 		<h:panelGrid columns="1"  style="width:100%;text-align:center;font-size:11px;font-family:Bahnschrift Light;">
-			<h:panelGrid id="headerID" columns="3" columnClasses="columnWith80,columnWith20,columnWith10" styleClass="ui-noborder" style="background-color:#D8D8D8">
+			<h:panelGrid id="headerID" columns="3" columnClasses="columnWith80,columnWith20,columnWith10" style="background-color:#D8D8D8">
 					<h:panelGrid columns="2" columnClasses="columnWith10,columnWith90" styleClass="ui-noborder" style="text-align:left;">
 						<i class="fa fa-user-circle" style="font-size:2.8rem;color:#424242;"/>
-						<h:panelGrid columns="1" styleClass="panelgrid-dotted-border"  style="text-align:left;margin-left:2%;">
+						<h:panelGrid columns="1"  style="text-align:left;margin-left:2%;">
 							<p:outputLabel value="#{vwCuentasPagar.header.empleado.nombre}" style="font-size:15px;font-weight:bold;color:#585858;" />
 							<p:outputLabel value="#{vwCuentasPagar.header.empleado.departamento}-#{vwCuentasPagar.header.empleado.puesto}" style="font-family:Bahnschrift Light;font-size:10px;font-weight:bold;color:#A4A4A4;" />
 						</h:panelGrid>
 					</h:panelGrid>
-					<h:panelGrid columns="3"  style="width:100%;text-align:center;" styleClass="ui-noborder">						
+					<h:panelGrid columns="3"  style="width:100%;text-align:center;" >						
 						<i class="fa fa-map-marker" style="font-size:1.3rem;color:#FBFBEF;"></i>
 						<h:panelGrid columns="1" styleClass="ui-noborder"  style="text-align:left;">							
 							<h:panelGrid columns="2" styleClass="ui-noborder"  style="text-align:left;">
@@ -46,11 +46,11 @@
 						</h:panelGrid>
 					</h:panelGrid>					
 					<h:panelGrid columns="7"  styleClass="ui-noborder" style="text-align:left;">
-						<p:commandButton id="btnOrdenID" icon="fa fa-list-alt" 
+						<p:commandButton id="btnOrdenID" icon="fa fa-shopping-cart" 
 						 	action="#{vwCuentasPagar.redirectGastos()}"
 						 	style="color:#FA8258;width:35px;height:35px;font-size:13px;font-weight:bold;" 
 						 	styleClass="rounded-button" />
-						<p:tooltip for="btnOrdenID" value="Ir a Ordenes de Compra" position="left" />
+						<p:tooltip for="btnOrdenID" value="Ir a Gastos" position="left" />
 						<p:commandButton id="btnHomeID" icon="fa fa-home" 
 						 	action="#{vwCuentasPagar.redirectMenu()}"
 						 	style="color:#0174DF;width:40px;height:40px;font-size:15px;font-weight:bold;" 
@@ -63,7 +63,7 @@
 						 <p:tooltip for="btnLogoutID" value="Cerrar Sesión" position="right" />
 					</h:panelGrid>
 			</h:panelGrid>
-			<h:panelGrid id="toolbarID"  styleClass="panelgrid-dotted-border"  style="width:100%;"  >
+			<h:panelGrid id="toolbarID"  style="width:100%;"  >
 	 			<p:toolbar    >
 					<f:facet name="left"  >
 						<h:panelGrid columns="22"  >							
@@ -115,7 +115,7 @@
 			
 			<h:panelGrid id="tablaID"  styleClass="panelgrid-dotted-border"   columns="3" style="width:100%;" columnClasses="valign-top,valign-top,valign-top" >
 			
-				<h:panelGrid  columns="1" style="text-align:left;font-size:9px;" styleClass="panel-height"> 
+				<h:panelGrid  columns="1" style="text-align:left;font-size:9px;" > 
 	
 					<p:dataTable  var="list" value="#{vwCuentasPagar.listaPrincipal}"  style="width:100%;"
 								selectionMode="single" selection="#{vwCuentasPagar.seleccionado}" rowKey="#{list.id}" sortBy="#{list.id}" sortOrder="descending" 
@@ -179,44 +179,78 @@
 					</p:commandButton>
 				</h:panelGrid>
 			</h:panelGrid>
-			<h:panelGrid id="capturaID" columns="2"  cellpadding="3" style="width:100%;text-align:center;" columnClasses="valign-top,valign-top" styleClass="panelgrid-dotted-border">
-				<h:panelGrid   columns="1"  styleClass="panelgrid-dotted-border" >
-					<p:tabView >
-		        		<p:tab title="DATOS" columns="3" >
-							<h:panelGrid rendered="false" columns="4" styleClass="panelgrid-dotted-border"  >						
-								<p:outputLabel value="Orden Compra:" />
-								<p:inputText  value="#{vwCuentasPagar.orden_id_e}"  style="width:40px;text-align:center;" readonly="true" />
-							    <p:inputText  value="#{vwCuentasPagar.orden_tipo_e}" style="width:200px;" readonly="true" />	
-							    <p:commandButton id="btnCapturaOrden" disabled="#{!vwCuentasPagar.editable}"	 style="font-size:15px;" icon="fa fa-list-alt" 
-									action="#{vwCuentasPagar.llenaListaOrdenes()}"
-									update=":formaID:dialogOrdenesID"
-									oncomplete="PF('dialogOrdenesVar').show()">
-								</p:commandButton>
-								<p:tooltip for="btnCapturaOrden" value="Seleccionar Orden de Compra" position="right" />	
-						    </h:panelGrid>	
-						    <h:panelGrid   columns="3" styleClass="panelgrid-dotted-border"  columnClasses="valign-top,valign-top,valign-top" >
-								<h:panelGrid  columns="2" style="text-align:left;" styleClass="panelgrid-dotted-border" > 
-									<p:outputLabel value="Gasto:" />
-				       				<p:inputText value="#{vwCuentasPagar.tipo_e}" rendered="#{!vwCuentasPagar.editable}" readonly="true" style="width:300px;"/>
-				       				<p:selectOneMenu  value="#{vwCuentasPagar.tipo_e}" placeholder="Seleccionar..." rendered="#{vwCuentasPagar.editable}"  style="width:288px;" editable="true" filter="true" filterMatchMode="contains" multiple="false"  >	           			 			
-					            			<f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" itemDisabled="true"/>	
-					            			<f:selectItems value="#{vwCuentasPagar.listaCatalogoGastos}"/>			            			 	            			
-						        	</p:selectOneMenu>
-						        	<p:outputLabel value="Concepto:" />
-					          		<p:inputText value="#{vwCuentasPagar.concepto_e}"  readonly="#{!vwCuentasPagar.editable}" style="width:300px;"/>					        	
-									<p:outputLabel value="Obra:" />
-				          			<p:inputText value="#{vwCuentasPagar.obra_e}"  rendered="#{!vwCuentasPagar.editable}" readonly="true" style="width:300px;"/>
-				          			<p:selectOneMenu  value="#{vwCuentasPagar.obra_e}" placeholder="Seleccionar..." rendered="#{vwCuentasPagar.editable}" multiple="false" style="width:288px" filter="true" filterMatchMode="contains" panelStyle="width:300px" >
-							           		<f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
-											<f:selectItems value="#{vwCuentasPagar.listaNombreObras}" />
-							        </p:selectOneMenu>
-							        <p:outputLabel value="Proveedor:" />
-				          			<p:inputText value="#{vwCuentasPagar.proveedor_e}"  rendered="#{!vwCuentasPagar.editable}" readonly="true" style="width:300px;"/>
-				          			<p:selectOneMenu  value="#{vwCuentasPagar.proveedor_e}" placeholder="Seleccionar..." rendered="#{vwCuentasPagar.editable}" multiple="false" style="width:288px" filter="true" filterMatchMode="contains" panelStyle="width:300px" >
-							           		<f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
-											<f:selectItems value="#{vwCuentasPagar.listaNombreProveedores}" />
-							        </p:selectOneMenu>
-							        <p:outputLabel value="Solicitó:" />
+			<h:panelGrid id="capturaID" columns="2"  style="width:100%;text-align:center;" columnClasses="valign-top,valign-top" styleClass="panelgrid-dotted-border">
+				<p:tabView >
+	        		<p:tab title="DATOS" columns="3" >
+						<h:panelGrid rendered="false" columns="4"   >						
+							<p:outputLabel value="Orden Compra:" />
+							<p:inputText  value="#{vwCuentasPagar.orden_id_e}"  style="width:40px;text-align:center;" readonly="true" />
+						    <p:inputText  value="#{vwCuentasPagar.orden_tipo_e}" style="width:200px;" readonly="true" />	
+						    <p:commandButton id="btnCapturaOrden" disabled="#{!vwCuentasPagar.editable}"	 style="font-size:15px;" icon="fa fa-list-alt" 
+								action="#{vwCuentasPagar.llenaListaOrdenes()}"
+								update=":formaID:dialogOrdenesID"
+								oncomplete="PF('dialogOrdenesVar').show()">
+							</p:commandButton>
+							<p:tooltip for="btnCapturaOrden" value="Seleccionar Orden de Compra" position="right" />	
+					    </h:panelGrid>	
+					    <h:panelGrid   columns="3" columnClasses="valign-top,valign-top,valign-top" >
+							<h:panelGrid  columns="2" style="text-align:left;" > 
+								<p:outputLabel value="Gasto:" />
+			       				<p:inputText value="#{vwCuentasPagar.tipo_e}" rendered="#{!vwCuentasPagar.editable}" readonly="true" style="width:300px;"/>
+			       				<p:selectOneMenu  value="#{vwCuentasPagar.tipo_e}" placeholder="Seleccionar..." rendered="#{vwCuentasPagar.editable}"  style="width:288px;" editable="true" filter="true" filterMatchMode="contains" multiple="false"  >	           			 			
+				            			<f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" itemDisabled="true"/>	
+				            			<f:selectItems value="#{vwCuentasPagar.listaCatalogoGastos}"/>			            			 	            			
+					        	</p:selectOneMenu>
+					        	<p:outputLabel value="Concepto:" />
+				          		<p:inputText value="#{vwCuentasPagar.concepto_e}"  readonly="#{!vwCuentasPagar.editable}" style="width:300px;"/>					        	
+								<p:outputLabel value="Obra:" />
+			          			<p:inputText value="#{vwCuentasPagar.obra_e}"  rendered="#{!vwCuentasPagar.editable}" readonly="true" style="width:300px;"/>
+			          			<p:selectOneMenu  value="#{vwCuentasPagar.obra_e}" placeholder="Seleccionar..." rendered="#{vwCuentasPagar.editable}" multiple="false" style="width:288px" filter="true" filterMatchMode="contains" panelStyle="width:300px" >
+						           		<f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+										<f:selectItems value="#{vwCuentasPagar.listaNombreObras}" />
+						        </p:selectOneMenu>
+						        <p:outputLabel value="Proveedor:" />
+			          			<p:inputText value="#{vwCuentasPagar.proveedor_e}"  rendered="#{!vwCuentasPagar.editable}" readonly="true" style="width:300px;"/>
+			          			<p:selectOneMenu  value="#{vwCuentasPagar.proveedor_e}" placeholder="Seleccionar..." rendered="#{vwCuentasPagar.editable}" multiple="false" style="width:288px" filter="true" filterMatchMode="contains" panelStyle="width:300px" >
+						           		<f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+										<f:selectItems value="#{vwCuentasPagar.listaNombreProveedores}" />
+						        </p:selectOneMenu>						    	
+				        	</h:panelGrid> 
+				        	<h:panelGrid  columns="2" style="text-align:left;" >
+				        		<p:outputLabel value="Fecha:"  />
+				        		<p:inputText value="#{vwCuentasPagar.fecha_e}" rendered="#{!vwCuentasPagar.editable}" style="width:153px;" readonly="true">
+							    			<f:convertDateTime type="date" pattern="dd/MMM/yyyy"  locale="es" />
+		      					</p:inputText>	
+		      					<p:calendar  placeholder="Sin Fecha..." rendered="#{vwCuentasPagar.editable}" 
+										mode="popup"  popupIconOnly="true" effect="fold"
+										value="#{vwCuentasPagar.fecha_e}" maxdate="now()"										
+										pattern="dd/MM/yyyy" 
+										locale="es" />
+			        			<p:outputLabel value="Factura:" />
+					        	<p:inputText value="#{vwCuentasPagar.factura_e}"  readonly="#{!vwCuentasPagar.editable}" style="width:153px;"/>         							          									        	 				      								          			
+			          			<p:outputLabel value="Importe:" />
+			          			<p:inputText value="#{vwCuentasPagar.importe_e}" readonly="#{!vwCuentasPagar.editable}" style="width:153px;text-align:right;">
+			          				<f:convertNumber type="currency"  pattern="###,##0.00" />
+			          			</p:inputText>
+			          			<p:outputLabel value="Vencimiento:"  />	
+				        	 	<p:inputText value="#{vwCuentasPagar.vencimiento_e}" rendered="#{!vwCuentasPagar.editable}" style="width:153px;" readonly="true">
+							    			<f:convertDateTime type="date" pattern="dd/MMM/yyyy"  locale="es" />
+		      					</p:inputText>		        						        		
+			           			<p:calendar  placeholder="Sin Fecha..." rendered="#{vwCuentasPagar.editable}" 
+										mode="popup"  popupIconOnly="true" effect="fold"
+										value="#{vwCuentasPagar.vencimiento_e}" mindate="now()"										
+										pattern="dd/MM/yyyy" 
+										locale="es" />
+			          			<p:outputLabel value="Estatus:" />
+						        <p:inputText value="#{vwCuentasPagar.estatus_e}"  rendered="#{!vwCuentasPagar.editable}" readonly="true" style="width:153px;"/>
+			          			<p:selectOneMenu  value="#{vwCuentasPagar.estatus_e}" placeholder="Seleccionar..." rendered="#{vwCuentasPagar.editable}" multiple="false" style="width:141px" filter="false"  panelStyle="width:153px" >							           		
+						           		<f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+										<f:selectItems value="#{vwCuentasPagar.listaEstatus}" />
+						        </p:selectOneMenu>					          					          																			
+		          			</h:panelGrid >
+		          			<h:panelGrid columns="1" style="text-align:left;">
+		          				<h:panelGrid  columns="2" style="text-align:left;" >
+			          				<p:outputLabel value="Solicitó:" />
 							        <p:inputText value="#{vwCuentasPagar.solicito_e}"  rendered="#{!vwCuentasPagar.editable}" readonly="true" style="width:300px;"/>
 				          			<p:selectOneMenu  value="#{vwCuentasPagar.solicito_e}" placeholder="Seleccionar..." rendered="#{vwCuentasPagar.editable}" multiple="false" style="width:288px" filter="true" filterMatchMode="contains" panelStyle="width:300px" >
 							           		<f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
@@ -227,93 +261,60 @@
 				          			<p:selectOneMenu  value="#{vwCuentasPagar.autorizo_e}" placeholder="Seleccionar..." rendered="#{vwCuentasPagar.editable}" multiple="false" style="width:288px" filter="true" filterMatchMode="contains" panelStyle="width:300px" >
 							           		<f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
 											<f:selectItems value="#{vwCuentasPagar.listaNombreEmpleados}" />
-							        </p:selectOneMenu>	
-					        	</h:panelGrid> 
-					        	<h:panelGrid  columns="2" style="text-align:left;" styleClass="panelgrid-dotted-border" >
-					        		<p:outputLabel value="Fecha:"  />
-					        		<p:inputText value="#{vwCuentasPagar.fecha_e}" rendered="#{!vwCuentasPagar.editable}" style="width:153px;" readonly="true">
-								    			<f:convertDateTime type="date" pattern="dd/MMM/yyyy"  locale="es" />
-			      					</p:inputText>	
-			      					<p:calendar  placeholder="Sin Fecha..." rendered="#{vwCuentasPagar.editable}" 
-											mode="popup"  popupIconOnly="true" effect="fold"
-											value="#{vwCuentasPagar.fecha_e}" maxdate="now()"										
-											pattern="dd/MM/yyyy" 
-											locale="es" />
-				        			<p:outputLabel value="Factura:" />
-						        	<p:inputText value="#{vwCuentasPagar.factura_e}"  readonly="#{!vwCuentasPagar.editable}" style="width:153px;"/>         							          									        	 				      								          			
-				          			<p:outputLabel value="Importe:" />
-				          			<p:inputText value="#{vwCuentasPagar.importe_e}" readonly="#{!vwCuentasPagar.editable}" style="width:153px;text-align:right;">
-				          				<f:convertNumber type="currency"  pattern="###,##0.00" />
-				          			</p:inputText>
-				          			<p:outputLabel value="Vencimiento:"  />	
-					        	 	<p:inputText value="#{vwCuentasPagar.vencimiento_e}" rendered="#{!vwCuentasPagar.editable}" style="width:153px;" readonly="true">
-								    			<f:convertDateTime type="date" pattern="dd/MMM/yyyy"  locale="es" />
-			      					</p:inputText>		        						        		
-				           			<p:calendar  placeholder="Sin Fecha..." rendered="#{vwCuentasPagar.editable}" 
-											mode="popup"  popupIconOnly="true" effect="fold"
-											value="#{vwCuentasPagar.vencimiento_e}" mindate="now()"										
-											pattern="dd/MM/yyyy" 
-											locale="es" />
-				          			<p:outputLabel value="Estatus:" />
-							        <p:inputText value="#{vwCuentasPagar.estatus_e}"  rendered="#{!vwCuentasPagar.editable}" readonly="true" style="width:153px;"/>
-				          			<p:selectOneMenu  value="#{vwCuentasPagar.estatus_e}" placeholder="Seleccionar..." rendered="#{vwCuentasPagar.editable}" multiple="false" style="width:141px" filter="false"  panelStyle="width:153px" >							           		
-							           		<f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
-											<f:selectItems value="#{vwCuentasPagar.listaEstatus}" />
-							        </p:selectOneMenu>					          					          																			
-			          			</h:panelGrid >
-			          			<h:panelGrid columns="1" style="text-align:left;" styleClass="panelgrid-dotted-border" >
-			          				<p:outputLabel value="Detalle:" />
-				       				<p:inputTextarea rows="5"  value="#{vwCuentasPagar.detalle_e}" readonly="#{!vwCuentasPagar.editable}" style="width:480px;"/>
-		          				</h:panelGrid>			          				     				
-							</h:panelGrid>					
-						</p:tab>
-						<p:tab title="FACTURAS Y PRESUPUESTOS" columns="2" >
-							<h:panelGrid  columns="2" style="text-align:left;" columnClasses="valign-top,valign-top" styleClass="panelgrid-dotted-border"  > 
-			         			
-						        <h:panelGrid     columns="4" styleClass="panelgrid-dotted-border">
-						        	<p:outputLabel value="Archivo:" />
-							        <p:inputText value="#{vwCuentasPagar.archivo_e}"  rendered="#{!vwCuentasPagar.editable}" readonly="true" style="width:295px;"/>
-				          			<p:selectOneMenu  value="#{vwCuentasPagar.archivo_e}" rendered="#{vwCuentasPagar.editable}" styleClass="MyOneMenu" style="font-size:10px;width:282px" multiple="false" filter="true"  >
-										<f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
-				        				<f:selectItems value="#{vwCuentasPagar.listaArchivosPDF}"/>	        		
-				    				</p:selectOneMenu>    			
-									<p:commandButton id="btnAgregarPDF" disabled="#{!vwCuentasPagar.editable}" style="font-size:15px;" icon="fa fa-plus-circle" 
-										action="#{vwCuentasPagar.agregaArchivo()}"									
-										update=":formaID">																		
-									</p:commandButton>
-									<p:tooltip for="btnAgregarPDF" value="Agregar Factura" position="right" />
-								</h:panelGrid>
-								
-								<h:panelGrid   columns="1" style="text-align:left;font-size:9px;" styleClass="panelgrid-dotted-border"  >
-		
-									<p:dataTable id="tablaArchivosID" var="list" value="#{vwCuentasPagar.listaArchivos}"  style="width:100%;"
-											selectionMode="single" selection="#{vwCuentasPagar.archivoSeleccionado}" rowKey="#{list.nombre}" sortBy="#{list.id}" 
-									        paginator="false"  rows="5">
-										<p:column headerText="Archivo"  styleClass="singleLine" style="width:80%;text-align:left;">
-									    		<h:outputText value="#{list.nombre}"/>
-										</p:column>
-										<p:column  headerText="PDF"  styleClass="singleLine" style="width:10%;text-align:center;">																
-											<p:commandButton  id="btnPreview"
-													action="#{vwCuentasPagar.accionPreview()}"
-													oncomplete="PF('dialogPDFVar').show()"
-										 			update=":formaID" style="color:#0174DF;width:15px;height:15px;font-size:15px;" 	icon="fa fa-file-pdf-o"  styleClass="rounded-button">						 								 											
-											</p:commandButton>										
-											<p:tooltip for="btnPreview" value="Ver #{list.nombre}" position="right" />
-										</p:column>
-										<p:column  headerText="Quitar"  styleClass="singleLine" style="width:10%;text-align:center;">																
-											<p:commandButton  id="btnBorrar" disabled="#{!vwCuentasPagar.editable}"
-													action="#{vwCuentasPagar.eliminaArchivo()}"    
-										 			update=":formaID" style="color:#0174DF;width:15px;height:15px;font-size:15px;" 	icon="fa fa-minus-circle"  styleClass="rounded-button">						 								 											
-											</p:commandButton>										
-											<p:tooltip for="btnBorrar" value="Quitar de la lista" position="right" />													
-										</p:column>	
-									</p:dataTable>
-								</h:panelGrid>
-		         			</h:panelGrid>
-						</p:tab>
-					</p:tabView>
-				</h:panelGrid>
-				<h:panelGrid   columns="1" style="text-align:center;" cellpadding="3" styleClass="panelgrid-dotted-border" >
+							        </p:selectOneMenu>
+						        </h:panelGrid>
+		          				<p:outputLabel value="Detalle:" />
+			       				<p:inputTextarea rows="3"  value="#{vwCuentasPagar.detalle_e}" readonly="#{!vwCuentasPagar.editable}" style="width:470px;"/>
+		          				</h:panelGrid>
+	          							          				     				
+						</h:panelGrid>					
+					</p:tab>
+					<p:tab title="FACTURAS Y PRESUPUESTOS" columns="2" >
+						<h:panelGrid  columns="2" style="text-align:left;" columnClasses="valign-top,valign-top" > 
+		         			
+					        <h:panelGrid     columns="4" >
+					        	<p:outputLabel value="Archivo:" />
+						        <p:inputText value="#{vwCuentasPagar.archivo_e}"  rendered="#{!vwCuentasPagar.editable}" readonly="true" style="width:295px;"/>
+			          			<p:selectOneMenu  value="#{vwCuentasPagar.archivo_e}" rendered="#{vwCuentasPagar.editable}" styleClass="MyOneMenu" style="font-size:10px;width:282px" multiple="false" filter="true"  >
+									<f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+			        				<f:selectItems value="#{vwCuentasPagar.listaArchivosPDF}"/>	        		
+			    				</p:selectOneMenu>    			
+								<p:commandButton id="btnAgregarPDF" disabled="#{!vwCuentasPagar.editable}" style="font-size:15px;" icon="fa fa-plus-circle" 
+									action="#{vwCuentasPagar.agregaArchivo()}"									
+									update=":formaID">																		
+								</p:commandButton>
+								<p:tooltip for="btnAgregarPDF" value="Agregar Factura" position="right" />
+							</h:panelGrid>
+							
+							<h:panelGrid   columns="1" style="text-align:left;font-size:9px;"   >
+	
+								<p:dataTable id="tablaArchivosID" var="list" value="#{vwCuentasPagar.listaArchivos}"  style="width:100%;"
+										selectionMode="single" selection="#{vwCuentasPagar.archivoSeleccionado}" rowKey="#{list.nombre}" sortBy="#{list.id}" 
+								        paginator="false"  rows="5">
+									<p:column headerText="Archivo"  styleClass="singleLine" style="width:80%;text-align:left;">
+								    		<h:outputText value="#{list.nombre}"/>
+									</p:column>
+									<p:column  headerText="PDF"  styleClass="singleLine" style="width:10%;text-align:center;">																
+										<p:commandButton  id="btnPreview"
+												action="#{vwCuentasPagar.accionPreview()}"
+												oncomplete="PF('dialogPDFVar').show()"
+									 			update=":formaID" style="color:#0174DF;width:15px;height:15px;font-size:15px;" 	icon="fa fa-file-pdf-o"  styleClass="rounded-button">						 								 											
+										</p:commandButton>										
+										<p:tooltip for="btnPreview" value="Ver #{list.nombre}" position="right" />
+									</p:column>
+									<p:column  headerText="Quitar"  styleClass="singleLine" style="width:10%;text-align:center;">																
+										<p:commandButton  id="btnBorrar" disabled="#{!vwCuentasPagar.editable}"
+												action="#{vwCuentasPagar.eliminaArchivo()}"    
+									 			update=":formaID" style="color:#0174DF;width:15px;height:15px;font-size:15px;" 	icon="fa fa-minus-circle"  styleClass="rounded-button">						 								 											
+										</p:commandButton>										
+										<p:tooltip for="btnBorrar" value="Quitar de la lista" position="right" />													
+									</p:column>	
+								</p:dataTable>
+							</h:panelGrid>
+	         			</h:panelGrid>
+					</p:tab>
+				</p:tabView>
+				<h:panelGrid   columns="1" style="text-align:center;" cellpadding="3"  >
 						<p:commandButton value="Agregar" 
 							action="#{vwCuentasPagar.accionAgregar()}"    				    						
 							update=":formaID:capturaID" 
@@ -330,8 +331,7 @@
 							action="#{vwCuentasPagar.accionCancelar()}"
 							styleClass="button-texto-icono"
 							disabled="#{!vwCuentasPagar.editable}"	    						
-							update=":formaID:capturaID">
-														
+							update=":formaID:capturaID">														
 						</p:commandButton>
 						<p:commandButton value="Guardar" style="width:150px;height:30px;" icon="fa fa-floppy-o"
 							action="#{vwCuentasPagar.accionGuardar()}" 
@@ -343,10 +343,8 @@
 				            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
 				            <p:commandButton value="Si, Actualizar" type="button" styleClass="ui-confirmdialog-yes" />
 				        </p:confirmDialog>					
-				</h:panelGrid>
-				
-			</h:panelGrid>
-			
+				</h:panelGrid>				
+			</h:panelGrid>			
 		</h:panelGrid>
 		
 		<p:dialog id="dialogPDFID" widgetVar="dialogPDFVar" header="#{vwCuentasPagar.archivoSeleccionado.nombre}"  modal="true" closable="true" maximizable="true" resizable="false" width="30%" height="400px" >		                 
@@ -362,10 +360,10 @@
 		   </h:panelGrid>
 		</p:dialog>
 		
-		<p:dialog id="dialogResumen" widgetVar="dialogResumenVar" header="Resumen de Gastos"  modal="true" closable="true"  resizable="false" width="auto" height="auto" >		                 
-			 <h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border"> 	
-				 <h:panelGrid  columns="2" styleClass="panelgrid-dotted-border">	
-	  				<h:panelGrid  columns="1" style="text-align:center;width:400px;font-size:10px;" styleClass="panelgrid-dotted-border">		  					
+		<p:dialog id="dialogResumen" widgetVar="dialogResumenVar" header="Resumen de Cuentas por Pagar"  modal="true" closable="true"  resizable="false" width="auto" height="auto" >		                 
+			 <h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border" > 	
+				 <h:panelGrid  columns="2" >	
+	  				<h:panelGrid  columns="1" style="text-align:center;width:400px;font-size:10px;" >		  					
 							<p:dataTable  var="list" value="#{vwCuentasPagar.listaResumenProveedor}"  scrollable="true" scrollHeight="150"
 										sortBy="#{list.importe}" sortOrder="descending" paginator="false" >			
 								<p:column headerText="Proveedor" sortBy="#{list.concepto}" styleClass="single-line"  style="width:10%;text-align:left;" >
@@ -378,15 +376,15 @@
 								</p:column> 																														 			 
 							</p:dataTable>
 	            	</h:panelGrid>
-	            	<h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">
+	            	<h:panelGrid  columns="1" style="text-align:center;" >
 	            		<p:outputLabel value="PROVEEDOR" style="font-size:15px;font-weight:bold;color:#585858;"/>	
 	  					<p:donutChart  model="#{vwCuentasPagar.donutModelProveedores}"  style="width:150px; height:150px;"/>
 	       		 	</h:panelGrid>
 	       		</h:panelGrid>
        		</h:panelGrid>
        		 <h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">
-				 <h:panelGrid  columns="2" styleClass="panelgrid-dotted-border">
-	  				<h:panelGrid  columns="1" style="text-align:center;width:400px;font-size:10px;" styleClass="panelgrid-dotted-border">	
+				 <h:panelGrid  columns="2" >
+	  				<h:panelGrid  columns="1" style="text-align:center;width:400px;font-size:10px;" >	
 							<p:dataTable  var="list" value="#{vwCuentasPagar.listaResumenObra}"  scrollable="true" scrollHeight="150"
 										sortBy="#{list.importe}" sortOrder="descending" paginator="false" >			
 								<p:column headerText="Obra/Proyecto" sortBy="#{list.concepto}" styleClass="single-line"  style="width:10%;text-align:left;" >
@@ -399,13 +397,15 @@
 								</p:column> 																														 			 
 							</p:dataTable>
 	            	</h:panelGrid>
-	            	<h:panelGrid   columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">	
+	            	<h:panelGrid   columns="1" style="text-align:center;" >	
 	            		<p:outputLabel value="OBRA/PROYECTO" style="font-size:15px;font-weight:bold;color:#585858;"/>
 	       		 		<p:donutChart model="#{vwCuentasPagar.donutModelObras}" style="width:150px; height:150px;"/>
 	       		 	</h:panelGrid>
 	       		</h:panelGrid>
-	       		<h:panelGrid  columns="2" styleClass="panelgrid-dotted-border">
-	  				<h:panelGrid  columns="1" style="text-align:center;width:400px;font-size:10px;" styleClass="panelgrid-dotted-border">	
+	       	</h:panelGrid>
+	       	 <h:panelGrid  columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">	
+	       		<h:panelGrid  columns="2" >
+	  				<h:panelGrid  columns="1" style="text-align:center;width:400px;font-size:10px;" >	
 							<p:dataTable  var="list" value="#{vwCuentasPagar.listaResumenEstatus}"  scrollable="true" scrollHeight="150"
 										sortBy="#{list.importe}" sortOrder="descending" paginator="false" >			
 								<p:column headerText="Estatus" sortBy="#{list.concepto}" styleClass="single-line"  style="width:10%;text-align:left;" >
@@ -418,7 +418,7 @@
 								</p:column> 																														 			 
 							</p:dataTable>
 	            	</h:panelGrid>
-	            	<h:panelGrid   columns="1" style="text-align:center;" styleClass="panelgrid-dotted-border">	
+	            	<h:panelGrid   columns="1" style="text-align:center;" >	
 	            		<p:outputLabel value="ESTATUS" style="font-size:15px;font-weight:bold;color:#585858;"/>
 	       		 		<p:donutChart model="#{vwCuentasPagar.donutModelEstatus}" style="width:150px; height:150px;"/>
 	       		 	</h:panelGrid>

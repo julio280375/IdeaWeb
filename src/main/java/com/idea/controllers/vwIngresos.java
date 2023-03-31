@@ -247,13 +247,6 @@ public class vwIngresos  {
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
 	public void accionPreview(){
 		
 		String origen=carpeta_archivos+archivoSeleccionado.getNombre();

@@ -10,7 +10,7 @@
    	<script src="https://kit.fontawesome.com/1f0a45e941.js" crossorigin="anonymous"></script>    
     <link rel="stylesheet" type="text/css" href="resources/css/default.css" media="all" />
     <h:outputScript library="js" name="resources/javascript/calendar.js" />
-    <title>Idea Los Cabos [GASTOS]</title>  
+    <title>Idea Los Cabos</title>  
     <script type="text/javascript">    
 		function start() {PF('statusDialog').show();}		 
 		function stop() {PF('statusDialog').hide();	}
@@ -279,6 +279,19 @@
 							disabled="#{!vwCuentasCobrar.editable}"	    						
 							update=":formaID:capturaID"
 							style="width:150px;height:30px;" icon="fa fa-undo" />
+						<p:commandButton value="Eliminar" 
+							action="#{vwCuentasCobrar.accionEliminar()}"
+							styleClass="button-texto-icono"
+							disabled="#{vwCuentasCobrar.editable}"
+							rendered="#{vwCuentasCobrar.header.empleado.superusuario}"	    						
+							update=":formaID"
+							style="width:150px;height:30px;" icon="fa fa-minus-circle" >
+							<p:confirm header="Eliminar registro" message="Desea eliminar el registro seleccionado?" icon="pi pi-exclamation-triangle"/>					
+						</p:commandButton>						
+						<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+				            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+				            <p:commandButton value="Si, Eliminar" type="button" styleClass="ui-confirmdialog-yes" />
+				        </p:confirmDialog>
 						<p:commandButton value="Guardar" style="width:150px;height:30px;" icon="fa fa-floppy-o" 
 							action="#{vwCuentasCobrar.accionGuardar()}" 
 							styleClass="button-texto-icono" 
